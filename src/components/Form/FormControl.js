@@ -6,17 +6,18 @@ const  FormControl = (
 
     return(
         <React.Fragment>
-            {typeControl == "select" &&
-            <div className={className}>
+            {
+            typeControl == "select" &&
+                <div className={className}>
             {label && 
-                <label>{label}</label>
+                    <label>{label}</label>
             }
-                <select 
-                name={name}
-                onChange={(event) => onChange(event,name)}>
-                    {children}
-                </select>
-            </div>
+                    <select 
+                    name={name}
+                    onChange={(event) => onChange(event,name)}>
+                        {children}
+                    </select>
+                </div>
             }
             {typeControl == "input" && 
             <div className={className}>

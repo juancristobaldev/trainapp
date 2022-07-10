@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Cookies from "universal-cookie/es6";
-import { Navigate } from "react-router-dom";
-import { Container } from "./Container";
+import { useNavigate, Navigate } from "react-router-dom";
+import { Container } from "./generals/Container";
 
 const Dashboard = () => {
     const cookies = new Cookies();
@@ -14,14 +14,25 @@ const Dashboard = () => {
         window.location.reload()
     }
 
+    const navigate = useNavigate()
+
     if( dataUser ){
         return(
-            <Container>
-                <h1>Hola {name}</h1>
-                <button
-                onClick={() => closeSesion()}
-                >Cerrar sesion</button>
-            </Container>
+            <React.Fragment>
+                <Container>
+                    <h1>Hola {name}</h1>
+                    <button
+                    onClick={() => closeSesion()}
+                    >Cerrar sesion</button>
+                </Container>
+                <Container>
+                    <p>Tus rutinas</p>
+                    <button
+                    onClick={() => navigate('/create-routine')}
+                    >Crear rutina</button>
+                </Container>
+            </React.Fragment>
+
         )
     }else{
         <Navigate to="/signin" />

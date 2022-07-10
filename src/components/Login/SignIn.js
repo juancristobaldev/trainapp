@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react"
-import { Container } from "../Container"
+import { Container } from "../generals/Container"
 import { FormControl } from "../Form/FormControl"
 import { Form } from "../Form/Form"
 import { ChangeSign } from "./ChangeSign"
+import { Main } from "../generals/Main"
 
 const SingIn = ({setID}) => {
 
@@ -47,7 +48,7 @@ const SingIn = ({setID}) => {
     },[dataFormLogin])
 
     return(
-        <Container>
+        <Main>
             {error.length > 0 && 
             <p
             style={{color:'red'}}
@@ -77,7 +78,7 @@ const SingIn = ({setID}) => {
                 textButton={'Crea una cuenta aqui'}
                 route={'/signup'}
             />
-        </Container>
+        </Main>
     )
 }
 

@@ -4,12 +4,12 @@ import { SingIn } from "./components/Login/SignIn";
 import { SingUp } from "./components/Login/SignUp";
 import Cookies from "universal-cookie/es6";
 import { Dashboard } from "./components/Dashboard";
+import { CreateRoutine } from "./components/Create/CreateRoutine";
 
 function App() {
   const cookies = new Cookies();
   const [id,setID] = useState({key:0})
   const [data,setData] = useState([])
-  console.log(id,data)
 
   const saveCookies = (object) => {
     cookies.set( 'user', JSON.stringify(object) , {
@@ -34,7 +34,6 @@ function App() {
   },[id])
 
   const user = cookies.get('user')
-  console.log(user)
 
   return (
     <Router>
@@ -42,6 +41,7 @@ function App() {
         <Route path="/" element={ user  ? <Dashboard/> : <Navigate to={'/signin'}/>}/>
         <Route path="/signup" element={ user  ? <Navigate to={'/'}/> : <SingUp/>}/>
         <Route path="/signin" element={ user  ? <Navigate to={'/'}/> : <SingIn setID={setID}/>}/>
+        <Route path="/create-routine" element={ user ? <CreateRoutine/> : <Navigate to={'/signin'}/>} />
       </Routes>
     </Router>
   );
