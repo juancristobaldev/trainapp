@@ -11,9 +11,9 @@ const SingIn = ({setID}) => {
         name:'',
         user:''
     })
-    console.log(dataFormLogin)
+
     const [error,setError] = useState([])
-    console.log(error)
+
     
     const handleChange = (e,name) => {
         const newData = {...dataFormLogin};

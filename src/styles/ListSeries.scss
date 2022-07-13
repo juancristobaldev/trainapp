@@ -1,0 +1,44 @@
+input[type="number"] {
+  -webkit-appearance: textfield !important;
+  margin: 0;
+  -moz-appearance: textfield !important;
+}
+
+.listSerie {
+  display: flex;
+  justify-content: space-around;
+  flex-direction: column;
+  .serie {
+    background: white;
+    display: grid;
+    place-items: center;
+    input {
+      &::-webkit-inner-spin-button,
+      ::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+      }
+    }
+  }
+  .typeAditional,
+  .typeSupport {
+    grid-template: 100% / 10% 10% 50% 15% 15%;
+  }
+  .typeOnlyRep,
+  .typeTime {
+    grid-template: 100% / 10% 10% 50% 30%;
+    .inputSerie {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+  .typeOnlyRep {
+    .inputSerie {
+      width: 20vw;
+      height: 20vw;
+    }
+  }
+  .typeTime {
+    width: 100%;
+  }
+}

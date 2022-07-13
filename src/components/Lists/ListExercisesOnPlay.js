@@ -1,14 +1,22 @@
 import React from "react";
+import { Exercise } from "../Exercise";
 import { Container } from "../generals/Container";
+import { Text } from "../generals/Text";
+import { ListSeries } from "./ListSeries";
 
-const ListExercisesOnPlay = ({array,children}) => {
+const ListExercisesOnPlay = ({list,setList,children}) => {
+
     return(
         <Container>
-            {array.map( item =>  
-                <p
-                key={item.name}
-                >{item.name}</p>
-            )}  
+            {list.map( item =>
+                    <Exercise
+                    typeEx={item.typeEx}
+                    key={item.nameEx}
+                    item={item}
+                    list={list}
+                    setList={setList}
+                    />
+            )}
         </Container>
     )
 }

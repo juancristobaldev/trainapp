@@ -27,7 +27,10 @@ const CreateRoutine = ( ) => {
                 
                     <Text text='No has agregado ningun ejercicio'/>    
                     :
-                    <ListExercisesOnPlay array={listOnCreate}/>
+                    <ListExercisesOnPlay 
+                    list={listOnCreate}
+                    setList={setListOnCreate}
+                    />
                 }
             </Form>
             <Container>

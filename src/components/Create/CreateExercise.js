@@ -11,10 +11,10 @@ const optionsMuscles = [
     'Espalda','Pectoral','Hombro','Abdomen','Biceps','Triceps'
 ]
 const optionsTypes = [
-    'Peso adicional','Peso asistido','Duracion','Cardio','Solo rep'
+    'Peso adicional','Peso asistido','Duracion','Solo rep'
 ];
 
-const CreateExercise = ({modal}) => {
+const CreateExercise = ({modal,getExercises}) => {
 
     const cookies = new Cookies()
     const user = cookies.get('user')
@@ -44,10 +44,12 @@ const CreateExercise = ({modal}) => {
             body: JSON.stringify(dataFormCreate)
         };
 
-        const response = await fetch('http://localhost:3001/api/exercises/create-exercise', requestOption)
+        const response = await fetch('http://localhost:3001/api/exercises/create-exercise', requestOption);
+        response.json()
+        .then(data => data ? 
+            getExercises() :  console.log('error')
+        )
     }
-
-    console.log(dataFormCreate)
 
     return(
         <Main>

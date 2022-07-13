@@ -1,7 +1,7 @@
 import React from "react";
 
 const  FormControl = (
-    {type,name,children,typeControl,label,onChange,className}
+    {type,name,children,typeControl,label,onChange,style,className}
     ) => {
 
     return(
@@ -25,6 +25,7 @@ const  FormControl = (
                 <label>{label}</label>
             }
                 <input
+                style={style}
                 name={name}
                 type={type}
                 onChange={(event) => onChange(event,name)}/>

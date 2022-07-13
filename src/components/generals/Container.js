@@ -1,11 +1,12 @@
 import React from "react"
 
-const Container = ({children,className}) => {
+const Container = ({style,children,className}) => {
 
     return(
 
         <div
         className={className}
+        style={style}
         >
             {children}
         </div>
