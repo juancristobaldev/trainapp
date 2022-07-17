@@ -27,7 +27,7 @@ const ListExercisesSelect = ({close, list, setList}) => {
     
         let dataBack;
     
-        await fetch(`http://localhost:3001/api/exercises/${user.id}`)
+        await fetch(`http://localhost:3001/api/select/exercises/user/${user.id}`)
         .then(response => response.json())
         .then(data => dataBack = data);
         

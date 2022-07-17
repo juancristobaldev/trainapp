@@ -4,7 +4,7 @@ import { ListSeries } from "./Lists/ListSeries";
 import { Text } from "./generals/Text";
 import { IoMdClose } from "react-icons/io";
 
-const Exercise = ({list,setList,item}) => {
+const Exercise = ({list,setList,item,getDataRoutine}) => {
     return(
         <Container
         key={item.nameEx}>
@@ -58,6 +58,7 @@ const Exercise = ({list,setList,item}) => {
             list={list}
             setList={setList}
             object={item}
+            getDataRoutine={getDataRoutine}
             />
         </Container>
     )

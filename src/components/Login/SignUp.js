@@ -4,6 +4,7 @@ import { FormControl } from "../Form/FormControl"
 import { Form } from "../Form/Form"
 import { ChangeSign } from "./ChangeSign"
 import { Main } from "../generals/Main"
+import { getErrorsForm } from "../functions/getFormsError"
 
 
 
@@ -13,11 +14,13 @@ const SingUp = () => {
         name:'',
         user:'',
         email:'',
+        date:'',
         pass:'',
         passConfirm:''
     })
     
     const [errors,setErrors] = useState([])
+    const [success,setSucess] = useState({success:false,message:null})
     
     const handleChange = (e,name) => {
         const newData = {...dataFormRegister};
@@ -27,16 +30,35 @@ const SingUp = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+        const { name,user,email,pass,passConfirm } = dataFormRegister
 
-        const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(dataFormRegister)
-        };
-        const response = await fetch('http://localhost:3001/api/users/create-user/', requestOptions);
-        
-        response.json()
-        .then(data => setErrors(data))
+        const posiblyErrors = [
+            {property:name,error:'Debes escribir un nombre'},
+            {property:user,error:'Debes escribir un usuario'},
+            {property:email,error:'El email es obligatorio'},
+            {property:pass, error:'Debes escribir una contraseña'}
+        ]
+
+        const {errorsForm} = getErrorsForm(posiblyErrors)
+        if(pass !== passConfirm) errorsForm.push('Las contraseñas deben coincidir')
+
+        if(errorsForm.length === 0){
+            const requestOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dataFormRegister)
+            };
+            const response = await fetch('http://localhost:3001/api/users/create-user/', requestOptions);
+            
+            response.json()
+            .then(data => data.error ? 
+            setErrors(data.errors) : setSucess({success:true, message: 'Usuario creado con exito'})
+            )
+        }
+        else{
+            setErrors(errorsForm)
+        }
+
     }
 
     useEffect(() => {

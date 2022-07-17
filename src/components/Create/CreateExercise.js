@@ -5,6 +5,7 @@ import { Text } from "../generals/Text";
 import { Form } from "../Form/Form";
 import { FormControl } from "../Form/FormControl";
 import { Options } from "../Form/Options";
+import { getErrorsForm } from "../functions/getFormsError";
 import Cookies from "universal-cookie/es6";
 
 const optionsMuscles = [
@@ -38,17 +39,21 @@ const CreateExercise = ({modal,getExercises}) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const requestOption = {
-            method:'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(dataFormCreate)
-        };
+        const errorsForm = [] 
 
-        const response = await fetch('http://localhost:3001/api/exercises/create-exercise', requestOption);
-        response.json()
-        .then(data => data ? 
-            getExercises() :  console.log('error')
-        )
+        if(dataFormCreate.name.length > 0){
+            const requestOption = {
+                method:'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dataFormCreate)
+            };
+    
+            const response = await fetch('http://localhost:3001/api/exercises/create-exercise', requestOption);
+            response.json()
+            .then(data => data && getExercises() )
+        }else{
+            console.log('Debes escribir un nombre para tu ejercicio')
+        }
     }
 
     return(

@@ -13,7 +13,7 @@ import { Serie } from "../Serie";
 
 
 
-const ListSeries = ({object,setList,list}) => {
+const ListSeries = ({object,setList,list,getDataRoutine}) => {
 
       const addSerie = (e,nameExercise) => {
         e.preventDefault(e)
@@ -85,11 +85,21 @@ const ListSeries = ({object,setList,list}) => {
                           <Serie>
                             <FormControl
                             style={{width:"35%"}}
+                            name={object.nameEx}
+                            serie={serie.idSerie}
+                            typeEx={object.typeEx}
+                            nameInput={'adicional'}
+                            onChange={getDataRoutine}
                             typeControl="input"
                             type="number"
+
                             />
                             <FormControl
                             style={{width:"35%"}}
+                            name={object.nameEx}
+                            serie={serie.idSerie}
+                            typeEx={object.typeEx}
+                            onChange={getDataRoutine}
                             typeControl="input"
                             type="number"
                             />
@@ -98,6 +108,10 @@ const ListSeries = ({object,setList,list}) => {
                           object.typeEx === 'Duracion' ?
                               <FormControl
                               className={'inputSerie'}
+                              name={object.nameEx}
+                              serie={serie.idSerie}
+                              typeEx={object.typeEx}
+                              onChange={getDataRoutine}
                               style={{width:"35%"}}
                               typeControl="input"
                               type="time"
@@ -105,6 +119,10 @@ const ListSeries = ({object,setList,list}) => {
                           :
                           <FormControl
                           className={'inputSerie'}
+                          name={object.nameEx}
+                          serie={serie.idSerie}
+                          typeEx={object.typeEx}
+                          onChange={getDataRoutine}
                           style={{width:"35%"}}
                           typeControl="input"
                           type="number"

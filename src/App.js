@@ -10,16 +10,15 @@ function App() {
   const cookies = new Cookies();
   const [id,setID] = useState({key:0})
   const [data,setData] = useState([])
-
   const saveCookies = (object) => {
     cookies.set( 'user', JSON.stringify(object) , {
       path: '/',
       maxAge:86400
     })
   }
-  
+
   const getUser = async (key) => {
-    fetch(`http://localhost:3001/api/users/${key}`)
+    fetch(`http://localhost:3001/api/select/users/element/${key}`)
     .then(response => response.json())
     .then(data => setData(data));
   }

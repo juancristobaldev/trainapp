@@ -4,13 +4,13 @@ import { Container } from "../generals/Container";
 import { Text } from "../generals/Text";
 import { ListSeries } from "./ListSeries";
 
-const ListExercisesOnPlay = ({list,setList,children}) => {
+const ListExercisesOnPlay = ({list,setList,children,getDataRoutine}) => {
 
     return(
         <Container>
             {list.map( item =>
                     <Exercise
-                    typeEx={item.typeEx}
+                    getDataRoutine={getDataRoutine}
                     key={item.nameEx}
                     item={item}
                     list={list}

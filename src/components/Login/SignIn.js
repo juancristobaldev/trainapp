@@ -23,7 +23,7 @@ const SingIn = ({setID}) => {
 
     const setIdAndShow = (data) => {
         setID(data[0])
-         console.log(data)
+        console.log(data)
     }
 
     const handleSubmit = async (e) => {

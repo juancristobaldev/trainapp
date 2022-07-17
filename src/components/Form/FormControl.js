@@ -1,7 +1,7 @@
 import React from "react";
 
 const  FormControl = (
-    {type,name,children,typeControl,label,onChange,style,className}
+    {type,name,children,placeholder,serie,nameInput,typeEx,typeControl,label,onChange,style,className}
     ) => {
 
     return(
@@ -25,10 +25,11 @@ const  FormControl = (
                 <label>{label}</label>
             }
                 <input
+                placeholder={placeholder}
                 style={style}
                 name={name}
                 type={type}
-                onChange={(event) => onChange(event,name)}/>
+                onChange={(event) => onChange(event,name,nameInput,serie,typeEx)}/>
             </div>
             }
         </React.Fragment>
