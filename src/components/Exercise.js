@@ -1,10 +1,9 @@
 import React from "react";
 import { Container } from "./generals/Container";
-import { ListSeries } from "./Lists/ListSeries";
 import { Text } from "./generals/Text";
 import { IoMdClose } from "react-icons/io";
 
-const Exercise = ({list,setList,item,getDataRoutine}) => {
+const Exercise = ({children,item}) => {
     return(
         <Container
         key={item.nameEx}>
@@ -54,12 +53,7 @@ const Exercise = ({list,setList,item,getDataRoutine}) => {
                     </React.Fragment>
                 }
             </Container>
-            <ListSeries
-            list={list}
-            setList={setList}
-            object={item}
-            getDataRoutine={getDataRoutine}
-            />
+            {children}
         </Container>
     )
 }

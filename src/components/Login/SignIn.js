@@ -34,6 +34,7 @@ const SingIn = ({setID}) => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(dataFormLogin)
         }
+        console.log(dataFormLogin)
 
         const response = await fetch('http://localhost:3001/api/auth', requestOptions);
 
