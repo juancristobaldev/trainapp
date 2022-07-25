@@ -11,10 +11,7 @@ const SingIn = ({setID}) => {
         name:'',
         user:''
     })
-
-    const [error,setError] = useState([])
-
-    
+    const [error,setError] = useState([])    
     const handleChange = (e,name) => {
         const newData = {...dataFormLogin};
         newData[name] = e.target.value
@@ -23,7 +20,6 @@ const SingIn = ({setID}) => {
 
     const setIdAndShow = (data) => {
         setID(data[0])
-        console.log(data)
     }
 
     const handleSubmit = async (e) => {
@@ -34,7 +30,6 @@ const SingIn = ({setID}) => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(dataFormLogin)
         }
-        console.log(dataFormLogin)
 
         const response = await fetch('http://localhost:3001/api/auth', requestOptions);
 

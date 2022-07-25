@@ -1,15 +1,15 @@
 import React from "react";
 import { Container } from "../generals/Container";
 
-
-const List = ({className,style,children}) => {
-
+const List = (props) => {
     return(
         <Container
-        className={className}
-        style={style}
+        style={props.style}
+        className={props.className}
         >
-            {children}
+            {!props.item.length && props.onEmpty()}
+            {props.item.map(props.render)}
+            {props.children}
         </Container>
     )
 }

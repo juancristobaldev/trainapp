@@ -11,11 +11,11 @@ import {GiHamburgerMenu} from "react-icons/gi"
 import '../styles/Dashboard.scss'
 import { Title } from "./Title";
 import { Button } from "./generals/Button";
-import { List } from "./Lists/List";
 import { useGet } from "../hooks/useGet";
 import { Text } from "./generals/Text";
 import { BsThreeDots } from "react-icons/bs";
 import { GrFormClose } from "react-icons/gr";
+import { ListApi } from "./Lists/ListApi";
 
 const Dashboard = () => {
 
@@ -57,52 +57,54 @@ const Dashboard = () => {
         return(
             <Main>
                 <Section>
-                    <Container>Hola</Container>
+                    <Container>      
+                    </Container>
                     <GiHamburgerMenu/>
                 </Section>
                 <Section>
                     <Title onClick={() => navigate('/create-routine')} buttonText={'Nuevo'}>Tus rutinas</Title>
                 </Section>
                 <Section>
-                    <List>
-                        {loading && <p>Loading...</p>}
-                        {error && <p>Oops hay un error</p>}
-                        {data.length > 0 &&
-                            data.map(item => 
-                                <Routine
-                                className="routine-container"
-                                key={item.id}
-                                >
-                                        <Container className={"routine-container-header"}>
-                                            <Text text={item.name}/>
-                                            <BsThreeDots
-                                            onClick={() => openModal(item.name)}
-                                            />
-                                            {opensModals.length > 0 && 
-                                                opensModals[opensModals.findIndex(modal => modal.id === item.name)].status && 
-                                                    <Container className="modal-routine">
-                                                        <Container className='modal-routine-header'>
-                                                            <Text text={'Menu'}/>
-                                                            <GrFormClose
-                                                            cursor={'pointer'}/>
-                                                        </Container>
-                                                        <Text className={'delete'} text='Eliminar'/>
-                                                        <Text text='Modificar'/>
-                                                    </Container>
-                                                
-                                            }
+                    <ListApi
+                    error={error}
+                    loading={loading}
+                    data={data}
+                    onError={() => <Text text={'Ooops hay un error...'}/>}
+                    onLoading={() => <Text text={'Cargando...'}/>}
+                    onEmpty={() => <Text text={'No hay rutinas'} />}
+                    render={ routine => (
+                        <Routine
+                        className="routine-container"
+                        key={routine.id}
+                        >
+                            <Container className={"routine-container-header"}>
+                                <Text text={routine.name}/>
+                                <BsThreeDots
+                                onClick={() => openModal(routine.name)}
+                                />
+                                {opensModals.length > 0 && 
+                                opensModals[opensModals.findIndex(modal => modal.id === routine.name)].status && 
+                                    <Container className="modal-routine">
+                                        <Container className='modal-routine-header'>
+                                            <Text text={'Menu'}/>
+                                            <GrFormClose
+                                            cursor={'pointer'}/>
                                         </Container>
-                                        <Container>
-                                            <Text text={item.dones}/>
-                                            <Text text={item.timeRecord}/>
-                                            <Button
-                                            textButton={'Seleccionar'}
-                                            />
-                                        </Container>
-                                </Routine>
-                            )
-                        }
-                    </List>
+                                        <Text className={'delete'} text='Eliminar'/>
+                                        <Text text='Modificar'/>
+                                    </Container>
+                                }
+                            </Container>
+                            <Container>
+                                <Text text={routine.dones}/>
+                                <Text text={routine.timeRecord}/>
+                                <Button
+                                textButton={'Seleccionar'}
+                                />
+                            </Container>
+                        </Routine>
+                    )}
+                    />
                 </Section>
                 <Section>
                     <Button

@@ -23,19 +23,16 @@ const useSeries = (objectList) => {
 
     }
 
-      const deleteSeries =  (serie,item) => {
-        
+      const deleteSeries =  async (serie,item) => {
+    
         const newList = [...state.listOnCreate]
-        const itemExercise = newList.find(item => item.nameEx === item.nameEx)
+        const itemExercise = newList.find(exercise => exercise.nameEx === item.nameEx)
         const indexSerie = itemExercise.seriesEx.findIndex(item => item.idSerie === serie.idSerie)
         itemExercise.seriesEx.splice(indexSerie,1)
-        
-        for(var i = 1; i <= itemExercise['seriesEx'].length; i++){
-            itemExercise['seriesEx'][i - 1].idSerie = i
-        }
+
         updateState({...state, listOnCreate:newList})
       }
-      
+
       const classControl = (type) => {
           if(type === 'Peso adicional') return 'typeAditional'
           else if(type === 'Peso asistido') return 'typeSupport'

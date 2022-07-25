@@ -21,7 +21,7 @@ input[type="number"] {
   }
   .typeAditional,
   .typeSupport {
-    grid-template: 100% / 10% 10% 50% 15% 15%;
+    grid-template: 100% / 10% 45% 15% 15% 15%;
   }
   .typeOnlyRep,
   .typeTime {
@@ -35,7 +35,6 @@ input[type="number"] {
   .typeOnlyRep {
     .inputSerie {
       width: 20vw;
-      height: 20vw;
     }
   }
   .typeTime {

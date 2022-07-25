@@ -22,6 +22,7 @@ import '../../styles/ListSeries.scss'
 
 import Cookies from "universal-cookie/es6";
 import { InputSerie } from "../InputSerie";
+import { ListApi } from "../Lists/ListApi";
 
 const CreateRoutine =  ( ) => {
 
@@ -32,6 +33,8 @@ const CreateRoutine =  ( ) => {
         modalErrors:{error:false,errors:[]},
         modalError:{error:false,message:null},
         modalCreate:false,
+        searchValue:'',
+        totalData:0,
         dataFormCreate:{
             idUser:new Cookies().get('user').id,
             nameRoutine:null,
@@ -41,12 +44,13 @@ const CreateRoutine =  ( ) => {
         }
     })
 
-    console.log(state.dataFormCreate)
-
     const redirect = useNavigate()
 
     const {
+        data,
         listExercisesSelect,
+        error,
+        loading,
         setListExercisesSelect,
         selectOfTheList,
         addExerciseToList,
@@ -59,7 +63,7 @@ const CreateRoutine =  ( ) => {
         deleteExercise,
         modalDelete,
         setModalDelete,
-    } = useExercises(state.user,{list:listExercisesSelect,updateList:setListExercisesSelect})
+    } = useExercises(state.user,{list:listExercisesSelect,updateList:setListExercisesSelect},{stateValue:state,setState:setState})
 
     const {
         addSerie,
@@ -77,7 +81,6 @@ const CreateRoutine =  ( ) => {
             const {nameInput,serie} = objEx
             await newList.forEach(item => {
                 if(item.nameEx === name){
-                    console.log(e.target.name)
                     const indexSerie = item.seriesEx.findIndex(item => item.idSerie === serie)
                     item.seriesEx[indexSerie][nameInput] = e.target.value;
                 }
@@ -143,132 +146,143 @@ const CreateRoutine =  ( ) => {
                 placeholder="Nombre de la rutina"
                 onChange={getDataRoutine}
                 />
-                {state.listOnCreate.length == 0 ? 
-                <Text text='No has agregado ningun ejercicio'/>    
-                :
-                <List>
-                {state.listOnCreate.map(item => 
-                    <Exercise
-                    item={item}
-                    >
-                        <List
-                        className={'listSerie'}
-                        style={{
-                            display:"flex",
-                            justifyContent:'space-around',
-                            flexDirection:"column",
-                        }}
-                        >
-                        {item.seriesEx.map(serie => 
-                            <Container
-                            key={serie.idSerie}
-                            className={classControl(item.typeEx) + ' serie'}
-                            >
-                                <IoMdClose
-                                onClick={() => deleteSeries(serie,item)}
-                                />
-                                <Text text={serie.idSerie} />
-                                <Text text={item.nameEx} />
-                                <Serie>
-                                    {item.typeEx === 'Peso adicional' || item.typeEx === 'Peso asistido' ?
-                                    <React.Fragment>
-                                        <InputSerie
+                <List
+                    item={state.listOnCreate}
+                    onEmpty={() => <Text text='No has agregado ningun ejercicio'/>}
+                    render={ exercise => (
+                        <Exercise 
+                        key={exercise.nameEx}
+                        item={exercise}>
+                            <List
+                            className='listSerie'
+                            style={{
+                                display:"flex",
+                                justifyContent:'space-around',
+                                flexDirection:"column",
+                            }}
+                            item={exercise.seriesEx}
+                            onEmpty={() => <Text text={'Agrega tu primera serie'}/>}
+                            render={ serie => (
+                                <Container
+                                key={serie.idSerie}
+                                className={classControl(exercise.typeEx) + ' serie'}
+                                >
+                                    <IoMdClose
+                                    onClick={() => deleteSeries(serie,exercise)}
+                                    />
+                                    <Text text='-' />
+                                    <Serie>
+                                        {exercise.typeEx === 'Peso adicional' || exercise.typeEx === 'Peso asistido' ?
+                                        <React.Fragment>
+                                            <InputSerie
+                                                style={{width:"35%"}}
+                                                name={exercise.nameEx}
+                                                type="number"
+                                                objEx={{nameInput:'other',serie:serie.idSerie}}
+                                                onChange={getDataRoutine}                                        
+                                            />
+                                            <InputSerie
                                             style={{width:"35%"}}
-                                            name={item.nameEx}
+                                            name={exercise.nameEx}
+                                            objEx={{nameInput:'reps',serie:serie.idSerie}}
+                                            onChange={getDataRoutine}
                                             type="number"
-                                            objEx={{nameInput:'other',serie:serie.idSerie}}
-                                            onChange={getDataRoutine}                                        
-                                        />
-                                        <InputSerie
-                                        style={{width:"35%"}}
-                                        name={item.nameEx}
-                                        objEx={{nameInput:'reps',serie:serie.idSerie}}
-                                        onChange={getDataRoutine}
-                                        type="number"
-                                        />
-                                    </React.Fragment>
-                                    :
-                                    item.typeEx === 'Duracion' ?
-                                        <InputSerie
-                                        className='inputSerie'
-                                        objEx={{nameInput:item.nameEx,serie:serie.idSerie}}
-                                        onChange={getDataRoutine}
-                                        style={{width:"35%"}}
-                                        type="time"
-                                        />
-                                    :
-                                        <InputSerie
-                                        className='inputSerie'
-                                        objEx={{nameInput:item.nameEx,serie:serie.idSerie}}
-                                        onChange={getDataRoutine}
-                                        style={{width:"35%"}}
-                                        type="number"
-                                        />
-                                    }
-                                </Serie>
-                            </Container>
-                        )}
-                        <Button 
-                        onClick={(e) => addSerie(e,item.nameEx)}
-                        textButton={'+ Serie'}
-                        />
-                        </List>
-                    </Exercise>                            
-                    )}
-                </List>
-                }
-            </Form>
-            <Container>
-                <Button
-                onClick={() => setState({...state, modal:!state.modal})}
-                textButton='Agregar un ejercicio'
-                />
-            </Container>
-            {state.modal && 
-                <Modal>
-                    <List>
-                    <Container>
-                        <Text text={'Lista de ejercicios'}/>
-                        <Container>
-                            <Button
-                            onClick={() => setState({...state, modal:false})}
-                            textButton="Cerrar"
-                            />
-                            {totalSelectItem > 0 && 
+                                            />
+                                        </React.Fragment>
+                                        :
+                                        exercise.typeEx === 'Duracion' ?
+                                            <InputSerie
+                                            className='inputSerie'
+                                            objEx={{nameInput:exercise.nameEx,serie:serie.idSerie}}
+                                            onChange={getDataRoutine}
+                                            style={{width:"50%"}}
+                                            type="time"
+                                            />
+                                        :
+                                            <InputSerie
+                                            className='inputSerie'
+                                            objEx={{nameInput:exercise.nameEx,serie:serie.idSerie}}
+                                            onChange={getDataRoutine}
+                                            style={{width:"35%"}}
+                                            type="number"
+                                            />
+                                        }
+                                        <p>a</p>
+                                    </Serie>
+                                </Container>
+                            )}
+                            >
                                 <Button 
-                                textButton={`Agregar (${totalSelectItem})`}
-                                onClick={ () => addExerciseToList() }
-                                />         
-                            }
-                        </Container>
-                        {listExercisesSelect.length === 0 && <Text text='Buscando ejercicios...' />}
-                        {listExercisesSelect.map( item => 
-                            <Text
-                                onClick={selectOfTheList}
-                                className={item.select ? 'onSelect' : 'offSelect'}
-                                text={item.nameEx}
-                                key={item.nameEx}
-                            />
-                        )}
+                                onClick={(e) => addSerie(e,exercise.nameEx)}
+                                textButton={'+ Serie'}
+                                />
+                            </List>
+                    </Exercise>                 
+                    )}
+                />
+                </Form>
+                <Container>
+                    <Button
+                    onClick={() => setState({...state, modal:!state.modal})}
+                    textButton='Agregar un ejercicio'
+                    />
+                </Container>
+                {state.modal && 
+                    <Modal>
                         <Container>
-                            {totalSelectItem > 0 &&
+                            <Text text={'Lista de ejercicios'}/>
+                            <Container>
+                                <input onChange={e => setState({...state, searchValue:e.target.value})} type={'text'} placeholder='Buscar ejercicios'/>
+                            </Container>
+                            <Container>
+                                <Button
+                                onClick={() => setState({...state, modal:false})}
+                                textButton="Cerrar"
+                                />
+                                {totalSelectItem > 0 && 
+                                    <Button 
+                                    textButton={`Agregar (${totalSelectItem})`}
+                                    onClick={ () => addExerciseToList() }
+                                    />         
+                                }
+                            </Container>
+                            <ListApi
+                                error={error}
+                                loading={loading}
+                                data={listExercisesSelect}
+                                total={listExercisesSelect.length}
+                                onEmptySearch = {() => <Text text={`No se encuentra ningun resultado con "${state.searchValue}"`}/>}
+                                onError={() => <Text text={'Oops hay un error...'}/>}
+                                onLoading={() => <Text text={'Cargando ejercicios'}/>}
+                                onEmpty={() => <Text text={'Oops, nada por aqui...'}/>}
+                                render={exercise => (
+                                    <Text
+                                    onClick={selectOfTheList}
+                                    className={exercise.select ? 'onSelect' : 'offSelect'}
+                                    text={exercise.nameEx}
+                                    key={exercise.nameEx}
+                                    />
+                            )}
+                            />
+                            <Container>
+                            {
+                                totalSelectItem > 0 &&
                                 <Container>
                                     <Button
                                     textButton={`Eliminar (${totalSelectItem})`}
                                     onClick={() => deleteExercise(false)}
                                     />
                                 </Container>                    
-                            }
-                            <Container>
-                                <Button
-                                textButton={'Crear ejercicio'}
-                                onClick={ () => setState({...state,modalCreate:!state.modalCreate}) }
-                                />
+                                }
+                                <Container>
+                                    <Button
+                                    textButton={'Crear ejercicio'}
+                                    onClick={ () => setState({...state,modalCreate:!state.modalCreate}) }
+                                    />
+                                </Container>
                             </Container>
                         </Container>
-                    </Container>
-                </List>
-            </Modal>
+                    </Modal>
             }
             { state.modalCreate &&
                 <Modal>
@@ -276,8 +290,8 @@ const CreateRoutine =  ( ) => {
                         <Container>
                             <Text text='Estas creando un ejercicio:'/>
                             <Button
-                            onClick={() => setState({ ...state, modal:false })}
-                            textButton={'Cerar'}
+                            onClick={() => setState({ ...state, modalCreate:false })}
+                            textButton={'Cerrar'}
                             />
                         </Container>
                         <Form

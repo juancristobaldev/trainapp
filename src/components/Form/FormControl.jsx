@@ -9,7 +9,7 @@ const  FormControl = (
                     typeControl == "select" &&
                         <div className={className}>
                     {label && 
-                            <label for={name}>{label}</label>
+                            <label>{label}</label>
                     }
                             <select 
                             name={name}
@@ -21,7 +21,7 @@ const  FormControl = (
                     {typeControl == "input" && 
                     <div className={className}>
                     {label && 
-                        <label for={name}>{label}</label>
+                        <label>{label}</label>
                     }
                         <input
                         placeholder={placeholder}

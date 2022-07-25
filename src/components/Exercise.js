@@ -7,7 +7,8 @@ const Exercise = ({children,item}) => {
     return(
         <Container
         key={item.nameEx}>
-            <Container style={{
+            <Container 
+            style={{
                 display:"flex",
                 justifyContent:'space-between',
                 alignItems:'center',
@@ -18,14 +19,17 @@ const Exercise = ({children,item}) => {
                 <Text text={item.typeEx}/>
                 <IoMdClose/>
             </Container>
-            <Container style={{
-                                display:"flex",
-                                justifyContent:'space-between',
-                                alignItems:'center',
-                                padding:'0 1rem'
+            <Container 
+            className={'stats-second-floor'}
+            style={{
+                                display:"grid",
+                                gridTemplate:'100% / 10% 45% 15% 15% 15%',
+                                placeItems:'center'
             }}>
-                <Text text='Serie'/>
-                <Text text='Nombre'/>
+                <Text style={{
+                    gridArea:'1/ 2 / 2 / 3'
+                }} text='Anterior'/>
+                <Container/>
                 {
                     item.typeEx === 'Peso adicional' && 
                     <React.Fragment>
