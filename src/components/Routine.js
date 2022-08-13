@@ -1,19 +1,14 @@
-import React, { useState } from "react"
+import React from "react"
 import { Container } from "./generals/Container"
-import { Text } from "./generals/Text"
-import {BsThreeDots} from 'react-icons/bs'
-import {GrFormClose} from "react-icons/gr"
-import { Modal } from "./Modal/Modal"
 
-import '../styles/Routines.scss'
 
-const Routine = ({children}) => {
+const Routine = ({className,style,children}) => {
 
 
     return(
-        <Container className={"routine-container"}>
+        <React.Fragment>
             {children}
-        </Container>
+        </React.Fragment>
     )
 }
 

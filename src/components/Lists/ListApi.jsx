@@ -2,10 +2,10 @@ import React from "react";
 
 function ListApi(props) {
     return (
-      <section className="ListRoutines-container">
+      <section className={props.className}>
         {props.error && props.onError()}
         {props.loading && props.onLoading()}
-        {(!props.loading && props.total === 0) && props.onEmpty()}
+        {(!props.loading && !props.data.length ) && props.onEmpty()}
         {props.data.map(props.render)}
       </section>
     );

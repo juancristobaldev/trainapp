@@ -5,54 +5,70 @@ import { Form } from "../Form/Form"
 import { ChangeSign } from "./ChangeSign"
 import { Main } from "../generals/Main"
 
-const SingIn = ({setID}) => {
+import { USER_SIGN_IN } from "../../data/mutations"
+import { useMutation } from "@apollo/client"
+import Cookies from "universal-cookie/es6"
+import { useNavigate } from "react-router-dom"
+
+
+
+const SingIn = ({ setID }) => {
+    const navigate = useNavigate()
+    const cookies = new Cookies()
+    const [userSignIn] = useMutation(USER_SIGN_IN)
 
     const [dataFormLogin, setDataFormLogin] = useState({
-        name:'',
-        user:''
+        user: '',
+        pass: ''
     })
-    const [error,setError] = useState([])    
-    const handleChange = (e,name) => {
-        const newData = {...dataFormLogin};
+    const [error, setError] = useState([]),
+        [loading, setLoading] = useState(false)
+
+    const handleChange = (e, name) => {
+        const newData = { ...dataFormLogin };
         newData[name] = e.target.value
         setDataFormLogin(newData)
     }
 
-    const setIdAndShow = (data) => {
-        setID(data[0])
+    const handleSubmit = async event => {
+        event.preventDefault()
+        setLoading(true)
+        await userSignIn({
+            variables: {
+                input: {
+                    ...dataFormLogin
+                }
+            }
+        }).then(async ({ data }) => {
+            const { errors, success, user, token } = data.userSignIn
+            const parseUser = JSON.parse(user)
+            if (success) {
+                cookies.set( 'session-token', token , {
+                    path: '/',
+                    maxAge:86400
+                })
+                cookies.set( 'session-id', parseUser.id , {
+                    path: '/',
+                    maxAge:86400
+                })
+                navigate('/')
+            }
+        })
     }
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-
-        const requestOptions = {
-            method:'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(dataFormLogin)
-        }
-
-        const response = await fetch('http://localhost:3001/api/auth', requestOptions);
-
-        response.json()
-        .then(data => data[0].hasOwnProperty('error') ? 
-            setError([data[0].message]) :  setIdAndShow(data)
-        )
-    }
-    
     useEffect(() => {
         setError([])
-    },[dataFormLogin])
+    }, [dataFormLogin])
 
-    return(
+    return (
         <Main>
-            {error.length > 0 && 
-            <p
-            style={{color:'red'}}
-            >{error[0]}</p>}
+            {error.length > 0 &&
+                <p
+                    style={{ color: 'red' }}
+                >{error[0]}</p>}
             <Form
-            method="POST"
-            textSubmit="Iniciar sesion"
-            onSubmit={handleSubmit}
+                textSubmit="Iniciar sesion"
+                onSubmit={handleSubmit}
             >
                 <FormControl
                     typeControl='input'
@@ -78,4 +94,26 @@ const SingIn = ({setID}) => {
     )
 }
 
-export {SingIn}
+export { SingIn }
+
+
+
+
+
+
+/*  const handleSubmit = async (e) => {
+        e.preventDefault()
+
+        const requestOptions = {
+            method:'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(dataFormLogin)
+        }
+
+        const response = await fetch('http://localhost:3001/api/auth', requestOptions);
+
+        response.json()
+        .then(data => data[0].hasOwnProperty('error') ? 
+            setError([data[0].message]) :  setIdAndShow(data)
+        )
+    } */

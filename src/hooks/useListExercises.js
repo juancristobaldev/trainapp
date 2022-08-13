@@ -86,6 +86,15 @@ const useListExercises = ( user, listObject ) => {
         }
     }
 
+    const deleteExerciseOfList = (exercise) => {
+        const newList = [...state.listOnCreate]
+        const index = newList.findIndex(item => item.nameEx === exercise.nameEx)
+        newList.splice(index,1)
+        updateState({...state, listOnCreate:newList})
+        
+
+    }
+
     useEffect(() =>{
         getExercises()
         searchExercise()
@@ -95,6 +104,7 @@ const useListExercises = ( user, listObject ) => {
         listExercisesSelect,
         loading,
         error,
+        deleteExerciseOfList,
         setListExercisesSelect,
         selectOfTheList,
         addExerciseToList,

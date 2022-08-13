@@ -3,7 +3,7 @@ import { Container } from "./generals/Container";
 import { Text } from "./generals/Text";
 import { IoMdClose } from "react-icons/io";
 
-const Exercise = ({children,item}) => {
+const Exercise = ({children,item,deleteExerciseOfList}) => {
     return(
         <Container
         key={item.nameEx}>
@@ -17,7 +17,7 @@ const Exercise = ({children,item}) => {
             }}>
                 <Text text={item.nameEx}/>
                 <Text text={item.typeEx}/>
-                <IoMdClose/>
+                <IoMdClose onClick={() => deleteExerciseOfList(item)}/>
             </Container>
             <Container 
             className={'stats-second-floor'}

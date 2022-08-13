@@ -1,17 +1,17 @@
 import React, { Children } from "react";
+import { Button } from "./generals/Button";
 import { Container } from "./generals/Container";
 
 const Title = ({children,onClick,buttonText}) => {
     return (
         <React.Fragment>
-            <h2>
+            <h3>
                 {children}
-            </h2>
-            <button
+            </h3>
+            <Button
+            textButton={buttonText}
             onClick={() => onClick()}
-            >
-                {buttonText}
-            </button>
+            />
         </React.Fragment>
 
 

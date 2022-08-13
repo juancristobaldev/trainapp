@@ -36,6 +36,7 @@ const CreateRoutine =  ( ) => {
         searchValue:'',
         totalData:0,
         dataFormCreate:{
+            id:null,
             idUser:new Cookies().get('user').id,
             nameRoutine:null,
             exercises:[],
@@ -51,6 +52,7 @@ const CreateRoutine =  ( ) => {
         listExercisesSelect,
         error,
         loading,
+        deleteExerciseOfList,
         setListExercisesSelect,
         selectOfTheList,
         addExerciseToList,
@@ -113,8 +115,10 @@ const CreateRoutine =  ( ) => {
     
             const response = await fetch('http://localhost:3001/api/routines/create-routine', requestOption);
             response.json()
-            .then(data => data ? 
-                console.log('yes') :  console.log('error')
+            .then(data => data.hasOwnProperty('error') ?
+                setState({...state, modalErrors:{error:true,errors:[data.message]}})
+             : 
+                console.log(data.message)
             )
         }else{ 
             setState({...state, modalErrors:{error:true,errors:errorsForm}})
@@ -152,7 +156,9 @@ const CreateRoutine =  ( ) => {
                     render={ exercise => (
                         <Exercise 
                         key={exercise.nameEx}
-                        item={exercise}>
+                        item={exercise}
+                        deleteExerciseOfList={deleteExerciseOfList}>
+
                             <List
                             className='listSerie'
                             style={{

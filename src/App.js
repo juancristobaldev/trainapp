@@ -10,37 +10,17 @@ function App() {
   const cookies = new Cookies();
   const [id,setID] = useState({key:0})
   const [data,setData] = useState([])
-  const saveCookies = (object) => {
-    cookies.set( 'user', JSON.stringify(object) , {
-      path: '/',
-      maxAge:86400
-    })
-  }
+  const [darkMode,updateDarkMode] = useState(false)
 
-  const getUser = async (key) => {
-    fetch(`http://localhost:3001/api/select/users/element/${key}`)
-    .then(response => response.json())
-    .then(data => setData(data));
-  }
-
-  if(data.length > 0) saveCookies(data[0]);
-  
-  useEffect(() => {
-      const { key } = id
-      if(key > 0){
-        getUser(key)
-      }
-  },[id])
-
-  const user = cookies.get('user')
+  const token = cookies.get('session-token')
 
   return (
     <Router>
       <Routes>
-        <Route path="/" element={ user  ? <Dashboard/> : <Navigate to={'/signin'}/>}/>
-        <Route path="/signup" element={ user  ? <Navigate to={'/'}/> : <SingUp/>}/>
-        <Route path="/signin" element={ user  ? <Navigate to={'/'}/> : <SingIn setID={setID}/>}/>
-        <Route path="/create-routine" element={ user ? <CreateRoutine/> : <Navigate to={'/signin'}/>} />
+        <Route path="/" element={ token  ? <Dashboard viewMode={{darkMode:darkMode,updateDarkMode:updateDarkMode}}/> : <Navigate to={'/signin'}/>}/>
+        <Route path="/signup" element={ token  ? <Navigate to={'/'}/> : <SingUp/>}/>
+        <Route path="/signin" element={ token  ? <Navigate to={'/'}/> : <SingIn setID={setID}/>}/>
+        <Route path="/create-routine" element={ token ? <CreateRoutine/> : <Navigate to={'/signin'}/>} />
       </Routes>
     </Router>
   );

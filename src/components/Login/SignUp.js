@@ -6,34 +6,44 @@ import { ChangeSign } from "./ChangeSign"
 import { Main } from "../generals/Main"
 import { getErrorsForm } from "../functions/getFormsError"
 
+import { CREATE_USER } from "../../data/mutations"
+import { useMutation } from "@apollo/client"
+import { useNavigate } from "react-router-dom"
+
 
 
 const SingUp = () => {
+    const navigate = useNavigate()
+
+    const [createUser] = useMutation(CREATE_USER)
+    const [loading,setLoading] = useState(false)
 
     const [dataFormRegister, setDataFormRegister] = useState({
-        name:'',
-        user:'',
-        email:'',
-        date:'',
-        pass:'',
-        passConfirm:''
+        "user": "",
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "date": "",
+        "pass": ""
     })
     
     const [errors,setErrors] = useState([])
+
     const [success,setSucess] = useState({success:false,message:null})
     
-    const handleChange = (e,name) => {
+    const handleChange = (e) => {
         const newData = {...dataFormRegister};
-        newData[name] = e.target.value  
+        newData[e.target.name] = e.target.value  
         setDataFormRegister(newData)
     }
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        const { name,user,email,pass,passConfirm } = dataFormRegister
+        const { first_name, last_name,user,email,pass,passConfirm } = dataFormRegister
 
         const posiblyErrors = [
-            {property:name,error:'Debes escribir un nombre'},
+            {property:last_name,error:'Debes escribir un apellido'},
+            {property:first_name,error:'Debes escribir un nombre'},
             {property:user,error:'Debes escribir un usuario'},
             {property:email,error:'El email es obligatorio'},
             {property:pass, error:'Debes escribir una contraseña'}
@@ -43,23 +53,32 @@ const SingUp = () => {
         if(pass !== passConfirm) errorsForm.push('Las contraseñas deben coincidir')
 
         if(errorsForm.length === 0){
-            const requestOptions = {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(dataFormRegister)
-            };
-            const response = await fetch('http://localhost:3001/api/users/create-user/', requestOptions);
+            const dataForm = {...dataFormRegister}
+            delete dataForm.passConfirm
             
-            response.json()
-            .then(data => data.error ? 
-            setErrors(data.errors) : setSucess({success:true, message: 'Usuario creado con exito'})
-            )
+            await createUser({
+                variables: {
+                    input:{
+                        ...dataForm
+                    }
+                }
+            }).then( async ({data}) => {
+                const {errors,success} = data.createUser
+                if(errors.length){
+                    setErrors(JSON.parse(errors))
+                }
+                if(success){
+                    navigate('/signin')
+                }
+            })
         }
         else{
             setErrors(errorsForm)
         }
 
     }
+
+    console.log(errors)
 
     useEffect(() => {
         setErrors([])
@@ -68,7 +87,6 @@ const SingUp = () => {
     return(
         <Main>
             <Form
-            method='POST'
             onSubmit={handleSubmit}
             textSubmit="Registrarse"
             >
@@ -90,8 +108,15 @@ const SingUp = () => {
                 <FormControl
                     typeControl='input'
                     type="text"
-                    name="name"
+                    name="first_name"
                     label="Nombre:"
+                    onChange={handleChange}
+                />
+                <FormControl
+                    typeControl='input'
+                    type="text"
+                    name="last_name"
+                    label="Apellido:"
                     onChange={handleChange}
                 />
                 <FormControl
