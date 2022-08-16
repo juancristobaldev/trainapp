@@ -24,10 +24,11 @@ import Cookies from "universal-cookie/es6";
 import { InputSerie } from "../InputSerie";
 import { ListApi } from "../Lists/ListApi";
 
+const token = new Cookies().get('session-token')
+
 const CreateRoutine =  ( ) => {
 
     const [state,setState] = useState({
-        user:new Cookies().get('user'),
         listOnCreate:[],
         modal:false,
         modalErrors:{error:false,errors:[]},
@@ -37,7 +38,7 @@ const CreateRoutine =  ( ) => {
         totalData:0,
         dataFormCreate:{
             id:null,
-            idUser:new Cookies().get('user').id,
+            token:token,
             nameRoutine:null,
             exercises:[],
             timeRecord:'00:00',
@@ -48,24 +49,23 @@ const CreateRoutine =  ( ) => {
     const redirect = useNavigate()
 
     const {
-        data,
-        listExercisesSelect,
         error,
         loading,
+        listExercisesSelect,
         deleteExerciseOfList,
         setListExercisesSelect,
         selectOfTheList,
         addExerciseToList,
-    } = useListExercises (state.user,{state:state,updateState:setState})
+    } = useListExercises (token,{state:state,updateState:setState})
 
     const {
         errors,
         handleChange,
-        createExercise,
-        deleteExercise,
+        createNewExercise,
+        deleteSomeExercise,
         modalDelete,
         setModalDelete,
-    } = useExercises(state.user,{list:listExercisesSelect,updateList:setListExercisesSelect},{stateValue:state,setState:setState})
+    } = useExercises(token,{list:listExercisesSelect,updateList:setListExercisesSelect},{stateValue:state,setState:setState})
 
     const {
         addSerie,
@@ -276,7 +276,7 @@ const CreateRoutine =  ( ) => {
                                 <Container>
                                     <Button
                                     textButton={`Eliminar (${totalSelectItem})`}
-                                    onClick={() => deleteExercise(false)}
+                                    onClick={() => deleteSomeExercise(false)}
                                     />
                                 </Container>                    
                                 }
@@ -301,20 +301,20 @@ const CreateRoutine =  ( ) => {
                             />
                         </Container>
                         <Form
-                        onSubmit={createExercise}
+                        onSubmit={createNewExercise}
                         textSubmit="Crear"
                         >
                             <FormControl
                             label="Nombre ejercicio:"
                             typeControl="input"
-                            name="name"
+                            name="nameEx"
                             type="text"
                             onChange={handleChange}
                             />
                             <FormControl
                             label="Musculos implicados:"
                             typeControl="select"
-                            name="muscle"
+                            name="muscleEx"
                             onChange={handleChange}
                             >
                                 <Options 
@@ -326,7 +326,7 @@ const CreateRoutine =  ( ) => {
                             <FormControl
                             label="Tipo de ejercicio:"
                             typeControl="select"
-                            name="type"
+                            name="typeEx"
                             onChange={handleChange}
                             >
                                 <Options 
@@ -359,7 +359,7 @@ const CreateRoutine =  ( ) => {
                 )}
                 <Button 
                 textButton='Aceptar'
-                onClick={() => deleteExercise(true)}/>
+                onClick={() => deleteSomeExercise(true)}/>
                 <Button 
                 textButton={'Cancelar'}
                 onClick={() => setModalDelete({

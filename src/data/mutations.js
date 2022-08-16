@@ -19,3 +19,20 @@ export const USER_SIGN_IN = gql`
         }
     }
 `
+
+export const CREATE_EXERCISE = gql`
+    mutation createExercise($input:CreateExerciseInput!){
+        createExercise(input:$input){
+        errors
+        success
+        }
+    }
+`
+export const DELETE_EXERCISE = gql`
+    mutation deleteExercise($input:DeleteExerciseInput!){
+        deleteExercise(input:$input){
+        errors
+        success
+        }
+    }  
+`

@@ -4,6 +4,7 @@ import App from './App';
 import { ApolloClient, InMemoryCache, ApolloProvider, gql } from '@apollo/client';
 
 import './index.css';
+import { DataProvider } from './context/DataProvider';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -12,23 +13,11 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-client.query({
-  query:gql`
-  query GetUsers {
-    getUsers{
-      id
-      user
-      email
-    }
-  }
-  `
-}).then((result) => console.log(result))
-
 root.render(
   <ApolloProvider client={client}>
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
+    <DataProvider>
+      <App/>
+    </DataProvider>
   </ApolloProvider>
 );
 

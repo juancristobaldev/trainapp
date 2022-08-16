@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Cookies from "universal-cookie/es6";
 import { useNavigate, Navigate } from "react-router-dom";
 import { Container } from "./generals/Container";
@@ -13,26 +13,33 @@ import Popover from '@mui/material/Popover';
 import '../styles/Dashboard.scss'
 import { Title } from "./Title";
 import { Button } from "./generals/Button";
-import { useGet } from "../hooks/useGet";
 import { Text } from "./generals/Text";
 import { BsThreeDots } from "react-icons/bs";
 import {MdDarkMode,MdLightMode,MdClose} from "react-icons/md"
 import { ListApi } from "./Lists/ListApi";
-
 import { Switch } from "@mui/material";
-import { color } from "@mui/system";
+import { DataContext } from "../context/DataProvider";
+import { Loading } from "./Loading";
+
 
 const Dashboard = ({viewMode}) => {
     const navigate = useNavigate()
 
     const cookies = new Cookies();
-    const dataUser = cookies.get('user');
-    const { id,name } = dataUser
+    const token = cookies.get('session-token');
 
-    const { data,loading,error } = useGet(`http://localhost:3001/api/select/routines/user/${id}`)
+    const [anchor,setAnchor] = useState(null),
+    [loading,setLoading] = useState(false),
+    [error,setError] = useState(null),
+    [stateNav,updateStateNav] = useState('none')
 
-    const [anchor,setAnchor] = useState(null)
-    const [stateNav,updateStateNav] = useState('none')
+    const {
+        routines,
+        me,
+        errorData,
+        loadingData
+    } = useContext(DataContext)
+
     const {darkMode,updateDarkMode} = viewMode
 
     const openPopover = (event) => {
@@ -47,7 +54,8 @@ const Dashboard = ({viewMode}) => {
         window.location.reload()
     }
 
-    if( dataUser ){
+
+    if(token){
         return(
             <Main 
             style={
@@ -58,6 +66,9 @@ const Dashboard = ({viewMode}) => {
                     {background:'white'}
             } 
             className={`main-dashboard ${darkMode && "darkMode"}`}>
+                {loadingData && 
+                    <Loading/>
+                }
                 <nav className="section-nav-dashboard">
                     <Container className={'pic-nav'}>      
                     </Container>
@@ -109,7 +120,7 @@ const Dashboard = ({viewMode}) => {
                     </Container>
                 </nav>
                 <Section className="section-user-dashboard">
-                    <h2>¡Hola {name}!</h2>
+                    <h2>¡Hola {me.first_name}!</h2>
                     <Text
                     text={'¿Que entrenaras hoy?'}
                     />
@@ -122,7 +133,7 @@ const Dashboard = ({viewMode}) => {
                                 ${darkMode && "darkMode"}`}
                     error={error}
                     loading={loading}
-                    data={data}
+                    data={routines}
                     onError={() => <Text text={'Ooops hay un error...'}/>}
                     onLoading={() => <Text text={'Cargando...'}/>}
                     onEmpty={() => <Text style={

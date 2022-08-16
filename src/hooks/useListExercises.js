@@ -1,44 +1,50 @@
+import { gql, useQuery } from "@apollo/client";
 import React, { useEffect, useState } from "react";
-import Cookies from "universal-cookie/es6";
-import { useGet } from "./useGet";
+import { GET_EXERCISES_BY_TOKEN } from "../data/query";
 
 
-const useListExercises = ( user, listObject ) => {
+const useListExercises = ( token , listObject ) => {
 
     const {state,updateState} = listObject
     const [listExercisesSelect,setListExercisesSelect] = useState([]);
 
-    const { data,loading,error } = useGet(`http://localhost:3001/api/select/exercises/user/${user.id}`,state)
+    const { data,error } = useQuery(GET_EXERCISES_BY_TOKEN, {
+        variables:{
+            token:token
+        }
+    })
 
     const searchExercise = () => {
-        let newData = [...data]
+        if(data){
+            let newData = [...JSON.parse(JSON.stringify(data.getExercisesByToken))];
 
-        if(state.listOnCreate.length > 0){
-            state.listOnCreate.forEach( item => {
-                const index = newData.findIndex(filt => filt.nameEx === item.nameEx)
-                newData.splice(index,1)
-            })
-        }
+            if(state.listOnCreate.length > 0){
+                state.listOnCreate.forEach( item => {
+                    const index = newData.findIndex(filt => filt.nameEx === item.nameEx)
+                    newData.splice(index,1)
+                })
+            }
 
-        if(!state.searchValue.length >= 1){
-            setListExercisesSelect(newData)
-        }
-        else{
-            let newList = []
-            newData.forEach(exercise => {
-                const nameEx = exercise.nameEx.toLowerCase(),
-                searchExercise = state.searchValue.toLowerCase()
-                if(nameEx.includes(searchExercise)){
-                    newList.push(exercise)
-                }
-            })
-            setListExercisesSelect(newList)
+            if(!state.searchValue.length >= 1){
+                setListExercisesSelect(newData)
+            }
+            else{
+                let newList = []
+                newData.forEach(exercise => {
+                    const nameEx = exercise.nameEx.toLowerCase(),
+                    searchExercise = state.searchValue.toLowerCase()
+                    if(nameEx.includes(searchExercise)){
+                        newList.push(exercise)
+                    }
+                })
+                setListExercisesSelect(newList)
+            }
         }
     }
 
     const getExercises = async () => {
-        if(!loading){
-            let dataBack = [...data];
+        if(data){
+            let dataBack = [...JSON.parse(JSON.stringify(data.getExercisesByToken))];
             dataBack.forEach(item => {
                 item['isAdded'] = false;
                 item['select'] = false;
@@ -101,9 +107,8 @@ const useListExercises = ( user, listObject ) => {
     },[data,state])
 
     return {
-        listExercisesSelect,
-        loading,
         error,
+        listExercisesSelect,
         deleteExerciseOfList,
         setListExercisesSelect,
         selectOfTheList,

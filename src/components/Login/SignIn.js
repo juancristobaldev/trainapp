@@ -40,14 +40,9 @@ const SingIn = ({ setID }) => {
                 }
             }
         }).then(async ({ data }) => {
-            const { errors, success, user, token } = data.userSignIn
-            const parseUser = JSON.parse(user)
+            const {success, token } = data.userSignIn
             if (success) {
                 cookies.set( 'session-token', token , {
-                    path: '/',
-                    maxAge:86400
-                })
-                cookies.set( 'session-id', parseUser.id , {
                     path: '/',
                     maxAge:86400
                 })

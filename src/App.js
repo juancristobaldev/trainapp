@@ -5,22 +5,35 @@ import { SingUp } from "./components/Login/SignUp";
 import Cookies from "universal-cookie/es6";
 import { Dashboard } from "./components/Dashboard";
 import { CreateRoutine } from "./components/Create/CreateRoutine";
+import { DataProvider } from "./context/DataProvider";
+import { Create } from "./components/Create/Create";
 
 function App() {
   const cookies = new Cookies();
-  const [id,setID] = useState({key:0})
-  const [data,setData] = useState([])
   const [darkMode,updateDarkMode] = useState(false)
-
   const token = cookies.get('session-token')
-
+  
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={ token  ? <Dashboard viewMode={{darkMode:darkMode,updateDarkMode:updateDarkMode}}/> : <Navigate to={'/signin'}/>}/>
-        <Route path="/signup" element={ token  ? <Navigate to={'/'}/> : <SingUp/>}/>
-        <Route path="/signin" element={ token  ? <Navigate to={'/'}/> : <SingIn setID={setID}/>}/>
-        <Route path="/create-routine" element={ token ? <CreateRoutine/> : <Navigate to={'/signin'}/>} />
+      <Routes>{
+        token ?
+        (
+          <>
+            <Route path="/" element={<Dashboard viewMode={{darkMode:darkMode,updateDarkMode:updateDarkMode}}/>}/>
+            <Route path="/create-routine" element={ <CreateRoutine/> }/>
+            <Route path="/signup" element={ <Navigate to={"/"}/> }/>
+            <Route path="/signin" element={ <Navigate to={"/"}/> }/>
+          </>
+        )
+        :
+        (
+          <>
+            <Route path="/signup" element={ <SingUp/> } />
+            <Route path="/signin" element={ <SingIn/>}/>
+            <Route path="/" element={ <Navigate to={'/signin'}/> }/>
+          </>
+        )
+      }
       </Routes>
     </Router>
   );

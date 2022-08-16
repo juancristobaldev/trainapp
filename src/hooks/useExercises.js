@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { getErrorsForm } from "../components/functions/getFormsError";
+import { CREATE_EXERCISE, DELETE_EXERCISE } from "../data/mutations";
+import { useMutation } from "@apollo/client";
+import { GET_EXERCISES_BY_TOKEN } from "../data/query";
 
-const useExercises = (user,objectList,state) => {
+const useExercises = (token,objectList,state) => {
 
     const [ dataFormCreateExercise, setDataFormCreateExercise ] = useState(
         {
-            id:user.id,
-            name:'',
-            muscle:'Espalda',
-            type:'Peso adicional'
+            token:token,
+            nameEx:'',
+            typeEx:'Peso adicional',
+            muscleEx:'Espalda',
+            seriesEx:JSON.stringify([])
         }
     )
 
@@ -16,34 +20,46 @@ const useExercises = (user,objectList,state) => {
         boolean:false,
         items:[]
     })
+
     const [errors,setErrors] = useState({error:false,errors:[]})
 
-    const deleteExercise = async (confirmation) => {
+    const [createExercise] = useMutation(CREATE_EXERCISE)
+    const [deleteExercise] = useMutation(DELETE_EXERCISE)
+
+    const deleteSomeExercise = async (confirmation) => {
 
         const {list,updateList} = objectList;
 
         const filter = list.filter(item => item.select === true)
         if(filter.length > 0){
             if(confirmation){
-                const requestOption = {
-                    method:'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(filter)
-                };
 
                 const deleteOfState = () => {
                     const unSelect = list.filter(item => item.select !== true)
                     updateList(unSelect)
                 }
                 
-                const response = await fetch(`http://localhost:3001/api/exercises/delete-exercise/${user.id}`, requestOption);
-                response.json()
-                .then(data => data === true &&
-                    setModalDelete({
-                        boolean:false,
-                        items:[]
+                filter.forEach( async (item) => {
+                    await deleteExercise({
+                        variables:{
+                            input:{
+                                token:token,
+                                nameEx:item.nameEx
+                            }
+                        },
+                        refetchQueries:[{query:GET_EXERCISES_BY_TOKEN,variables:{
+                            token:token
+                        }}]
+                    }).then( async ({data}) => {
+
+                        const { errors, success } = data.deleteExercise
+    
+                        if(errors) console.log(errors )
+                        if(success) console.log('Ejercicio/s eliminados correctamente')
+    
                     })
-                )
+                })
+               
                 deleteOfState()   
             }else{
                 const objDelete = {
@@ -64,37 +80,43 @@ const useExercises = (user,objectList,state) => {
         setDataFormCreateExercise(newData)
     }
 
-    const createExercise = async (e) => {
+    const createNewExercise = async (e) => {
         e.preventDefault();
         const {list,updateList} = objectList;
         const {stateValue,setState} = state
 
         const arrayFusion = [...list, ...stateValue.listOnCreate]
         const searchError = [
-            {property:dataFormCreateExercise.name, error:'Debes escribir un nombre para tu ejercicio'}
+            {property:dataFormCreateExercise.nameEx, error:'Debes escribir un nombre para tu ejercicio'}
         ]
         const { errorsForm } = getErrorsForm(searchError)
-        const index = arrayFusion.findIndex(item => item.nameEx === dataFormCreateExercise.name)
+        const index = arrayFusion.findIndex(item => item.nameEx === dataFormCreateExercise.nameEx)
 
         if(index >= 0) errorsForm.push('Este ejercicio ya existe en tu lista');
         if(errorsForm.length){
             setErrors({error:true,errors:errorsForm})
         }else{
-            const requestOption = {
-                method:'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(dataFormCreateExercise)
-            };
-            const response = await fetch('http://localhost:3001/api/exercises/create-exercise', requestOption);
-            response.json()
-            .then( data => {
-                const filt = [...data]
+            await createExercise({
+                variables: {
+                    input: {...dataFormCreateExercise},
+                },
+                refetchQueries:[{query: GET_EXERCISES_BY_TOKEN,variables:{
+                    token:token
+                }}]
+            }).then( async ({data}) => {
+                const {errors,success} = data.createExercise;
+                const filt = [...list]
+
+                if(success) console.log('Ejercicio creado con exito')
+                if(errors) console.log(errors)
+
                 if(stateValue.listOnCreate.length > 0){
                     stateValue.listOnCreate.forEach( item => {
                         const index = filt.findIndex(filt => filt.nameEx === item.nameEx)
                         filt.splice(index,1)
                     })
                 }
+
                 setState({...stateValue, searchValue:''})
                 setTimeout(() => {
                     updateList(filt)
@@ -109,8 +131,8 @@ const useExercises = (user,objectList,state) => {
 
 
     return {
-        createExercise,
-        deleteExercise,
+        createNewExercise,
+        deleteSomeExercise,
         handleChange,
         errors,
         setErrors,
