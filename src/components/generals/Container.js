@@ -1,10 +1,11 @@
 import React from "react"
 
-const Container = ({style,children,className}) => {
+const Container = ({onClick,style,children,className}) => {
 
     return(
 
         <div
+        onClick={onClick}
         className={className}
         style={style}
         >

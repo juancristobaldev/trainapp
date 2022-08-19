@@ -25,11 +25,12 @@ input[type="number"] {
   }
   .typeOnlyRep,
   .typeTime {
-    grid-template: 100% / 10% 10% 50% 30%;
+    grid-template: 100% / 10% 45% 30% 15%;
     .inputSerie {
       display: flex;
       justify-content: center;
       align-items: center;
+      width: 90% !important;
     }
   }
   .typeOnlyRep {

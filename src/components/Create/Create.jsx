@@ -1,9 +1,11 @@
 import React from "react";
 import { Container } from "../generals/Container";
 
-const Create = ({children}) => {
+const Create = ({className ,children}) => {
     return (
-        <Container>
+        <Container
+        className={className}
+        >
             {children}
         </Container>
     )

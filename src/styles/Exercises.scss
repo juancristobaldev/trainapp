@@ -1,0 +1,113 @@
+.exercises-list-routine {
+  display: flex;
+  flex-direction: column;
+  max-height: 75vh;
+  overflow: auto;
+  background: linear-gradient(180deg, #ffffff, #fefefe 100%) !important;
+  .empty-list-routine {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    font-weight: thin;
+    font-style: italic;
+    color: silver;
+  }
+  .exercise {
+    margin: 15px 1rem;
+    box-shadow: 0.5px 0.5px 4px rgba($color: #000000, $alpha: 0.15),
+      0.5px 0.5px 4px rgba($color: #000000, $alpha: 0.15);
+    border-radius: 0.25rem;
+    .exercise-header {
+      cursor: pointer;
+      height: 5vh;
+      .exercise-name {
+        font-weight: 700;
+        font-size: 1rem;
+      }
+      .exercise-type {
+        font-weight: 300;
+        font-size: 0.75rem;
+        font-style: italic;
+      }
+    }
+    .exercise-info {
+      border-bottom-left-radius: 1rem;
+      border-bottom-right-radius: 1rem;
+      background: linear-gradient(359deg, #ffffff, #fbfbfb 100%) !important;
+      .stats-second-floor {
+        padding: 0.5rem 0;
+        font-size: 0.75rem;
+        display: grid;
+        place-items: center;
+      }
+      .stats-second-floor.double-input {
+        grid-template: 100% / 10% 45% 15% 15% 15%;
+      }
+      .stats-second-floor.single-input {
+        grid-template: 100%/10% 45% 30% 15%;
+      }
+      .listSerie {
+        border-radius: 0.25rem;
+        .first-serie {
+          text-align: center;
+          font-size: 0.75rem;
+          color: silver;
+          font-style: italic;
+        }
+        .serie {
+          margin: 0.25rem 0;
+          padding: 0.5rem 0;
+          background-color: transparent;
+          .lock {
+            background-color: rgb(240, 240, 240);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            svg {
+              fill: silver;
+            }
+          }
+          .input-reps,
+          .input-type,
+          .lock {
+            width: 3vh !important;
+            height: 3vh;
+            border-radius: 0.25rem;
+            text-align: center;
+          }
+          .input-reps {
+            background-color: rgb(240, 240, 240);
+            border: none;
+          }
+          .input-type {
+            border: 1px silver solid;
+          }
+        }
+        .container-add-serie {
+          border-radius: 0.25rem;
+          z-index: 99;
+          background-color: white;
+          height: 5vh;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          button {
+            width: calc(100% - 1rem);
+            height: 60%;
+            margin: 0 0.5rem;
+            border: 1px solid #e94560;
+            background-color: transparent;
+            color: #e94560;
+            border-radius: 0.25rem;
+
+            &:hover {
+              background-color: #e94560;
+              color: white;
+            }
+          }
+        }
+      }
+    }
+  }
+}

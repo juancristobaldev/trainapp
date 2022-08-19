@@ -76,6 +76,7 @@ const useListExercises = ( token , listObject ) => {
         const newList = [...state.listOnCreate]
         const listSelect = [...listExercisesSelect]
         const listSelectFilt = listExercisesSelect.filter(item => item.select === true);
+        const newFormCreate  = {...state.dataFormCreate}
 
         if(listSelectFilt.length > 0){
             listSelect.forEach(item => {
@@ -83,11 +84,13 @@ const useListExercises = ( token , listObject ) => {
                     item.select = false
                     item.isAdded = true
                     item.seriesEx = JSON.parse(item.seriesEx)
-                    newList.push(item);
+                    newList.push(item)
+                    newFormCreate.exercises.push(item)
                 }
             })
+
             const filtList = listSelect.filter(item => item.isAdded !== true);
-            updateState({...state, listOnCreate:newList})
+            updateState({...state, listOnCreate:newList, modal:false, dataFormCreate:newFormCreate})
             setListExercisesSelect(filtList)
         }
     }

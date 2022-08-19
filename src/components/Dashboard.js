@@ -151,7 +151,7 @@ const Dashboard = ({viewMode}) => {
                             className={`routine-container
                             ${darkMode && "darkMode"}`}>
                                 <Container className={"routine-container-header"}>
-                                <Text text={routine.name}/>
+                                <Text text={routine.nameRoutine}/>
                                 <BsThreeDots 
                                 cursor={'pointer'}
                                 onClick={openPopover}/>

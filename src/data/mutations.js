@@ -36,3 +36,12 @@ export const DELETE_EXERCISE = gql`
         }
     }  
 `
+
+export const CREATE_ROUTINE = gql`
+    mutation createRoutine($input:CreateRoutineInput!){
+        createRoutine(input:$input){
+        errors
+        success
+        }
+    }
+`

@@ -14,7 +14,7 @@ export const DataProvider = ({children}) => {
     [me,updateMe] = useState({}),
     [routines,updateRoutines] = useState([])
 
-    const {data,loading,error} = useQuery(GET_ROUTINES_AND_USER_BY_TOKEN, {
+    const {data,loading,error ,refetch} = useQuery(GET_ROUTINES_AND_USER_BY_TOKEN, {
         variables:{
             token:session_token
         }

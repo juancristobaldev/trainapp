@@ -6,6 +6,8 @@ import { GET_EXERCISES_BY_TOKEN } from "../data/query";
 
 const useExercises = (token,objectList,state) => {
 
+    const {stateValue,setState} = state
+
     const [ dataFormCreateExercise, setDataFormCreateExercise ] = useState(
         {
             token:token,
@@ -27,13 +29,14 @@ const useExercises = (token,objectList,state) => {
     const [deleteExercise] = useMutation(DELETE_EXERCISE)
 
     const deleteSomeExercise = async (confirmation) => {
-
         const {list,updateList} = objectList;
+        let filter = list.filter(item => item.select === true)
 
-        const filter = list.filter(item => item.select === true)
-        if(filter.length > 0){
+        if(filter.length > 0  || confirmation){
+            
+            if(filter.length === 0) filter = [...modalDelete.items]
+
             if(confirmation){
-
                 const deleteOfState = () => {
                     const unSelect = list.filter(item => item.select !== true)
                     updateList(unSelect)
@@ -59,15 +62,16 @@ const useExercises = (token,objectList,state) => {
     
                     })
                 })
-               
+                setState({...stateValue, modal:true})
+                setModalDelete({boolean:false,items:[]})
                 deleteOfState()   
             }else{
                 const objDelete = {
                     boolean:true,
                     items:[]
                 }
-                filter.forEach(items => {
-                    objDelete.items.push(items.nameEx)
+                filter.forEach(item => {
+                    objDelete.items.push(item)
                 })
                 setModalDelete(objDelete)
             }
@@ -117,17 +121,18 @@ const useExercises = (token,objectList,state) => {
                     })
                 }
 
-                setState({...stateValue, searchValue:''})
+                setState({...stateValue, searchValue:'', modalCreate:false, modal:true})
                 setTimeout(() => {
                     updateList(filt)
                 },50)
             })
         } 
     }
+
     
     useEffect(() => {
         setErrors({})
-    },[dataFormCreateExercise])
+    },[dataFormCreateExercise,stateValue.modal,stateValue.modalCreate])
 
 
     return {

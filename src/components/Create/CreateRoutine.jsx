@@ -16,35 +16,45 @@ import { Options } from "../Form/Options";
 import { useExercises } from "../../hooks/useExercises";
 import { useSeries } from "../../hooks/useSeries";
 import { IoMdClose } from "react-icons/io";
+import { GrClose } from "react-icons/gr";
 import { Serie } from "../Serie";
+import {HiLockClosed} from "react-icons/hi"
 
 import '../../styles/ListSeries.scss'
+import '../../styles/CreateRoutine.scss'
+import '../../styles/Modal.scss'
 
 import Cookies from "universal-cookie/es6";
 import { InputSerie } from "../InputSerie";
 import { ListApi } from "../Lists/ListApi";
+import { useMutation } from "@apollo/client";
+import { CREATE_ROUTINE } from "../../data/mutations";
+import { GET_ROUTINES_AND_USER_BY_TOKEN } from "../../data/query";
+import CheckBox from "../Checkbox";
 
 const token = new Cookies().get('session-token')
 
 const CreateRoutine =  ( ) => {
 
+    const [createRoutine] = useMutation(CREATE_ROUTINE)
+
     const [state,setState] = useState({
         listOnCreate:[],
         modal:false,
         modalErrors:{error:false,errors:[]},
-        modalError:{error:false,message:null},
         modalCreate:false,
         searchValue:'',
         totalData:0,
         dataFormCreate:{
-            id:null,
             token:token,
-            nameRoutine:null,
+            nameRoutine:'',
             exercises:[],
             timeRecord:'00:00',
-            done:0
+            dones:0
         }
     })
+
+    console.log(state.modalErrors)
 
     const redirect = useNavigate()
 
@@ -88,8 +98,8 @@ const CreateRoutine =  ( ) => {
                 }
             })
             newData.exercises = newList
-        }
-        newData[name] = e.target.value
+        }else newData[name] = e.target.value
+        
         setState({...state, dataFormCreate:newData})
     }
 
@@ -107,19 +117,27 @@ const CreateRoutine =  ( ) => {
         const {errorsForm} = getErrorsForm(posiblyErrors)
 
         if(errorsForm.length === 0){
-            const requestOption = {
-                method:'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(state.dataFormCreate)
-            };
-    
-            const response = await fetch('http://localhost:3001/api/routines/create-routine', requestOption);
-            response.json()
-            .then(data => data.hasOwnProperty('error') ?
-                setState({...state, modalErrors:{error:true,errors:[data.message]}})
-             : 
-                console.log(data.message)
-            )
+
+            const inputVariables = {...state.dataFormCreate, exercises:JSON.stringify(state.dataFormCreate.exercises)}
+            console.log(inputVariables)
+
+            await createRoutine({
+                variables:{
+                    input:{
+                        ...inputVariables
+                    }
+                },
+                refetchQueries:[{query:GET_ROUTINES_AND_USER_BY_TOKEN,variables:{
+                    token:token
+                }}]
+            }).then( ({data}) => {
+                const { errors, success } = data.createRoutine
+                if(errors) console.log(errors)
+                if(success) console.log('Rutina creada con exito')
+            })
+
+            redirect('/')
+
         }else{ 
             setState({...state, modalErrors:{error:true,errors:errorsForm}})
         }
@@ -129,36 +147,43 @@ const CreateRoutine =  ( ) => {
 
     useEffect(() => {
         setState({...state, modalErrors:{error:false,errors:[]}})
-    },[state.dataFormCreate,state.listOnCreate])
+    },[state.dataFormCreate,state.listOnCreate,state.modal,state.modalCreate])
 
     return(
-        <Main>
-            <Container>
+        <Main className={'main-create-routine'}>
+            <Container className={'header-create-routine'}>
                 <Text text={'Estas creando una rutina:'}/>
-                <Button
+                <GrClose
+                cursor={'pointer'}
                 onClick={() => redirect('/')}
-                textButton='Salir'
                 />
             </Container>
             <Form
+            className={'form-create-routine'}
             onSubmit={handleSubmit}
             textSubmit='Crear rutina'>
                 <FormControl
                 typeControl={'input'}
+                className={'input-name-routine'}
                 type="text"
                 name={'nameRoutine'}
                 placeholder="Nombre de la rutina"
                 onChange={getDataRoutine}
                 />
                 <List
+                    className={'exercises-list-routine'}
                     item={state.listOnCreate}
-                    onEmpty={() => <Text text='No has agregado ningun ejercicio'/>}
+                    onEmpty={() => 
+                        <Container className={'empty-list-routine'}>
+                            <Text text='No has agregado ningun ejercicio'/>
+                        </Container>
+                    }
                     render={ exercise => (
                         <Exercise 
                         key={exercise.nameEx}
                         item={exercise}
-                        deleteExerciseOfList={deleteExerciseOfList}>
-
+                        deleteExerciseOfList={deleteExerciseOfList}
+                        >
                             <List
                             className='listSerie'
                             style={{
@@ -167,7 +192,7 @@ const CreateRoutine =  ( ) => {
                                 flexDirection:"column",
                             }}
                             item={exercise.seriesEx}
-                            onEmpty={() => <Text text={'Agrega tu primera serie'}/>}
+                            onEmpty={() => <Text className={'first-serie'} text={'Agrega tu primera serie'}/>}
                             render={ serie => (
                                 <Container
                                 key={serie.idSerie}
@@ -181,6 +206,7 @@ const CreateRoutine =  ( ) => {
                                         {exercise.typeEx === 'Peso adicional' || exercise.typeEx === 'Peso asistido' ?
                                         <React.Fragment>
                                             <InputSerie
+                                                className={'input-type'}
                                                 style={{width:"35%"}}
                                                 name={exercise.nameEx}
                                                 type="number"
@@ -188,16 +214,18 @@ const CreateRoutine =  ( ) => {
                                                 onChange={getDataRoutine}                                        
                                             />
                                             <InputSerie
-                                            style={{width:"35%"}}
-                                            name={exercise.nameEx}
-                                            objEx={{nameInput:'reps',serie:serie.idSerie}}
-                                            onChange={getDataRoutine}
-                                            type="number"
+                                                className={'input-reps'}
+                                                style={{width:"35%"}}
+                                                name={exercise.nameEx}
+                                                objEx={{nameInput:'reps',serie:serie.idSerie}}
+                                                onChange={getDataRoutine}
+                                                type="number"
                                             />
                                         </React.Fragment>
                                         :
                                         exercise.typeEx === 'Duracion' ?
                                             <InputSerie
+                                            className={'input-duracion'}
                                             className='inputSerie'
                                             objEx={{nameInput:exercise.nameEx,serie:serie.idSerie}}
                                             onChange={getDataRoutine}
@@ -206,6 +234,7 @@ const CreateRoutine =  ( ) => {
                                             />
                                         :
                                             <InputSerie
+                                            className={'input-reps'}
                                             className='inputSerie'
                                             objEx={{nameInput:exercise.nameEx,serie:serie.idSerie}}
                                             onChange={getDataRoutine}
@@ -213,188 +242,249 @@ const CreateRoutine =  ( ) => {
                                             type="number"
                                             />
                                         }
-                                        <p>a</p>
+                                        <Container className={'lock'}>
+                                            <HiLockClosed/>
+                                        </Container>
                                     </Serie>
                                 </Container>
                             )}
                             >
-                                <Button 
-                                onClick={(e) => addSerie(e,exercise.nameEx)}
-                                textButton={'+ Serie'}
-                                />
+                                <Container
+                                className={'container-add-serie'}
+                                >
+                                    <Button 
+                                    onClick={(e) => addSerie(e,exercise.nameEx)}
+                                    textButton={'+ Serie'}
+                                    />
+                                </Container>
                             </List>
                     </Exercise>                 
                     )}
                 />
+                {state.modalErrors.error  === true && 
+                    <Container className={'create-errors'}>
+                        {
+                            state.modalErrors.errors.map(item => 
+                                <p 
+                                key={item}
+                                style={{color:'red'}}>*{item}</p>   
+                            )
+                        }
+                    </Container>
+                }
                 </Form>
-                <Container>
+                <Container className={'container-add-new-exercise'}>
                     <Button
                     onClick={() => setState({...state, modal:!state.modal})}
                     textButton='Agregar un ejercicio'
                     />
                 </Container>
+                <footer>
+                    <p className="p-doit">
+                        <span>Do</span>It
+                    </p>
+                </footer>
                 {state.modal && 
                     <Modal>
-                        <Container>
-                            <Text text={'Lista de ejercicios'}/>
-                            <Container>
+                        <Container className={'back'}
+                        onClick={() => setState({...state, modal: false})}
+                        />
+                        <Container className={'modal-exercises'}>
+                            <Container className={'modal-exercises-header'}>
+                                <Text text={'Lista de ejercicios'}/>
+                                <Button
+                                    onClick={() => setState({...state, modal:false})}
+                                    textButton="Cancelar"
+                                />
+                            </Container>
+                            <Container className={'modal-exercises-search'}>
                                 <input onChange={e => setState({...state, searchValue:e.target.value})} type={'text'} placeholder='Buscar ejercicios'/>
                             </Container>
-                            <Container>
-                                <Button
-                                onClick={() => setState({...state, modal:false})}
-                                textButton="Cerrar"
-                                />
-                                {totalSelectItem > 0 && 
-                                    <Button 
-                                    textButton={`Agregar (${totalSelectItem})`}
-                                    onClick={ () => addExerciseToList() }
-                                    />         
-                                }
-                            </Container>
-                            <ListApi
+                            <ListApi 
+
+                                className={'modal-exercises-list'}
                                 error={error}
                                 loading={loading}
                                 data={listExercisesSelect}
                                 total={listExercisesSelect.length}
-                                onEmptySearch = {() => <Text text={`No se encuentra ningun resultado con "${state.searchValue}"`}/>}
-                                onError={() => <Text text={'Oops hay un error...'}/>}
+                                onEmptySearch = {() => 
+                                    <Container className={'search-empty-container'}>
+                                        <Text text={`No se encuentra ningun resultado con "${state.searchValue}"`}/>
+                                    </Container>
+                                }
+                                onError={() => 
+                                    <Container className={'error-container'}>
+                                        <Text 
+                                        text={`Ooops, hay un error...`}/>
+                                    </Container>
+                                }
                                 onLoading={() => <Text text={'Cargando ejercicios'}/>}
-                                onEmpty={() => <Text text={'Oops, nada por aqui...'}/>}
+                                onEmpty={() => 
+                                    <Container className={'empty-container'}>
+                                        <Text 
+                                        text={`Tu lista de ejercicios esta vacia`}/>
+                                    </Container>
+                                }
                                 render={exercise => (
-                                    <Text
-                                    onClick={selectOfTheList}
-                                    className={exercise.select ? 'onSelect' : 'offSelect'}
-                                    text={exercise.nameEx}
+                                    <Container 
                                     key={exercise.nameEx}
-                                    />
-                            )}
+                                    className={`exercise-container ${exercise.select ?'onSelect' : 'offSelect' }`}
+                                    onClick={() => selectOfTheList(exercise.nameEx)}
+                                    >
+                                        <Text
+                                        text={exercise.nameEx}
+                                        key={exercise.nameEx}
+                                        />
+                                        <CheckBox
+                                        select={exercise.select}
+                                        />
+                                    </Container>
+                                )}
                             />
-                            <Container>
+                            <Container className={'modal-exercises-actions'}>
                             {
                                 totalSelectItem > 0 &&
-                                <Container>
+                                <>
                                     <Button
+                                    className={'button-delete'}
                                     textButton={`Eliminar (${totalSelectItem})`}
-                                    onClick={() => deleteSomeExercise(false)}
+                                    onClick={() => {
+                                        setState({...state, modal:false})
+                                        deleteSomeExercise(false)
+                                    }}
                                     />
-                                </Container>                    
+                                    <Button 
+                                    className={'button-add'}
+                                    textButton={`Agregar (${totalSelectItem})`}
+                                    onClick={ () => addExerciseToList() }
+                                    />       
+                                </>                    
                                 }
-                                <Container>
-                                    <Button
-                                    textButton={'Crear ejercicio'}
-                                    onClick={ () => setState({...state,modalCreate:!state.modalCreate}) }
-                                    />
-                                </Container>
+                            </Container>
+                            <Container
+                            className={'modal-exercises-create'}
+                            >
+                                <Button
+                                textButton={'Crear ejercicio'}
+                                onClick={ () => {
+                                    setState(
+                                        {
+                                            ...state,
+                                            modalCreate:!state.modalCreate,
+                                            modal:false
+                                        }
+                                    )
+                                } }
+                                />
                             </Container>
                         </Container>
                     </Modal>
             }
             { state.modalCreate &&
                 <Modal>
-                    <Create>
-                        <Container>
-                            <Text text='Estas creando un ejercicio:'/>
-                            <Button
-                            onClick={() => setState({ ...state, modalCreate:false })}
-                            textButton={'Cerrar'}
-                            />
-                        </Container>
-                        <Form
-                        onSubmit={createNewExercise}
-                        textSubmit="Crear"
+                    <Container className={"back create"}
+                    onClick={() => setState({...state, modalCreate: false})}
+                    >
+                    </Container>
+                        <Create
+                        className={'modal-create-exercise'}
                         >
-                            <FormControl
-                            label="Nombre ejercicio:"
-                            typeControl="input"
-                            name="nameEx"
-                            type="text"
-                            onChange={handleChange}
-                            />
-                            <FormControl
-                            label="Musculos implicados:"
-                            typeControl="select"
-                            name="muscleEx"
-                            onChange={handleChange}
-                            >
-                                <Options 
-                                arrayOptions={
-                                    ['Espalda','Pectoral','Hombro','Abdomen','Biceps','Triceps']
-                                } 
+                            <Container className={'header-create'}>
+                                <Text text='Estas creando un ejercicio:'/>
+                                <Button
+                                onClick={() => setState({ ...state, modalCreate:false, modal:true})}
+                                textButton={'Cerrar'}
                                 />
-                            </FormControl>
-                            <FormControl
-                            label="Tipo de ejercicio:"
-                            typeControl="select"
-                            name="typeEx"
-                            onChange={handleChange}
+                            </Container>
+                            <Form
+                            className={'form-create'}
+                            onSubmit={createNewExercise}
+                            textSubmit="Crear"
                             >
-                                <Options 
-                                arrayOptions={
-                                    ['Peso adicional','Peso asistido','Duracion','Solo rep']
-                                }
+                                <Container className={'errors'}>
+                                    {
+                                        errors.error && 
+                                        <p
+                                        style={{color:"red"}}
+                                        >*{errors.errors.map(item => item)}</p>
+                                        
+                                    }
+                                </Container>
+                                <FormControl
+                                className={'name-input-create'}
+                                label="Nombre ejercicio:"
+                                typeControl="input"
+                                name="nameEx"
+                                type="text"
+                                onChange={handleChange}
                                 />
-                            </FormControl>
-                        </Form>
-                    </Create>
+                                <FormControl
+                                className={'muscle-input-create'}
+                                label="Musculos implicados:"
+                                typeControl="select"
+                                name="muscleEx"
+                                onChange={handleChange}
+                                >
+                                    <Options 
+                                    arrayOptions={
+                                        ['Espalda','Pectoral','Hombro','Abdomen','Biceps','Triceps']
+                                    } 
+                                    />
+                                </FormControl>
+                                <FormControl
+                                className={'type-input-create'}
+                                label="Tipo de ejercicio:"
+                                typeControl="select"
+                                name="typeEx"
+                                onChange={handleChange}
+                                >
+                                    <Options 
+                                    arrayOptions={
+                                        ['Peso adicional','Peso asistido','Duracion','Solo rep']
+                                    }
+                                    />
+                                </FormControl>
+                            </Form>
+                        </Create>
                 </Modal>  
-            }
-            {
-            errors.error && 
-            <Modal>
-                <p
-                style={{color:"red"}}
-                >{errors.errors.map(item => item)}</p>
-            </Modal>
             }
             {
             modalDelete.boolean === true && 
             <Modal>
-                <Text text={'¿Estas seguro que deseas eliminar los siguientes ejercicios?'}/>
-                {modalDelete.items.map(item =>
-                    <Text 
-                    text={item} 
-                    style={{ color:'red'}}
-                    />
-                )}
-                <Button 
-                textButton='Aceptar'
-                onClick={() => deleteSomeExercise(true)}/>
-                <Button 
-                textButton={'Cancelar'}
-                onClick={() => setModalDelete({
-                    boolean:false,
-                    items:true
-                })}
+                <Container className={'back delete'}
+                onClick={() => setModalDelete({...modalDelete,boolean: false})}
                 />
+                <Container className={'modal-delete'}>
+                    <Container
+                    className={'container-text'}
+                    >
+                        <Text text={'¿Estas seguro que deseas eliminar los siguientes ejercicios?'}/>
+                    </Container>
+                    <Container className={'list-exercises-delete'}>
+                        {modalDelete.items.map(item =>
+                            <Text 
+                            key={item.nameEx}
+                            text={item.nameEx} 
+                            style={{ color:'red'}}
+                            />
+                        )}
+                    </Container>
+                    <Container className={'container-buttons'}>
+                        <Button 
+                        className={'cancel'}
+                        textButton={'Cancelar'}
+                        onClick={() => setModalDelete({
+                            boolean:false,
+                            items:true
+                        })}
+                        />
+                        <Button 
+                        className={'accept'}
+                        textButton='Aceptar'
+                        onClick={() => deleteSomeExercise(true,modalDelete.items)}/>
+                    </Container>
+                </Container>
             </Modal>
-            }
-            {
-            state.modalError.error === true &&
-            <Modal>
-                <Text
-                text={state.modalError.message}
-                style={{
-                    color:"red"
-                }}
-                />
-                <Button
-                textButton={'Aceptar'}
-                onClick={() => setState({...state, modalError:{
-                    error:false,
-                    message:'',
-                }})}
-                />
-            </Modal>
-            }
-            {state.modalErrors.error && 
-                <Modal>
-                    {state.modalErrors.errors.map(item => 
-                        <p 
-                        key={item}
-                        style={{color:'red'}}>{item}</p>    
-                    )}
-                </Modal> 
             }
         </Main>
     )

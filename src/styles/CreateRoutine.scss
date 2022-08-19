@@ -1,0 +1,93 @@
+.main-create-routine {
+  display: grid;
+  grid-template-rows: 7.5vh 75vh 7.5vh 10vh;
+  .header-create-routine {
+    display: flex;
+    font-weight: 600;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0rem 1rem;
+  }
+  .form-create-routine {
+    display: grid;
+    grid-template-rows: 7.5vh 1fr 7.5vh 7.5vh;
+    .input-name-routine {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      input {
+        width: 100%;
+        height: 70%;
+        border: 1px solid silver;
+        border-radius: 0.2rem;
+        margin: 1rem;
+        text-align: center;
+        &::placeholder {
+          text-align: center;
+          font-style: italic;
+        }
+      }
+    }
+    .container-submit {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      grid-area: 4/ 1 / 5 /2;
+      input {
+        border: 0;
+        background-color: #e94560;
+        color: white;
+        border-radius: 0.25rem;
+        width: calc(100% - 2rem);
+        height: 65%;
+        font-weight: 800;
+        &:hover {
+          background-color: #ca3049;
+        }
+        &:active {
+          transform: scale(0.95);
+        }
+      }
+    }
+    .create-errors {
+      font-style: italic;
+      font-size: 0.9rem;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      justify-content: center;
+    }
+  }
+  .container-add-new-exercise {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    button {
+      background-color: rgb(234 231 231);
+      width: calc(100% - 2rem);
+      border-radius: 0.25rem;
+      height: 65%;
+      border: 0;
+      font-weight: 800;
+      cursor: pointer;
+      &:active {
+        transform: scale(0.95);
+      }
+      &:hover {
+        background-color: rgb(224, 224, 224);
+      }
+    }
+  }
+  footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.25rem;
+    .p-doit {
+      span {
+        font-weight: 700;
+      }
+    }
+  }
+}
