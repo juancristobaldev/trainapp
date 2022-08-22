@@ -1,73 +1,57 @@
-import React, { useEffect, useState } from "react";
-import { Container } from "../generals/Container";
-import { useNavigate } from "react-router-dom";
-import { Main } from "../generals/Main";
-import { Form } from "../Form/Form";
-import { Text } from "../generals/Text";
-import { Modal } from "../Modal/Modal";
-import { List } from "../Lists/List";
-import { FormControl } from "../Form/FormControl";
-import { getErrorsForm } from "../functions/getFormsError";
-import { Exercise } from "../Exercise";
-import { Button } from "../generals/Button";
-import { useListExercises } from "../../hooks/useListExercises";
-import { Create } from "./Create";
-import { Options } from "../Form/Options";
-import { useExercises } from "../../hooks/useExercises";
-import { useSeries } from "../../hooks/useSeries";
-import { IoMdClose } from "react-icons/io";
-import { GrClose } from "react-icons/gr";
-import { Serie } from "../Serie";
-import {HiLockClosed} from "react-icons/hi"
-import {RiDeleteBin2Fill} from "react-icons/ri"
-
-import '../../styles/ListSeries.scss'
-import '../../styles/CreateRoutine.scss'
-import '../../styles/Modal.scss'
-
+import { useQuery } from "@apollo/client";
+import React from "react";
+import { useState } from "react";
+import { Navigate } from "react-router-dom";
+import { GET_ROUTINE_BY_ID } from "../data/query";
+import { Main } from "./generals/Main";
+import { Text } from "./generals/Text";
+import { Loading } from "./Loading";
+import '../styles/Loading.scss'
 import Cookies from "universal-cookie/es6";
-import { InputSerie } from "../InputSerie";
-import { ListApi } from "../Lists/ListApi";
-import { useMutation } from "@apollo/client";
-import { CREATE_ROUTINE } from "../../data/mutations";
-import { GET_ROUTINES_AND_USER_BY_TOKEN } from "../../data/query";
-import CheckBox from "../Checkbox";
+import { useEffect } from "react";
+import { Container } from "./generals/Container";
+import { FormControl, List } from "@mui/material";
+import { ListApi } from "./Lists/ListApi";
+import { Button } from "./generals/Button";
+import CheckBox from "./Checkbox";
+import { InputSerie } from "./InputSerie";
+import { Exercise } from "./Exercise";
+import { IoMdClose } from "react-icons/io";
+import { useListExercises } from "../hooks/useListExercises";
+import { useExercises } from "../hooks/useExercises";
+import { useSeries } from "../hooks/useSeries";
+import { Create } from "./Create/Create";
+import { Form } from "./Form/Form";
+import { Serie } from "./Serie";
+import { Modal } from "./Modal/Modal";
+import { Options } from "./Form/Options";
 
 const token = new Cookies().get('session-token')
 
-const CreateRoutine =  ( ) => {
-
-    const [createRoutine] = useMutation(CREATE_ROUTINE)
-
-    const [state,setState] = useState({
-        listOnCreate:[],
+const GoRoutine = ({routine}) => {
+    const [state,updateState] = useState({
+        dataRoutine:false,
+        listOnPlay:[],
         modal:false,
         modalErrors:{error:false,errors:[]},
         modalCreate:false,
         searchValue:'',
-        totalData:0,
-        dataFormCreate:{
+        routineOnPlay:{
             token:token,
-            nameRoutine:'',
+            nameRoutine:routine.nameRoutine,
             exercises:[],
-            timeRecord:'00:00',
-            dones:0
+            timeRecord:routine.timeRecord,
+            dones:routine.dones + 1
         }
     })
 
-    console.log(state.modalErrors)
-
-    const redirect = useNavigate()
-
     const {
-        error,
-        loading,
         listExercisesSelect,
         deleteExerciseOfList,
         setListExercisesSelect,
         selectOfTheList,
         addExerciseToList,
-    } = useListExercises (token,{state:state,updateState:setState})
+    } = useListExercises (token,{state:state,updateState:updateState})
 
     const {
         errors,
@@ -76,111 +60,80 @@ const CreateRoutine =  ( ) => {
         deleteSomeExercise,
         modalDelete,
         setModalDelete,
-    } = useExercises(token,{list:listExercisesSelect,updateList:setListExercisesSelect},{stateValue:state,setState:setState})
+    } = useExercises(token,{list:listExercisesSelect,updateList:setListExercisesSelect},{stateValue:state,setState:updateState})
 
     const {
         addSerie,
         deleteSeries,
         classControl
-    } = useSeries({state:state,updateState:setState})
+    } = useSeries({state:state,updateState:updateState})
 
+    const { data,loading,error } = useQuery(GET_ROUTINE_BY_ID, {
+        variables:{
+            id:routine.id
+        }
+    })
 
     const getDataRoutine = async (e,name,objEx) => {
 
-        const newData = {...state.dataFormCreate};
-        const newList = [...state.listOnCreate]
+        const newData = {...state.routineOnPlay};
+        const newList = [...state.listOnPlay]
 
-        if(name !== 'nameRoutine'){
-            const {nameInput,serie} = objEx
-            await newList.forEach(item => {
-                if(item.nameEx === name){
-                    const indexSerie = item.seriesEx.findIndex(item => item.idSerie === serie)
-                    item.seriesEx[indexSerie][nameInput] = e.target.value;
-                }
-            })
-            newData.exercises = newList
-        }else newData[name] = e.target.value
-        
-        setState({...state, dataFormCreate:newData})
-    }
+        const {nameInput,serie} = objEx
+        await newList.forEach(item => {
+            if(item.nameEx === name){
+                const indexSerie = item.seriesEx.findIndex(item => item.idSerie === serie)
+                item.seriesEx[indexSerie][nameInput] = e.target.value;
+            }
+        })
+        newData.exercises = newList
 
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        const {exercises,nameRoutine} = state.dataFormCreate
-
-        const posiblyErrors = [
-            {property:exercises,error:'Debes agregar al menos un ejercicio'},
-            {property:nameRoutine,error:'Debes escribir un nombre para la rutina'}
-        ]
-
-        const {errorsForm} = getErrorsForm(posiblyErrors)
-
-        if(errorsForm.length === 0){
-
-            const inputVariables = {...state.dataFormCreate, exercises:JSON.stringify(state.dataFormCreate.exercises)}
-            console.log(inputVariables)
-
-            await createRoutine({
-                variables:{
-                    input:{
-                        ...inputVariables
-                    }
-                },
-                refetchQueries:[{query:GET_ROUTINES_AND_USER_BY_TOKEN,variables:{
-                    token:token
-                }}]
-            }).then( ({data}) => {
-                const { errors, success } = data.createRoutine
-                if(errors) console.log(errors)
-                if(success) console.log('Rutina creada con exito')
-            })
-
-            redirect('/')
-
-        }else{ 
-            setState({...state, modalErrors:{error:true,errors:errorsForm}})
-        }
+        updateState({...state, routineOnPlay:newData})
     }
 
     const totalSelectItem = listExercisesSelect.filter(item => item.select === true).length
 
     useEffect(() => {
-        setState({...state, modalErrors:{error:false,errors:[]}})
-    },[state.dataFormCreate,state.listOnCreate,state.modal,state.modalCreate])
+        if(error) console.log(error)
+        if(!loading){
+            updateState(
+                {...state, 
+                dataRoutine:data.getRoutineById[0], 
+                routineOnPlay:{...state.routineOnPlay, exercises:JSON.parse(data.getRoutineById[0].exercises)}
+                }
+            )
 
-    return(
-        <Main className={'main-create-routine'}>
-            <Container className={'header-create-routine'}>
-                <Text text={'Estas creando una rutina:'}/>
-                <GrClose
-                cursor={'pointer'}
-                onClick={() => redirect('/')}
-                />
-            </Container>
-            <Form
-            className={'form-create-routine'}
-            onSubmit={handleSubmit}
-            textSubmit='Crear rutina'>
-                <FormControl
-                typeControl={'input'}
-                className={'input-name-routine'}
-                type="text"
-                name={'nameRoutine'}
-                placeholder="Nombre de la rutina"
-                onChange={getDataRoutine}
-                />
-                <List
-                    className={'exercises-list-routine'}
-                    item={state.listOnCreate}
-                    onEmpty={() => 
-                        <Container className={'empty-list-routine'}>
-                            <Text text='No has agregado ningun ejercicio'/>
-                        </Container>
-                    }
-                    render={ exercise => (
-                        <Exercise 
+        }
+    },[data])
+
+    if(routine.active){
+        return(
+            <Main
+            className={'main-goroutine'}
+            >
+            {loading ? <Loading/> : 
+            <>
+                <Container>
+                    <p>Temporizador</p>
+                </Container>
+                <Container>
+                    <h2>{state.dataRoutine.nameRoutine}</h2>
+                    <Text
+                    text={`Mejor tiempo 🎉: ${state.dataRoutine.timeRecord}`}
+                    />
+                    <Text
+                    text={`Tiempo actual ⏱️: ${state.dataRoutine.timeRecord}`}
+                    />
+                </Container>
+                <ListApi
+                error={error}
+                loading={loading}
+                data={state.routineOnPlay.exercises}
+                onError={() => <p>Hay un error</p>}
+                onLoading={() => <p>Cargando...</p>}
+                onEmpty={() => <p>Agrega tu primer ejercicio</p>}
+                render={exercise => 
+                    <Exercise 
                         key={exercise.nameEx}
                         item={exercise}
                         deleteExerciseOfList={deleteExerciseOfList}
@@ -244,7 +197,7 @@ const CreateRoutine =  ( ) => {
                                             />
                                         }
                                         <Container className={'lock'}>
-                                            <HiLockClosed/>
+                                            <CheckBox/>
                                         </Container>
                                     </Serie>
                                 </Container>
@@ -259,47 +212,30 @@ const CreateRoutine =  ( ) => {
                                     />
                                 </Container>
                             </List>
-                    </Exercise>                 
-                    )}
-                />
-                {state.modalErrors.error  === true && 
-                    <Container className={'create-errors'}>
-                        {
-                            state.modalErrors.errors.map(item => 
-                                <p 
-                                key={item}
-                                style={{color:'red'}}>*{item}</p>   
-                            )
-                        }
-                    </Container>
+                    </Exercise>
                 }
-                </Form>
-                <Container className={'container-add-new-exercise'}>
-                    <Button
-                    onClick={() => setState({...state, modal:!state.modal})}
-                    textButton='Agregar un ejercicio'
-                    />
+                />
+                <Container>
+                    <Button/>
+                    <Button/>
                 </Container>
-                <footer>
-                    <p className="p-doit">
-                        <span>Do</span>It
-                    </p>
-                </footer>
-                {state.modal && 
+            </>
+            }
+            {state.modal && 
                     <Modal>
                         <Container className={'back'}
-                        onClick={() => setState({...state, modal: false})}
+                        onClick={() => updateState({...state, modal: false})}
                         />
                         <Container className={'modal-exercises'}>
                             <Container className={'modal-exercises-header'}>
                                 <Text text={'Lista de ejercicios'}/>
                                 <Button
-                                    onClick={() => setState({...state, modal:false})}
+                                    onClick={() => updateState({...state, modal:false})}
                                     textButton="Cancelar"
                                 />
                             </Container>
                             <Container className={'modal-exercises-search'}>
-                                <input onChange={e => setState({...state, searchValue:e.target.value})} type={'text'} placeholder='Buscar ejercicios'/>
+                                <input onChange={e => updateState({...state, searchValue:e.target.value})} type={'text'} placeholder='Buscar ejercicios'/>
                             </Container>
                             <ListApi 
 
@@ -345,7 +281,7 @@ const CreateRoutine =  ( ) => {
                                     className={'button-delete'}
                                     textButton={`Eliminar (${totalSelectItem})`}
                                     onClick={() => {
-                                        setState({...state, modal:false})
+                                        updateState({...state, modal:false})
                                         deleteSomeExercise(false)
                                     }}
                                     />
@@ -363,7 +299,7 @@ const CreateRoutine =  ( ) => {
                                 <Button
                                 textButton={'Crear ejercicio'}
                                 onClick={ () => {
-                                    setState(
+                                    updateState(
                                         {
                                             ...state,
                                             modalCreate:!state.modalCreate,
@@ -379,7 +315,7 @@ const CreateRoutine =  ( ) => {
             { state.modalCreate &&
                 <Modal>
                     <Container className={"back create"}
-                    onClick={() => setState({...state, modalCreate: false})}
+                    onClick={() => updateState({...state, modalCreate: false})}
                     >
                     </Container>
                         <Create
@@ -388,7 +324,7 @@ const CreateRoutine =  ( ) => {
                             <Container className={'header-create'}>
                                 <Text text='Estas creando un ejercicio:'/>
                                 <Button
-                                onClick={() => setState({ ...state, modalCreate:false, modal:true})}
+                                onClick={() => updateState({ ...state, modalCreate:false, modal:true})}
                                 textButton={'Cerrar'}
                                 />
                             </Container>
@@ -482,8 +418,12 @@ const CreateRoutine =  ( ) => {
                 </Container>
             </Modal>
             }
-        </Main>
+            </Main>
+            
+        )
+    }else if( !routine.active || !token ) return (
+        <Navigate to={'/'}/>
     )
 }
 
-export {CreateRoutine}
+export { GoRoutine }

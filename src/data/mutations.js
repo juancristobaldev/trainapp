@@ -45,3 +45,11 @@ export const CREATE_ROUTINE = gql`
         }
     }
 `
+export const DELETE_ROUTINE = gql`
+    mutation deleteRoutine($input:DeleteRoutineInput!){
+        deleteRoutine(input:$input){
+        errors
+        success
+        }
+    }
+`

@@ -41,6 +41,8 @@
   }
   .modal-exercises-list {
     background: linear-gradient(180deg, #ffffff, #fbfbfb 100%) !important;
+    max-height: 100%;
+    overflow: auto;
     .empty-container,
     .error-container,
     .search-empty-container {
@@ -238,7 +240,8 @@
     align-items: center;
     font-weight: 600;
   }
-  .list-exercises-delete {
+  .list-exercises-delete,
+  .routine-delete {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -256,11 +259,17 @@
       border: 0;
       border-radius: 0.25rem;
       font-weight: 500;
+      &:active {
+        transform: scale(0.9);
+      }
     }
     .accept {
       background-color: #e94560;
       color: white;
       border: 0;
+      &:hover {
+        background-color: #ca3049;
+      }
     }
   }
 }

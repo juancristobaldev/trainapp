@@ -5,12 +5,13 @@ import { SingUp } from "./components/Login/SignUp";
 import Cookies from "universal-cookie/es6";
 import { Dashboard } from "./components/Dashboard";
 import { CreateRoutine } from "./components/Create/CreateRoutine";
-import { DataProvider } from "./context/DataProvider";
-import { Create } from "./components/Create/Create";
+import { GoRoutine } from "./components/GoRoutine";
+
 
 function App() {
   const cookies = new Cookies();
-  const [darkMode,updateDarkMode] = useState(false)
+  const [darkMode,updateDarkMode] = useState(false),
+  [routineOnPlay,updateRoutineOnPlay] = useState({active:false,id:null})
   const token = cookies.get('session-token')
   
   return (
@@ -19,8 +20,9 @@ function App() {
         token ?
         (
           <>
-            <Route path="/" element={<Dashboard viewMode={{darkMode:darkMode,updateDarkMode:updateDarkMode}}/>}/>
+            <Route path="/" element={<Dashboard updateRoutineOnPlay={updateRoutineOnPlay} viewMode={{darkMode:darkMode,updateDarkMode:updateDarkMode}}/>}/>
             <Route path="/create-routine" element={ <CreateRoutine/> }/>
+            <Route path="/go-routine" element={ <GoRoutine routine={routineOnPlay}/> }/>
             <Route path="/signup" element={ <Navigate to={"/"}/> }/>
             <Route path="/signin" element={ <Navigate to={"/"}/> }/>
           </>

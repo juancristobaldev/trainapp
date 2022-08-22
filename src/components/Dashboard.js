@@ -5,33 +5,40 @@ import { Container } from "./generals/Container";
 import { Main } from "./generals/Main";
 import { Section } from "./generals/Section";
 import { Routine } from "./Routine";
+
 import {GiHamburgerMenu} from "react-icons/gi"
+import {RiDeleteBin2Fill} from "react-icons/ri"
+import {MdDarkMode,MdLightMode,MdClose} from "react-icons/md"
 
-import '../styles/Popover.scss'
 
-import Popover from '@mui/material/Popover';
 import '../styles/Dashboard.scss'
+
 import { Title } from "./Title";
 import { Button } from "./generals/Button";
 import { Text } from "./generals/Text";
-import { BsThreeDots } from "react-icons/bs";
-import {MdDarkMode,MdLightMode,MdClose} from "react-icons/md"
 import { ListApi } from "./Lists/ListApi";
 import { Switch } from "@mui/material";
 import { DataContext } from "../context/DataProvider";
 import { Loading } from "./Loading";
 
+import { useMutation } from "@apollo/client";
+import { DELETE_ROUTINE } from "../data/mutations";
+import { GET_ROUTINES_AND_USER_BY_TOKEN } from "../data/query";
+import { Modal } from "./Modal/Modal";
 
-const Dashboard = ({viewMode}) => {
+
+const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
     const navigate = useNavigate()
 
     const cookies = new Cookies();
     const token = cookies.get('session-token');
 
-    const [anchor,setAnchor] = useState(null),
-    [loading,setLoading] = useState(false),
+    const [loading,setLoading] = useState(false),
     [error,setError] = useState(null),
-    [stateNav,updateStateNav] = useState('none')
+    [stateNav,updateStateNav] = useState('none'),
+    [modalDelete,updateModalDelete] = useState({ boolean:false, item:{id:null,name:null}}),
+    [deleteRoutine] = useMutation(DELETE_ROUTINE)
+    
 
     const {
         routines,
@@ -40,20 +47,39 @@ const Dashboard = ({viewMode}) => {
         loadingData
     } = useContext(DataContext)
 
-    const {darkMode,updateDarkMode} = viewMode
 
-    const openPopover = (event) => {
-        setAnchor(event.currentTarget)
-    }
-    const handleClose = () => {
-        setAnchor(null)
-    }
+    const {darkMode,updateDarkMode} = viewMode
     
     const closeSesion = async () => {
         await cookies.remove('user')
         window.location.reload()
     }
 
+    const deleteRoutineDB = async (id) => {
+        const inputVariables = {
+            token:token,
+            id:id
+        }
+
+        await deleteRoutine({
+            variables:{
+                input:{
+                    ...inputVariables
+                }
+            },
+            refetchQueries:[{query:GET_ROUTINES_AND_USER_BY_TOKEN,variables:{
+                token:token
+            }}]
+        }).then( ({data}) => {
+            const { errors, success } = data.deleteRoutine
+            if(errors) console.log(errors)
+            if(success){
+                console.log('Rutina eliminada con exito')
+                updateModalDelete({boolean:false,item:{name:null,id:null}})
+            }
+        })
+
+    }
 
     if(token){
         return(
@@ -86,7 +112,7 @@ const Dashboard = ({viewMode}) => {
                                 text={'Menu'}
                                 />
                                 <MdClose
-                                fill={darkMode && 'white'}
+                                fill={darkMode ? 'white' : 'black'}
                                 cursor={'pointer'}
                                 onClick={() => updateStateNav('unactived')}
                                 />
@@ -113,7 +139,7 @@ const Dashboard = ({viewMode}) => {
                                 />
                                 <MdDarkMode
                                 fill={
-                                    darkMode && '#e94560'
+                                    darkMode ? '#e94560' : undefined
                                 }
                                 />
                             </Container>
@@ -130,7 +156,7 @@ const Dashboard = ({viewMode}) => {
                 </Section>
                 <ListApi
                     className={`section-list-routines 
-                                ${darkMode && "darkMode"}`}
+                    ${darkMode && "darkMode"}`}
                     error={error}
                     loading={loading}
                     data={routines}
@@ -143,52 +169,39 @@ const Dashboard = ({viewMode}) => {
                         opacity:'40%'
                         }} 
                         text={'Crea tu primera rutina 🏋️'} />}
-                    render={ routine => (
-                        <Routine
-                        key={routine.id}
-                        >
-                            <Container
-                            className={`routine-container
-                            ${darkMode && "darkMode"}`}>
-                                <Container className={"routine-container-header"}>
-                                <Text text={routine.nameRoutine}/>
-                                <BsThreeDots 
-                                cursor={'pointer'}
-                                onClick={openPopover}/>
-                                <Popover
-                                className="popover"
-                                open={Boolean(anchor)}
-                                anchorEl={anchor}
-                                onClose={handleClose}
-                                anchorOrigin={{
-                                    horizontal: 'left',
-                                  }}
-                                >
-                                    <Container className={'popover-menu'}>
-                                        <Text text={'Menu'}/>
-                                        <Text
-                                        style={
-                                            {color:'red',
-                                            cursor:'pointer'}
-                                        }
-                                        text={'Eliminar'}/>
-                                    </Container>
-                                </Popover>
-                            </Container>
-                            <Container className={'routine-container-stats'}>
-                                <Text text={`Record 🎉: ${routine.timeRecord}`}/>
-                                <Text text={`Veces realizadas: ${routine.dones}`} />
-                            </Container>
-                            <Container className={'routine-container-button'}>
-                                <Button
-                                textButton={'Empezar rutina'}
-                                />
-                            </Container>
+                        render={ routine => (
+                            <Routine
+                            key={routine.id}
+                            >
+                                <Container
+                                className={`routine-container
+                                ${darkMode && "darkMode"}`}>
+                                    <Container className={"routine-container-header"}>
+                                    <Text text={routine.nameRoutine}/>
+                                    <RiDeleteBin2Fill
+                                    onClick={() => updateModalDelete({boolean:true,item:{id:routine.id,name:routine.nameRoutine}})}
+                                    fill="#e94560"
+                                    cursor={'pointer'}
+                                    />
+                                </Container>
+                                <Container className={'routine-container-stats'}>
+                                    <Text text={`Record 🎉: ${routine.timeRecord}`}/>
+                                    <Text text={`Veces realizadas: ${routine.dones}`} />
+                                </Container>
+                                <Container className={'routine-container-button'}>
+                                    <Button
+                                    onClick={() => {
+                                        navigate('/go-routine')
+                                        updateRoutineOnPlay({active:true, id:routine.id})
+                                    }}
+                                    textButton={'Empezar rutina'}
+                                    />
+                                </Container>
 
-                            </Container>
-                        </Routine>
-                    )}
-                    />
+                                </Container>
+                            </Routine>
+                        )}
+                        />
                 <Section className='section-add-folder'>
                     <Title buttonText={'Nuevo'}>Tus carpetas</Title>
                 </Section>
@@ -197,6 +210,31 @@ const Dashboard = ({viewMode}) => {
                 </Section>
                 <Section className={'footer'}>
                 </Section>
+                { modalDelete.boolean && 
+                    <Modal>
+                        <Container className={'back delete'}/>
+                        <Container className={'modal-delete'}>
+                            <Container className={'container-text'}>
+                                <Text text={'¿Estas seguro de eliminar la siguiente rutina?'}/>
+                            </Container>
+                            <Container className={'routine-delete'}>
+                                <Text 
+                                style={{color:"red", fontStyle:"italic"}}
+                                text={modalDelete.item.name}/>
+                            </Container>
+                            <Container className={'container-buttons'}>
+                                <Button
+                                className={'accept'}
+                                onClick={() => deleteRoutineDB(modalDelete.item.id)}
+                                textButton={'Aceptar'}
+                                />
+                                <Button
+                                textButton={'Cancelar'}
+                                />
+                            </Container>
+                        </Container>
+                    </Modal>
+                }
             </Main>
         )
     }else{

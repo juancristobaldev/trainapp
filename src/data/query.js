@@ -46,6 +46,19 @@ export const GET_ROUTINES_BY_TOKEN = gql`
         }
           
     `
+    export const GET_ROUTINE_BY_ID = gql`
+    query getRoutineById($id:Int!) {
+        getRoutineById(id:$id){
+                  id
+                  token
+                  nameRoutine
+                  dones
+                  timeRecord
+                  exercises
+              }
+      }
+      
+`
 
 export const GET_USERS = gql`
     query getUsers{
