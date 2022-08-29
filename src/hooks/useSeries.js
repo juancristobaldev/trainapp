@@ -9,8 +9,17 @@ const useSeries = (objectList) => {
         const exercises = [...state.listOnCreate]
         const indexEx = exercises.findIndex( item => item.nameEx === nameExercise )
         const series = exercises[indexEx].seriesEx;
+
+        const seriesID = []
+        series.forEach( serie => {
+            seriesID.push(serie.idSerie)
+        })
+        seriesID.sort((a,b) => {return b-a})
+
+        const nLarge =  seriesID[0]
+
         const serie = {
-            idSerie: series.length + 1,
+            idSerie: nLarge + 1 || series.length + 1,
             reps:0
         }
         if(series.length === 0){
@@ -26,7 +35,9 @@ const useSeries = (objectList) => {
       const deleteSeries =  async (serie,item) => {
     
         const newList = [...state.listOnCreate]
+        console.log(newList)
         const itemExercise = newList.find(exercise => exercise.nameEx === item.nameEx)
+        console.log(itemExercise)
         const indexSerie = itemExercise.seriesEx.findIndex(item => item.idSerie === serie.idSerie)
         itemExercise.seriesEx.splice(indexSerie,1)
 

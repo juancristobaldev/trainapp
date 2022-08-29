@@ -17,12 +17,6 @@ const useExercises = (token,objectList,state) => {
             seriesEx:JSON.stringify([])
         }
     )
-
-    const [modalDelete,setModalDelete] = useState({
-        boolean:false,
-        items:[]
-    })
-
     const [errors,setErrors] = useState({error:false,errors:[]})
 
     const [createExercise] = useMutation(CREATE_EXERCISE)
@@ -34,7 +28,7 @@ const useExercises = (token,objectList,state) => {
 
         if(filter.length > 0  || confirmation){
             
-            if(filter.length === 0) filter = [...modalDelete.items]
+            if(filter.length === 0) filter = [...stateValue.modalDelete.items]
 
             if(confirmation){
                 const deleteOfState = () => {
@@ -62,8 +56,7 @@ const useExercises = (token,objectList,state) => {
     
                     })
                 })
-                setState({...stateValue, modal:true})
-                setModalDelete({boolean:false,items:[]})
+                setState({...stateValue, modal:true, modalDelete:{boolean:false,items:[]}})
                 deleteOfState()   
             }else{
                 const objDelete = {
@@ -73,7 +66,7 @@ const useExercises = (token,objectList,state) => {
                 filter.forEach(item => {
                     objDelete.items.push(item)
                 })
-                setModalDelete(objDelete)
+                setState({...stateValue, modalDelete:objDelete})
             }
         }
     }
@@ -140,9 +133,7 @@ const useExercises = (token,objectList,state) => {
         deleteSomeExercise,
         handleChange,
         errors,
-        setErrors,
-        modalDelete,setModalDelete
-    }
+        setErrors,    }
 }
 
 export {useExercises}

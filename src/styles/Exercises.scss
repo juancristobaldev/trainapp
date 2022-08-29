@@ -3,7 +3,7 @@
   flex-direction: column;
   max-height: 75vh;
   overflow: auto;
-  background: linear-gradient(180deg, #ffffff, #fefefe 100%) !important;
+  background: linear-gradient(180deg, #ffffff, #fafafa 100%) !important;
   .empty-list-routine {
     display: flex;
     justify-content: center;
@@ -14,6 +14,7 @@
     color: silver;
   }
   .exercise {
+    background-color: white;
     margin: 15px 1rem;
     box-shadow: 0.5px 0.5px 4px rgba($color: #000000, $alpha: 0.15),
       0.5px 0.5px 4px rgba($color: #000000, $alpha: 0.15);

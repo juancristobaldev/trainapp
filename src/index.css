@@ -35,6 +35,7 @@ code {
 }
 
 /* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
+::-webkit-scrollbar-thumb:hover,
+::-webkit-scrollbar-thumb:active {
   background: #e94560;
 }

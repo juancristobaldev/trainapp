@@ -7,7 +7,7 @@ export default function CheckBox(props){
     if(props.select == true){
         return  <div className="checkBoxItem">
                     <div
-                    onClick={() => props.onClick()}
+                    onClick={props.onClick && props.onClick()}
                     className="checkBoxOn"
                     >
                         <FaCheck fill="white"/>
@@ -16,7 +16,7 @@ export default function CheckBox(props){
     } 
     else return <div className="checkBoxItem">
                     <div 
-                    onClick={() => props.onClick()} 
+                    onClick={props.onClick && props.onClick()}
                     className="checkBoxOff"
                     >
                 </div></div>
