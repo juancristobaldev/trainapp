@@ -20,7 +20,8 @@ const useSeries = (objectList) => {
 
         const serie = {
             idSerie: nLarge + 1 || series.length + 1,
-            reps:0
+            reps:0,
+            checked:false,
         }
         if(series.length === 0){
             series.push(serie)
@@ -32,12 +33,20 @@ const useSeries = (objectList) => {
 
     }
 
-      const deleteSeries =  async (serie,item) => {
-    
+    const checkSerie = async (serie,item) => {
         const newList = [...state.listOnCreate]
-        console.log(newList)
         const itemExercise = newList.find(exercise => exercise.nameEx === item.nameEx)
-        console.log(itemExercise)
+        const indexSerie = itemExercise.seriesEx.findIndex(item => item.idSerie === serie.idSerie)
+        
+        if(itemExercise.seriesEx[indexSerie].checked === false) itemExercise.seriesEx[indexSerie].checked = true
+        else itemExercise.seriesEx[indexSerie].checked = false
+
+        updateState({...state, listOnCreate:newList})
+    }
+
+      const deleteSeries =  async (serie,item) => {
+        const newList = [...state.listOnCreate]
+        const itemExercise = newList.find(exercise => exercise.nameEx === item.nameEx)
         const indexSerie = itemExercise.seriesEx.findIndex(item => item.idSerie === serie.idSerie)
         itemExercise.seriesEx.splice(indexSerie,1)
 
@@ -52,6 +61,7 @@ const useSeries = (objectList) => {
         }
 
         return{
+            checkSerie,
             addSerie,
             deleteSeries,
             classControl

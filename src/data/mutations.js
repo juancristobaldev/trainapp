@@ -53,3 +53,12 @@ export const DELETE_ROUTINE = gql`
         }
     }
 `
+
+export const UPDATE_ROUTINE = gql`
+    mutation updateRoutine($input:UpdateRoutineInput!){
+        updateRoutine(input:$input){
+        errors
+        success
+        }
+    }
+`

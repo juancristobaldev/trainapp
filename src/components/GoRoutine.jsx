@@ -1,8 +1,8 @@
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import React from "react";
 import { useState } from "react";
-import { Navigate } from "react-router-dom";
-import { GET_ROUTINE_BY_ID } from "../data/query";
+import { Navigate, useNavigate } from "react-router-dom";
+import { GET_ROUTINES_AND_USER_BY_TOKEN, GET_ROUTINE_BY_ID } from "../data/query";
 import { Main } from "./generals/Main";
 import { Text } from "./generals/Text";
 import { Loading } from "./Loading";
@@ -30,16 +30,24 @@ import '../styles/Exercises.scss'
 import '../styles/Timer.scss'
 import '../styles/GoRoutine.scss'
 
-import { ProgressiveCount } from "./Counts/ProgressiveCount";
 import { Timer } from "./MenuTimer/Timer";
 import { ListExercises } from "./Lists/ListExercises";
 import { CreateExercise } from "./Create/CreateExercise";
 import { ModalDelete } from "./Modal/ModalDelete";
 import { Create } from "./Create/Create";
+import { FaCheck } from "react-icons/fa";
+import { ProgressiveCount } from "./ProgressiveCount";
+import { UPDATE_ROUTINE } from "../data/mutations";
 
 const token = new Cookies().get('session-token')
 
+
 const GoRoutine = ({routine}) => {
+    const navigate = useNavigate()
+
+    const [updateRoutine] = useMutation(UPDATE_ROUTINE)
+
+
     const [state,updateState] = useState({
         dataRoutine:false,
         listOnCreate:[],
@@ -59,12 +67,12 @@ const GoRoutine = ({routine}) => {
             type:'select',
             listTimers:[]
         },
-        routineOnPlay:{
-            token:token,
-            nameRoutine:routine.nameRoutine,
+        dataFormCreate:{
+            id:routine.routine.id,
+            nameRoutine:routine.routine.nameRoutine,
             exercises:[],
-            timeRecord:routine.timeRecord,
-            dones:routine.dones + 1
+            timeRecord:routine.routine.timeRecord,
+            dones:routine.routine.dones + 1
         }
     })
 
@@ -76,13 +84,15 @@ const GoRoutine = ({routine}) => {
     }
 
     const {
+        listOriginal,
         deleteExerciseOfList,
     } = useListExercises (token,{state:state,updateState:updateState})
 
     const {
         addSerie,
         deleteSeries,
-        classControl
+        classControl,
+        checkSerie
     } = useSeries({state:state,updateState:updateState})
 
     const { data,loading,error } = useQuery(GET_ROUTINE_BY_ID, {
@@ -91,22 +101,144 @@ const GoRoutine = ({routine}) => {
         }
     })
 
+    console.log(state.listOnCreate)
+
+    const handleSubmit = async (e) => {
+
+        const {listOnCreate,dataFormCreate} = state
+
+        e.preventDefault()
+        let newList = [...listOnCreate]
+        const dataRoutine = {...dataFormCreate};
+        let error = false
+
+        await newList.forEach(item => {
+            const boolean = listOriginal.find(exercise => exercise.nameEx === item.nameEx)
+            if(!boolean){
+                newList = newList.filter(exercise => item.nameEx !== exercise.nameEx)
+            }
+        })
+
+        await newList.forEach(item => {
+            item.seriesEx.forEach(serie => {
+                if(serie.checked === false){
+                    console.log(serie)
+                    serie["need"] = true
+                    error = true
+                }
+            })
+        })
+
+        if(error === true) await updateState({...state, dataFormCreate:dataRoutine})
+        else {
+            dataRoutine.exercises = newList
+
+            const timeNow = document.getElementById('progressive-count').innerHTML.substring(16,25)
+
+            if(dataRoutine.timeRecord !== 'indefinido'){   
+            
+            const timeRoutine = {
+                hour:parseInt(`${timeNow[0]}${timeNow[1]}`),
+                min:parseInt(`${timeNow[3]}${timeNow[4]}`),
+                seg:parseInt(`${timeNow[6]}${timeNow[7]}`)
+            }
+
+            const objectRecord = {
+                hourRecord:parseInt(`${dataRoutine.timeRecord[0]}${dataRoutine.timeRecord[1]}`),
+                minRecord:parseInt(`${dataRoutine.timeRecord[3]}${dataRoutine.timeRecord[4]}`),
+                segRecord:parseInt(`${dataRoutine.timeRecord[6]}${dataRoutine.timeRecord[7]}`)
+            }
+
+            const {hourRecord,minRecord,segRecord} = objectRecord
+            const hourRoutine = timeRoutine.hour
+
+            if(hourRecord == hourRoutine){
+                const minRoutine = parseInt(timeRoutine.min)
+                if(minRecord == minRoutine){
+                    const segRoutine = parseInt(timeRoutine.seg)
+                    if(segRecord == segRoutine){
+                        dataRoutine.timeRecord = dataRoutine.timeRecord
+                    }else{
+                        if(segRecord > segRoutine){
+                            dataRoutine.timeRecord = `${timeRoutine.hour <= 9 ? `0${timeRoutine.hour}`:`${timeRoutine.hour}`}:${timeRoutine.min <= 9 ? `0${timeRoutine.min}` : timeRoutine.min }:${timeRoutine.seg <= 9 ? `0${timeRoutine.seg}` : timeRoutine.seg}`
+                        }else{
+                            dataRoutine.timeRecord = dataRoutine.timeRecord;
+                        }
+                    }
+                }else{
+                    if(minRecord > minRoutine){
+                        dataRoutine.timeRecord = `${timeRoutine.hour <= 9 ? `0${timeRoutine.hour}`:`${timeRoutine.hour}`}:${timeRoutine.min <= 9 ? `0${timeRoutine.min}` : timeRoutine.min }:${timeRoutine.seg <= 9 ? `0${timeRoutine.seg}` : timeRoutine.seg}`
+                    }else{
+                        dataRoutine.timeRecord = dataRoutine.timeRecord;
+                    }
+                }
+            }else{
+                if(hourRoutine < hourRecord){
+                    dataRoutine.timeRecord = `${timeRoutine.hour <= 9 ? `0${timeRoutine.hour}`:`${timeRoutine.hour}`}:${timeRoutine.min <= 9 ? `0${timeRoutine.min}` : timeRoutine.min }:${timeRoutine.seg <= 9 ? `0${timeRoutine.seg}` : timeRoutine.seg}`
+                }else{
+                    dataRoutine.timeRecord = dataRoutine.timeRecord;
+                }
+            }
+        }
+        else { 
+            dataRoutine.timeRecord = timeNow 
+        }
+
+        await dataRoutine.exercises.forEach(exercise => {
+            exercise.seriesEx.forEach(serie => {
+                serie.checked = false
+            })
+        })
+        console.log(dataRoutine)
+
+        const variables = {...dataRoutine, exercises: JSON.stringify(dataRoutine.exercises)}
+        console.log(variables)
+        await updateRoutine({
+            variables:{
+                input:{
+                    ...dataRoutine,
+                    exercises:JSON.stringify(dataRoutine.exercises)
+                }
+            },
+            refetchQueries:[{GET_ROUTINES_AND_USER_BY_TOKEN, variables:{
+                token:token
+            }}]
+        }).then( ({data}) => {
+            const {error,success} = data.updateRoutine
+            if(error)console.log(error)
+            if(success){
+                navigate('/')
+                window.location.reload()
+            }
+        })
+        }
+
+        console.log(dataRoutine)
+        
+    }
+
+
     const getDataRoutine = async (e,name,objEx) => {
 
-        const newData = {...state.routineOnPlay};
+        const newData = {...state.dataFormCreate};
         const newList = [...state.listOnCreate]
 
         const {nameInput,serie} = objEx
         await newList.forEach(item => {
+            item.seriesEx.forEach(serie => {
+                serie.need = false
+            })
             if(item.nameEx === name){
                 const indexSerie = item.seriesEx.findIndex(item => item.idSerie === serie)
                 item.seriesEx[indexSerie][nameInput] = e.target.value;
             }
         })
+
         newData.exercises = newList
 
-        updateState({...state, routineOnPlay:newData})
+        updateState({...state, dataFormCreate:newData})
     }
+    console.log(state.timer.clock)
 
     const getDataTimer = (event) => {
        const timer = {...state.timer.clock}
@@ -118,13 +250,14 @@ const GoRoutine = ({routine}) => {
         const clock = state.timer.clock,
         errors = [];
         let time = '';
-        if(parseInt(clock.minutes) > 60) errors.push('El maximo de minutos es 60.')
-        if(parseInt(clock.seconds) > 60) errors.push('El maximo de segundos es 60.')
-        if(!clock.minutes || !clock.seconds) errors.push('Mintos y segundos obligatorios') 
+        if(parseInt(clock.minutes) > 59) errors.push('El maximo de minutos es 59.')
+        if(parseInt(clock.seconds) > 59) errors.push('El maximo de segundos es 59.')
+        if(!clock.minutes || !clock.seconds) errors.push('Minutos y segundos obligatorios') 
         if(errors.length === 0) {
             const newList = [...JSON.parse(localStorage.getItem('timer'))]
             console.log(newList)
-            time = `${clock.minutes <= 9  ? `0${clock.minutes}` : `${clock.minutes}`}:${clock.seconds <= 9  ? `0${clock.seconds}` : `${clock.seconds}`}`
+            time = `${clock.minutes <= 9  ? `0${clock.minutes}` : `${clock.minutes}`}:${clock.seconds <= 9 && clock.seconds >= 1  ? `0${clock.seconds}` : `${clock.seconds}`}`
+            console.log(time)
             if(newList.length < 3){
                 newList.unshift(time)
             }else{
@@ -142,11 +275,20 @@ const GoRoutine = ({routine}) => {
     useEffect(() => {
         if(error) console.log(error)
         if(!loading){
+            
+            let newListOnCreate = [...JSON.parse(data.getRoutineById[0].exercises)]
+            newListOnCreate.forEach(item => {
+                item.seriesEx.forEach(serie => {
+                    const lastSerie = serie.other ? `${serie.other} Kg / ${serie.reps} Reps` : serie.time ? `${serie.time} Min` : `${serie.reps} Reps`
+                    serie["lastMoment"] = lastSerie
+                })
+            })
+
             updateState(
                 {...state, 
                 dataRoutine:data.getRoutineById[0], 
-                routineOnPlay:{...state.routineOnPlay, exercises:JSON.parse(data.getRoutineById[0].exercises)},
-                listOnCreate:[...JSON.parse(data.getRoutineById[0].exercises)]
+                dataFormCreate:{...state.dataFormCreate, exercises:JSON.parse(data.getRoutineById[0].exercises)},
+                listOnCreate:newListOnCreate
                 }
             )
 
@@ -302,13 +444,16 @@ const GoRoutine = ({routine}) => {
             <Form
             className={'form-goroutine'}
             textSubmit='Finalizar rutina'
+            onSubmit={(e) => handleSubmit(e)}
             >
                 <Container className={'stats-goroutine'}>
                     <h2>{state.dataRoutine.nameRoutine}</h2>
                     <Text
                     text={`Mejor tiempo 🎉: ${state.dataRoutine.timeRecord}`}
                     />
-                    <ProgressiveCount/>
+                    <ProgressiveCount
+                    id={"progressive-count"}
+                    />                    
                 </Container>
                 <ListApi
                 className={'exercises-list-routine'}
@@ -317,7 +462,11 @@ const GoRoutine = ({routine}) => {
                 data={state.listOnCreate}
                 onError={() => <p>Hay un error</p>}
                 onLoading={() => <p>Cargando...</p>}
-                onEmpty={() => <p>Agrega tu primer ejercicio</p>}
+                onEmpty={() => 
+                    <Container className={'exercises-list-routine-empty'}>
+                        <Text text={'Agrega tu primer ejercicio'}/>
+                    </Container>
+                }
                 render={exercise => 
                     <Exercise 
                         key={exercise.nameEx}
@@ -332,63 +481,76 @@ const GoRoutine = ({routine}) => {
                                 flexDirection:"column",
                             }}
                             item={exercise.seriesEx}
-                            onEmpty={() => <Text className={'first-serie'} text={'Agrega tu primera serie'}/>}
-                            render={ serie => (
-                                <Container
-                                key={serie.idSerie}
-                                className={classControl(exercise.typeEx) + ' serie'}
-                                >
-                                    <IoMdClose
-                                    onClick={() => deleteSeries(serie,exercise)}
-                                    />
-                                    <Text text={serie.other ? `${serie.other} Kg / ${serie.reps} Reps` : serie.time ? `${serie.time} Min` : `${serie.reps} Reps`} />
-                                    <Serie>
-                                        {exercise.typeEx === 'Peso adicional' || exercise.typeEx === 'Peso asistido' ?
-                                        <React.Fragment>
-                                            <InputSerie
-                                                className={'input-type'}
-                                                style={{width:"35%"}}
-                                                name={exercise.nameEx}
-                                                type="number"
-                                                objEx={{nameInput:'other',serie:serie.idSerie}}
-                                                onChange={getDataRoutine}                                        
+                            onEmpty={() => 
+                                <Text className={'first-serie'} text={'Agrega tu primera serie'}/>
+                            }
+                            render={ serie => 
+                                    <Serie
+                                        dataRoutine={state.dataRoutine}
+                                        exercise={exercise}
+                                        serie={serie}
+                                        key={serie.idSerie}
+                                        className={classControl(exercise.typeEx) + ` serie ${serie.need ? "need" : "false"}`}
+                                        >
+                                            <IoMdClose
+                                            onClick={() => deleteSeries(serie,exercise)}
                                             />
-                                            <InputSerie
-                                                className={'input-reps'}
-                                                style={{width:"35%"}}
-                                                name={exercise.nameEx}
-                                                objEx={{nameInput:'reps',serie:serie.idSerie}}
-                                                onChange={getDataRoutine}
-                                                type="number"
-                                            />
-                                        </React.Fragment>
-                                        :
-                                        exercise.typeEx === 'Duracion' ?
-                                            <InputSerie
-                                            className='inputSerie'
-                                            name={exercise.nameEx}
-                                            objEx={{nameInput:'time',serie:serie.idSerie}}
-                                            onChange={getDataRoutine}
-                                            style={{width:"50%"}}
-                                            type="time"
-                                            />
-                                        :
-                                            <InputSerie
-                                            className={'input-reps'}
-                                            className='inputSerie'
-                                            name={exercise.nameEx}
-                                            objEx={{nameInput:'reps',serie:serie.idSerie}}
-                                            onChange={getDataRoutine}
-                                            style={{width:"35%"}}
-                                            type="number"
-                                            />
-                                        }
-                                        <Container className={'checkbox'}>
-                                            <CheckBox/>
-                                        </Container>
-                                    </Serie>
-                                </Container> 
-                            )}
+                                            <Text text={serie.lastMoment}/>
+                                            <>
+                                                {exercise.typeEx === 'Peso adicional' || exercise.typeEx === 'Peso asistido' ?
+                                                <>
+                                                    <InputSerie
+                                                        className={'input-type'}
+                                                        style={{width:"35%"}}
+                                                        name={exercise.nameEx}
+                                                        type="number"
+                                                        objEx={{nameInput:'other',serie:serie.idSerie}}
+                                                        onChange={getDataRoutine}                                        
+                                                    />
+                                                    <InputSerie
+                                                        className={'input-reps'}
+                                                        style={{width:"35%"}}
+                                                        name={exercise.nameEx}
+                                                        objEx={{nameInput:'reps',serie:serie.idSerie}}
+                                                        onChange={getDataRoutine}
+                                                        type="number"
+                                                    />
+                                                </>
+                                                :
+                                                exercise.typeEx === 'Duracion' ?
+                                                    <InputSerie
+                                                    className='inputSerie'
+                                                    name={exercise.nameEx}
+                                                    objEx={{nameInput:'time',serie:serie.idSerie}}
+                                                    onChange={getDataRoutine}
+                                                    style={{width:"50%"}}
+                                                    type="time"
+                                                    />
+                                                :
+                                                    <InputSerie
+                                                    className={'input-reps'}
+                                                    className='inputSerie'
+                                                    name={exercise.nameEx}
+                                                    objEx={{nameInput:'reps',serie:serie.idSerie}}
+                                                    onChange={getDataRoutine}
+                                                    style={{width:"35%"}}
+                                                    type="number"
+                                                    />
+                                                }
+                                                <Container className={'checkbox'}>
+                                                    <Container className="checkBoxItem">
+                                                        <Container
+                                                        style={ !serie.checked && serie.need ? { border:'1px solid red' } : {border:0}}
+                                                        onClick={() => checkSerie(serie,exercise)}
+                                                        className={serie.checked ? "checkBoxOn" : "checkBoxOff"}
+                                                        >
+                                                            {serie.checked && <FaCheck fill="white"/>}
+                                                        </Container>
+                                                    </Container>
+                                                </Container>
+                                            </>
+                                        </Serie> 
+                            }
                             >
                                 <Container
                                 className={'container-add-serie'}
@@ -444,6 +606,7 @@ const GoRoutine = ({routine}) => {
                     <>
                         <ModalDelete
                         token={token}
+                        exercise={true}
                         objectState={{state:state,setState:updateState}}
                         />
                         <Container className={'back'}

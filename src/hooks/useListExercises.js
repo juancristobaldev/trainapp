@@ -7,6 +7,7 @@ const useListExercises = ( token , listObject ) => {
 
     const {state,updateState} = listObject
     const [listExercisesSelect,setListExercisesSelect] = useState([]);
+    const [listOriginal,setListOriginal] = useState([])
 
     const { data,error } = useQuery(GET_EXERCISES_BY_TOKEN, {
         variables:{
@@ -49,12 +50,14 @@ const useListExercises = ( token , listObject ) => {
                 item['isAdded'] = false;
                 item['select'] = false;
             })
+
             if(state.listOnCreate.length > 0){
                 state.listOnCreate.forEach(item => {
                     const index = dataBack.findIndex(itemData => itemData.nameEx === item.nameEx);
                     if(index >= 0) dataBack.splice(index,1)
                 })
             }
+            setListOriginal([...JSON.parse(JSON.stringify(data.getExercisesByToken))])
             setListExercisesSelect(dataBack)
         }
     }
@@ -68,7 +71,6 @@ const useListExercises = ( token , listObject ) => {
                 else item.select = true
             } 
         })
-
         setListExercisesSelect(newList)
     }
 
@@ -110,6 +112,7 @@ const useListExercises = ( token , listObject ) => {
     },[data,state])
 
     return {
+        listOriginal,
         error,
         listExercisesSelect,
         deleteExerciseOfList,

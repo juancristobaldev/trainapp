@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-function ProgressiveCount(){
+const useProgressiveCount = () => {
     const [timeRoutine, setTimeRoutine] = useState({
         hour:null,
         min:null,
         seg:null
     })
 
-    const [seg,setSeg] = useState('00')
+    const [seg,setSeg] = useState('01')
     const [min,setMin] = useState('00')
     const [hour,setHour] = useState('00')
 
@@ -46,11 +46,10 @@ function ProgressiveCount(){
         )
         time(hour,min,seg)
     },1000)
-    return(
-        <div>
-            <p>Tiempo actual ⏱️: {hour}:{min}:{seg}</p>
-        </div>
-    )
+
+    return {
+        timeRoutine
+    }
 }
 
-export {ProgressiveCount}
+export {useProgressiveCount}

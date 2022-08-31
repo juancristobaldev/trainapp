@@ -27,6 +27,8 @@ const ListExercises = ({token,objectState}) => {
     } = useExercises(token,{list:listExercisesSelect,updateList:setListExercisesSelect},{stateValue:state,setState:setState})
 
 
+    console.log(listExercisesSelect)
+
     const totalSelectItem = listExercisesSelect.filter(item => item.select === true).length
 
     return(

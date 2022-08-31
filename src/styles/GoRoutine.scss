@@ -55,6 +55,14 @@
 
     .exercises-list-routine {
       height: 100%;
+      .exercises-list-routine-empty {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        font-style: italic;
+        color: silver;
+      }
     }
     .container-submit {
       display: flex;

@@ -49,7 +49,7 @@ const CreateRoutine =  ( ) => {
             token:token,
             nameRoutine:'',
             exercises:[],
-            timeRecord:'00:00',
+            timeRecord:'indefinido',
             dones:0
         }
     })
@@ -183,7 +183,7 @@ const CreateRoutine =  ( ) => {
                                     onClick={() => deleteSeries(serie,exercise)}
                                     />
                                     <Text text='-' />
-                                    <Serie>
+                                    <>
                                         {exercise.typeEx === 'Peso adicional' || exercise.typeEx === 'Peso asistido' ?
                                         <React.Fragment>
                                             <InputSerie
@@ -228,7 +228,7 @@ const CreateRoutine =  ( ) => {
                                         <Container className={'lock'}>
                                             <HiLockClosed/>
                                         </Container>
-                                    </Serie>
+                                    </>
                                 </Container>
                             )}
                             >
@@ -294,6 +294,7 @@ const CreateRoutine =  ( ) => {
             {state.modalDelete.boolean &&
                 <Modal>
                     <ModalDelete
+                    exercise={true}
                     token={token}
                     objectState={{state:state,setState:setState}}
                     />

@@ -5,7 +5,7 @@ import { Button } from "../generals/Button";
 import { Container } from "../generals/Container";
 import { Text } from "../generals/Text";
 
-const ModalDelete = ({token,objectState}) => {
+const ModalDelete = ({token,objectState,exercise}) => {
 
     const {state,setState} = objectState
 
@@ -23,12 +23,17 @@ const ModalDelete = ({token,objectState}) => {
 
 
     return (
-        <Container className={'modal-delete'}>
+        <Container className={`modal-delete ${exercise && 'exercise'}`}>
                 <Container
                 className={'container-text'}
                 >
                     <Text text={'¿Estas seguro que deseas eliminar los siguientes ejercicios?'}/>
                 </Container>
+                {exercise && 
+                    <Container className={'text-warning'}>
+                        <Text text={'Estos ejercicios seran eliminados de todas las rutinas donde esten involucrados'}/>
+                    </Container>
+                }
                 <Container className={'list-exercises-delete'}>
                     {state.modalDelete.items.map(item =>
                         <Text 
@@ -42,7 +47,7 @@ const ModalDelete = ({token,objectState}) => {
                     <Button 
                     className={'cancel'}
                     textButton={'Cancelar'}
-                    onClick={() => setState({...state, modalDelete:{
+                    onClick={() => setState({...state, modal: true, modalDelete:{
                         boolean:false,
                         items:true
                     }})}

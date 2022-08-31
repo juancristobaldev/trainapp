@@ -26,7 +26,6 @@ import { DELETE_ROUTINE } from "../data/mutations";
 import { GET_ROUTINES_AND_USER_BY_TOKEN } from "../data/query";
 import { Modal } from "./Modal/Modal";
 
-
 const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
     const navigate = useNavigate()
 
@@ -47,6 +46,7 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
         loadingData
     } = useContext(DataContext)
 
+    console.log(routines)
 
     const {darkMode,updateDarkMode} = viewMode
     
@@ -192,7 +192,7 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                                     <Button
                                     onClick={() => {
                                         navigate('/go-routine')
-                                        updateRoutineOnPlay({active:true, id:routine.id})
+                                        updateRoutineOnPlay({active:true, id:routine.id, routine:routine})
                                     }}
                                     textButton={'Empezar rutina'}
                                     />

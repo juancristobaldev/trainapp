@@ -1,10 +1,11 @@
 import React from "react";
+import { Container } from "./generals/Container";
 
-const Serie = ({children}) => {
+const Serie = ({children,className}) => {
     return(
-        <React.Fragment>
+        <Container className={className}>
             {children}
-        </React.Fragment>
+        </Container>
     )
 }
 

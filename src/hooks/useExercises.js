@@ -66,7 +66,7 @@ const useExercises = (token,objectList,state) => {
                 filter.forEach(item => {
                     objDelete.items.push(item)
                 })
-                setState({...stateValue, modalDelete:objDelete})
+                setState({...stateValue, modal: false,modalDelete:objDelete})
             }
         }
     }

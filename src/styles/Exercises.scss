@@ -57,8 +57,7 @@
           font-style: italic;
         }
         .serie {
-          margin: 0.25rem 0;
-          padding: 0.5rem 0;
+          padding: 0.75rem 0;
           background-color: transparent;
           .lock {
             background-color: rgb(240, 240, 240);
@@ -84,6 +83,10 @@
           .input-type {
             border: 1px silver solid;
           }
+        }
+
+        .serie.need {
+          background: rgb(255, 233, 233);
         }
         .container-add-serie {
           border-radius: 0.25rem;

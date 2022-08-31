@@ -63,7 +63,7 @@ function Timer({time}){
     }
 
     useEffect(() => {
-        console.log(timerState)
+        console.log('click')
         if(timerState === true){
             idInterval.current = setInterval(() => {
                 if(timerState === true){
@@ -71,7 +71,7 @@ function Timer({time}){
                 }
             },1000)
         }
-    })
+    },[timerState])
     return (
         <Container className="timer">
             <Container className={'timer-count'}>
@@ -82,7 +82,7 @@ function Timer({time}){
                 <button 
                 className="button-delete" 
                 onClick={() => sustractionTimer()}
-                ><CgMathMinus/></button>
+                >-10seg</button>
             }
                 <button 
                 className="button-alter" 
@@ -92,7 +92,7 @@ function Timer({time}){
                 <button  
                 className="button-add" 
                 onClick={() => additionTimer()}
-                ><CgMathPlus/></button>
+                >+10seg</button>
             }
             </Container>
         </Container>

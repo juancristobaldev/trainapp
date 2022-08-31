@@ -221,7 +221,24 @@
   }
 }
 
+.modal-delete.exercise {
+  height: 30vh;
+  margin: 35vh 1rem;
+  grid-template-rows: 0.75fr 0.75fr 1fr 0.75fr;
+  .container-text {
+    flex-direction: column;
+  }
+  .text-warning {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-style: italic;
+    text-align: center;
+  }
+}
+
 .modal-delete {
+  padding: 0.45rem;
   display: grid;
   position: absolute;
   top: 0;
@@ -234,6 +251,9 @@
   width: calc(100% - 2rem);
   height: 25%;
   margin: 35vh 1rem;
+  .container-text {
+    padding: 0 0.65;
+  }
   .container-text {
     text-align: center;
     display: flex;

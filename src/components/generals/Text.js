@@ -2,10 +2,11 @@ import React from "react";
 import '../../styles/Text.scss'
 
 
-const Text = ({className, style, text, onClick}) => {
+const Text = ({id,className, style, text, onClick}) => {
 
     return onClick ? 
     <p
+    id={id}
     style={style}
     onClick={() => onClick(text)}
     className={className}
@@ -14,6 +15,8 @@ const Text = ({className, style, text, onClick}) => {
     </p> 
     :
     <p
+    id={id}
+
     style={style}
     className={className}
     >
