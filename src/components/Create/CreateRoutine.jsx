@@ -54,12 +54,12 @@ const CreateRoutine =  ( ) => {
         }
     })
 
+    console.log(state.dataFormCreate)
+
     const redirect = useNavigate()
 
     const {
-        listExercisesSelect,
         deleteExerciseOfList,
-        setListExercisesSelect,
     } = useListExercises (token,{state:state,updateState:setState},state.listOnCreate)
 
     const {
@@ -74,9 +74,9 @@ const CreateRoutine =  ( ) => {
         const newList = [...state.listOnCreate]
 
         if(name !== 'nameRoutine'){
-            const {nameInput,serie} = objEx
+            const {nameInput,idList,serie} = objEx
             await newList.forEach(item => {
-                if(item.nameEx === name){
+                if(item.idList === idList){
                     const indexSerie = item.seriesEx.findIndex(item => item.idSerie === serie)
                     item.seriesEx[indexSerie][nameInput] = e.target.value;
                 }
@@ -88,7 +88,7 @@ const CreateRoutine =  ( ) => {
     }
 
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e,confirmation) => {
         e.preventDefault();
 
         const {exercises,nameRoutine} = state.dataFormCreate
@@ -103,7 +103,7 @@ const CreateRoutine =  ( ) => {
         if(errorsForm.length === 0){
 
             const inputVariables = {...state.dataFormCreate, exercises:JSON.stringify(state.dataFormCreate.exercises)}
-
+            
             await createRoutine({
                 variables:{
                     input:{
@@ -161,7 +161,7 @@ const CreateRoutine =  ( ) => {
                     }
                     render={ exercise => (
                         <Exercise 
-                        key={exercise.nameEx}
+                        key={exercise.idList}
                         item={exercise}
                         deleteExerciseOfList={deleteExerciseOfList}
                         >
@@ -190,15 +190,16 @@ const CreateRoutine =  ( ) => {
                                                 className={'input-type'}
                                                 style={{width:"35%"}}
                                                 name={exercise.nameEx}
+                                                idList={exercise.idList}
                                                 type="number"
-                                                objEx={{nameInput:'other',serie:serie.idSerie}}
+                                                objEx={{nameInput:'other',idList:exercise.idList,serie:serie.idSerie}}
                                                 onChange={getDataRoutine}                                        
                                             />
                                             <InputSerie
                                                 className={'input-reps'}
                                                 style={{width:"35%"}}
                                                 name={exercise.nameEx}
-                                                objEx={{nameInput:'reps',serie:serie.idSerie}}
+                                                objEx={{nameInput:'reps',idList:exercise.idList,serie:serie.idSerie}}
                                                 onChange={getDataRoutine}
                                                 type="number"
                                             />
@@ -209,7 +210,8 @@ const CreateRoutine =  ( ) => {
                                             className={'input-duracion'}
                                             className='inputSerie'
                                             name={exercise.nameEx}
-                                            objEx={{nameInput:'time',serie:serie.idSerie}}
+                                            idList={exercise.idList}
+                                            objEx={{nameInput:'time',idList:exercise.idList,serie:serie.idSerie}}
                                             onChange={getDataRoutine}
                                             style={{width:"50%"}}
                                             type="time"
@@ -219,7 +221,8 @@ const CreateRoutine =  ( ) => {
                                             className={'input-reps'}
                                             className='inputSerie'
                                             name={exercise.nameEx}
-                                            objEx={{nameInput:'reps',serie:serie.idSerie}}
+                                            idList={exercise.idList}
+                                            objEx={{nameInput:'reps',idList:exercise.idList,serie:serie.idSerie}}
                                             onChange={getDataRoutine}
                                             style={{width:"35%"}}
                                             type="number"
@@ -236,7 +239,7 @@ const CreateRoutine =  ( ) => {
                                 className={'container-add-serie'}
                                 >
                                     <Button 
-                                    onClick={(e) => addSerie(e,exercise.nameEx)}
+                                    onClick={(e) => addSerie(e,exercise.idList)}
                                     textButton={'+ Serie'}
                                     />
                                 </Container>

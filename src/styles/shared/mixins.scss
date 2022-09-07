@@ -1,0 +1,38 @@
+@mixin button-primary(
+  $primary-color,
+  $primary-hover,
+  $color-font,
+  $font-hover,
+  $border,
+  $border-hover
+) {
+  transition: 0.25s;
+  border: $border;
+  color: $color-font;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  background-color: $primary-color;
+  &:active {
+    transform: scale(0.95);
+  }
+  &:hover {
+    background-color: $primary-hover;
+    border: $border-hover;
+    color: $font-hover;
+  }
+}
+
+@mixin dflex($jcontent, $aitems, $flexdirection) {
+  display: flex;
+  justify-content: $jcontent;
+  align-items: $aitems;
+  flex-direction: $flexdirection;
+}
+
+@mixin dgrid($rows, $columns, $p-items, $p-content) {
+  display: grid;
+  grid-template-columns: $columns;
+  grid-template-rows: $rows;
+  place-items: $p-items;
+  place-content: $p-content;
+} ;

@@ -1,49 +1,41 @@
+@use "src/styles/shared/mixins.scss";
+@import "src/styles/shared/variables.scss";
+
 .header-goroutine {
   height: 7.5vh;
-  display: flex;
-  justify-content: end;
-  align-items: center;
+  @include mixins.dflex(end, center, row);
   span {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    @include mixins.dflex(center, center, row);
+    @include mixins.button-primary(
+      $color-primary,
+      $color-primary-hover-button,
+      white,
+      white,
+      0,
+      0
+    );
     padding: 0.5rem;
-    background-color: #e94560;
-    border-radius: 0.25rem;
     margin-right: 2.5vw;
-    cursor: pointer;
     p {
       margin-right: 5px;
-      color: white;
     }
     svg {
-      margin-left: 5px;
       fill: white;
-    }
-    &:active {
-      transform: scale(0.9);
-    }
-    &:hover {
-      background-color: #ca3049;
+      margin-left: 5px;
     }
   }
 }
 .main-goroutine {
-  display: grid;
-  grid-template-rows: 75vh 7.5vh 10vh;
+  @include mixins.dgrid(75vh 7.5vh 10vh, none, normal, normal);
   margin: 0px 2.5vw;
   box-shadow: 1px 1px 6px rgba($color: #000000, $alpha: 0.25);
   border-top-left-radius: 0.25rem;
   border-top-right-radius: 0.25rem;
   .form-goroutine {
-    display: grid;
-    grid-template-rows: 15vh 1fr 7.5vh;
+    @include mixins.dgrid(15vh 1fr 7.5vh, none, normal, normal);
     .stats-goroutine {
-      display: flex;
-      flex-direction: column;
+      @include mixins.dflex(center, start, column);
       padding-left: 1rem;
-      align-items: start;
-      justify-content: center;
       h2 {
         padding: 1rem 0;
       }
@@ -56,56 +48,46 @@
     .exercises-list-routine {
       height: 100%;
       .exercises-list-routine-empty {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        @include mixins.dflex(center, center, row);
         height: 100%;
         font-style: italic;
         color: silver;
       }
     }
     .container-submit {
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      @include mixins.dflex(center, center, row);
       input {
+        @include mixins.button-primary(
+          $color-primary,
+          $color-primary-hover-button,
+          white,
+          white,
+          0,
+          0
+        );
         width: calc(100% - 2rem);
         height: 65%;
-        background-color: #e94560;
-        border: 0;
-        border-radius: 0.25rem;
-        color: white;
-        &:active {
-          transform: scale(0.9);
-        }
-        &:hover {
-          background-color: #ca3049;
-        }
       }
     }
   }
   .container-add-new-exercise {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    @include mixins.dflex(center, center, row);
     button {
+      @include mixins.button-primary(
+        rgb(235, 233, 233),
+        rgb(224, 224, 224),
+        black,
+        black,
+        0,
+        0
+      );
       width: calc(100% - 2rem);
-      border: 0;
-      border-radius: 0.25rem;
       height: 65%;
-      &:hover {
-        background-color: rgb(224, 224, 224);
-      }
-      &:active {
-        transform: scale(0.9);
-      }
     }
   }
 }
 footer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  @include mixins.dflex(center, center, row);
   font-size: 1.25rem;
   .p-doit {
     span {

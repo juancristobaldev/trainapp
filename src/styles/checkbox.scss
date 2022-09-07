@@ -1,11 +1,12 @@
+@use "src/styles/shared/mixins.scss";
+@import "src/styles/shared/variables.scss";
+
 @mixin checkbox {
   border-radius: 0.25rem;
   width: 25px;
   height: 25px;
   transition: 0.25s;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  @include mixins.dflex(center, center, row);
   box-shadow: inset 0px 0px 2px rgba($color: #000000, $alpha: 0.25);
 }
 
@@ -14,5 +15,5 @@
 }
 .checkBoxOn {
   @include checkbox();
-  background-color: #e94560;
+  background-color: $color-primary;
 }

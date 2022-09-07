@@ -8,6 +8,7 @@ import { Container } from "../generals/Container";
 function Timer({time}){
     const [timer,setTimer] = useState(time)
     const [timerState,setTimerState] = useState(false)
+    const [finishTime,setFinishTime] = useState(false)
 
     const convertTime = () => {
         const minutes = (parseInt(`${time[0]}${time[1]}`) * 60000)
@@ -31,6 +32,7 @@ function Timer({time}){
 
     const startOrRestartTimer = () => {
         timeEnd.current = (new Date().getTime() + timeAsigned)
+        setFinishTime(false)      
         setTimerState(true)                                     
     }
 
@@ -51,19 +53,18 @@ function Timer({time}){
 
     function countdown(){
         const {minutesTime,secondsTime} = getTimeRemaining()
-        
         if(timerState === true){
             if(minutesTime >= 0 || secondsTime >= 0){
                 setTimer(`${minutesTime <= 9 ? `0${minutesTime}` : minutesTime }:${secondsTime <= 9 ? `0${secondsTime}` : secondsTime}`)
             }
             else{
                 setTimerState(false)
+                setFinishTime(true)
             }
         }
     }
 
     useEffect(() => {
-        console.log('click')
         if(timerState === true){
             idInterval.current = setInterval(() => {
                 if(timerState === true){
@@ -71,11 +72,18 @@ function Timer({time}){
                 }
             },1000)
         }
+        if(finishTime === true){
+            console.log('reproduciendo...')
+            document.getElementById('audio').play()
+        }
     },[timerState])
     return (
         <Container className="timer">
             <Container className={'timer-count'}>
-                    <h2>{timer[0]}{timer[1]}:{timer[3]}{timer[4]}</h2>
+                <h2>{timer[0]}{timer[1]}:{timer[3]}{timer[4]}</h2>  
+                {finishTime && 
+                <audio id="audio" src="/TrainingApp.m4a"></audio>
+                }
             </Container>
             <Container className="timer-buttons">
             {timerState === true && 

@@ -1,3 +1,6 @@
+@use "src/styles/shared/mixins.scss";
+@import "src/styles/shared/variables.scss";
+
 .exercises-list-routine {
   display: flex;
   flex-direction: column;
@@ -5,9 +8,7 @@
   overflow: auto;
   background: linear-gradient(180deg, #ffffff, #fafafa 100%) !important;
   .empty-list-routine {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    @include mixins.dflex(center, center, row);
     height: 100%;
     font-weight: thin;
     font-style: italic;
@@ -39,14 +40,13 @@
       .stats-second-floor {
         padding: 0.5rem 0;
         font-size: 0.75rem;
-        display: grid;
-        place-items: center;
+        @include mixins.dgrid(auto, auto, center, normal);
       }
       .stats-second-floor.double-input {
-        grid-template: 100% / 10% 45% 15% 15% 15%;
+        grid-template: 100% / 10% 45% 15% 15% 15% !important;
       }
       .stats-second-floor.single-input {
-        grid-template: 100%/10% 45% 30% 15%;
+        grid-template: 100%/10% 45% 30% 15% !important;
       }
       .listSerie {
         border-radius: 0.25rem;
@@ -61,9 +61,7 @@
           background-color: transparent;
           .lock {
             background-color: rgb(240, 240, 240);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            @include mixins.dflex(center, center, row);
             svg {
               fill: silver;
             }
@@ -88,27 +86,25 @@
         .serie.need {
           background: rgb(255, 233, 233);
         }
+
         .container-add-serie {
           border-radius: 0.25rem;
           z-index: 99;
           background-color: white;
           height: 5vh;
-          display: flex;
-          justify-content: center;
-          align-items: center;
+          @include mixins.dflex(center, center, row);
           button {
+            @include mixins.button-primary(
+              transparent,
+              $color-primary,
+              $color-primary,
+              white,
+              1px solid $color-primary,
+              1px solid $color-primary
+            );
             width: calc(100% - 1rem);
             height: 60%;
             margin: 0 0.5rem;
-            border: 1px solid #e94560;
-            background-color: transparent;
-            color: #e94560;
-            border-radius: 0.25rem;
-
-            &:hover {
-              background-color: #e94560;
-              color: white;
-            }
           }
         }
       }

@@ -42,11 +42,8 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
     const {
         routines,
         me,
-        errorData,
         loadingData
     } = useContext(DataContext)
-
-    console.log(routines)
 
     const {darkMode,updateDarkMode} = viewMode
     
@@ -229,6 +226,7 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                                 textButton={'Aceptar'}
                                 />
                                 <Button
+                                onClick={() => updateModalDelete({boolean:false})}
                                 textButton={'Cancelar'}
                                 />
                             </Container>

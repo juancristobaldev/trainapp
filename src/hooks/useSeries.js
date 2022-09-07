@@ -4,10 +4,10 @@ const useSeries = (objectList) => {
 
     const {state,updateState} = objectList
 
-    const addSerie = (e,nameExercise) => {
+    const addSerie = (e,idList) => {
         e.preventDefault(e)
         const exercises = [...state.listOnCreate]
-        const indexEx = exercises.findIndex( item => item.nameEx === nameExercise )
+        const indexEx = exercises.findIndex( item => item.idList === idList)
         const series = exercises[indexEx].seriesEx;
 
         const seriesID = []
@@ -35,7 +35,7 @@ const useSeries = (objectList) => {
 
     const checkSerie = async (serie,item) => {
         const newList = [...state.listOnCreate]
-        const itemExercise = newList.find(exercise => exercise.nameEx === item.nameEx)
+        const itemExercise = newList.find(exercise => exercise.idList === item.idList)
         const indexSerie = itemExercise.seriesEx.findIndex(item => item.idSerie === serie.idSerie)
         
         if(itemExercise.seriesEx[indexSerie].checked === false) itemExercise.seriesEx[indexSerie].checked = true
@@ -46,7 +46,7 @@ const useSeries = (objectList) => {
 
       const deleteSeries =  async (serie,item) => {
         const newList = [...state.listOnCreate]
-        const itemExercise = newList.find(exercise => exercise.nameEx === item.nameEx)
+        const itemExercise = newList.find(exercise => exercise.idList === item.idList)
         const indexSerie = itemExercise.seriesEx.findIndex(item => item.idSerie === serie.idSerie)
         itemExercise.seriesEx.splice(indexSerie,1)
 

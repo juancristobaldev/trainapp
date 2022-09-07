@@ -1,10 +1,11 @@
+@use "src/styles/shared/mixins.scss";
+@import "src/styles/shared/variables.scss";
+
 .header-create-routine {
-  display: flex;
-  font-weight: 600;
-  justify-content: space-between;
-  align-items: center;
   padding: 0rem 1rem;
   height: 7.5vh;
+  font-weight: 600;
+  @include mixins.dflex(space-between, center, row);
 }
 
 .main-create-routine {
@@ -12,15 +13,11 @@
   border-top-left-radius: 0.25rem;
   border-top-right-radius: 0.25rem;
   margin: 0px 2.5vw;
-  display: grid;
-  grid-template-rows: 75vh 7.5vh 10vh;
+  @include mixins.dgrid(75vh 7.5vh 10vh, none, normal, normal);
   .form-create-routine {
-    display: grid;
-    grid-template-rows: 7.5vh 1fr 7.5vh 7.5vh;
+    @include mixins.dgrid(7.5vh 1fr 7.5vh 7.5vh, none, normal, normal);
     .input-name-routine {
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      @include mixins.dflex(center, center, row);
       input {
         width: 100%;
         height: 55%;
@@ -35,60 +32,47 @@
       }
     }
     .container-submit {
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      @include mixins.dflex(center, center, row);
       grid-area: 4/ 1 / 5 /2;
       input {
-        border: 0;
-        background-color: #e94560;
-        color: white;
-        border-radius: 0.25rem;
+        @include mixins.button-primary(
+          $color-primary,
+          $color-primary-hover-button,
+          white,
+          white,
+          0,
+          0
+        );
         width: calc(100% - 2rem);
         height: 65%;
         font-weight: 800;
-        &:hover {
-          background-color: #ca3049;
-        }
-        &:active {
-          transform: scale(0.95);
-        }
       }
     }
     .create-errors {
       font-style: italic;
       font-size: 0.9rem;
       text-align: center;
-      display: flex;
-      align-items: center;
-      flex-direction: column;
-      justify-content: center;
+      @include mixins.dflex(center, center, column);
     }
   }
   .container-add-new-exercise {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    @include mixins.dflex(center, center, row);
     button {
-      background-color: rgb(234 231 231);
+      @include mixins.button-primary(
+        rgb(234 231 231),
+        rgb(224, 224, 224),
+        black,
+        black,
+        0,
+        0
+      );
       width: calc(100% - 2rem);
-      border-radius: 0.25rem;
       height: 65%;
-      border: 0;
       font-weight: 800;
-      cursor: pointer;
-      &:active {
-        transform: scale(0.95);
-      }
-      &:hover {
-        background-color: rgb(224, 224, 224);
-      }
     }
   }
   footer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    @include mixins.dflex(center, center, row);
     font-size: 1.25rem;
     .p-doit {
       span {

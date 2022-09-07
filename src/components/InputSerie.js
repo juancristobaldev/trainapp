@@ -1,6 +1,6 @@
 import React from "react";
 
-const InputSerie = ({value,placeholder,className,style,name,onChange,type,objEx}) => {
+const InputSerie = ({value,placeholder,className,style,name,idList,onChange,type,objEx}) => {
     return (
         <input
         value={value}

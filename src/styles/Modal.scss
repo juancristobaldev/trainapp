@@ -1,4 +1,8 @@
+@use "src/styles/shared/mixins.scss";
+@import "src/styles/shared/variables.scss";
+
 .modal-exercises {
+  @include mixins.dgrid(12.5% 12.5% 55% 10% 10%, auto, normal, normal);
   position: absolute;
   top: calc(15% + 1rem);
   z-index: 999;
@@ -6,33 +10,29 @@
   box-shadow: -0.5px -0.5px 10px rgba($color: #000000, $alpha: 0.15),
     0.5px 0.5px 10px rgba($color: #000000, $alpha: 0.15);
   border-radius: 0.25rem;
-  display: grid;
-  grid-template-rows: 12.5% 12.5% 55% 10% 10%;
   width: calc(100% - 2rem);
   height: calc(70% - 2rem);
   margin: 0 1rem;
   background-color: white;
   .modal-exercises-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    @include mixins.dflex(space-between, center, row);
     margin: 0 1rem;
     p {
       font-weight: 700;
     }
     button {
-      color: red;
-      border: none;
-      background-color: transparent;
-      &:hover {
-        text-decoration: underline;
-      }
+      @include mixins.button-primary(
+        transparent,
+        transparent,
+        $color-primary,
+        $color-primary-hover-button,
+        0,
+        0
+      );
     }
   }
   .modal-exercises-search {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    @include mixins.dflex(center, center, row);
     input {
       width: 100%;
       height: 60%;
@@ -46,25 +46,21 @@
     .empty-container,
     .error-container,
     .search-empty-container {
+      @include mixins.dflex(center, center, row);
       color: silver;
       width: 100%;
       height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       font-weight: thin;
       font-style: italic;
     }
     .exercise-container {
+      @include mixins.dflex(space-between, center, row);
       cursor: pointer;
       height: 20%;
       width: 100%;
       border-top: 0.5px solid silver;
       border-bottom: 0.5px solid silver;
-      display: flex;
-      justify-content: space-between;
       padding: 0 1rem;
-      align-items: center;
       font-weight: 500;
       transition: 0.25s;
       &:hover {
@@ -77,63 +73,54 @@
     }
   }
   .modal-exercises-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    @include mixins.dgrid(auto, 1fr 1fr, normal, normal);
     margin: 0rem 1rem;
     gap: 10px;
     .button-delete,
     .button-add {
+      @include mixins.button-primary(
+        transparent,
+        $color-primary,
+        $color-primary,
+        white,
+        1px solid $color-primary,
+        1px solid $color-primary
+      );
       width: calc(100%);
       height: 75%;
       align-self: center;
-      background-color: transparent;
-      border-radius: 0.25rem;
-      color: #e94560;
-      border: 1px solid #e94560;
-      transition: 0.25s;
       &:hover {
-        background-color: #e94560;
-        color: white;
         text-decoration: underline;
-      }
-      &:active {
-        transform: scale(0.95);
       }
     }
   }
   .modal-exercises-create {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    @include mixins.dflex(center, center, row);
     button {
+      @include mixins.button-primary(
+        $color-primary,
+        $color-primary-hover-button,
+        white,
+        white,
+        0,
+        0
+      );
       width: 100%;
       margin: 0 1rem;
       height: 75%;
-      border: 0;
-      color: white;
       font-weight: 600;
-      background-color: #e94560;
-      border-radius: 0.25rem;
-      &:hover {
-        background-color: #ca3049;
-      }
-      &:active {
-        transform: scale(0.95);
-      }
     }
   }
 }
 .back {
+  @include mixins.dflex(flex-start, center, row);
   z-index: 900;
   background-color: rgb(250, 250, 250, 0.6);
   backdrop-filter: blur(5px);
-
   position: absolute;
   top: 0;
   width: 100%;
   height: 100%;
-  display: flex;
-  align-items: center;
 }
 .back.create {
   z-index: 1000;
@@ -141,10 +128,13 @@
 .back.delete {
   z-index: 1003;
 }
+.back.delete,
+.back.uncompleted {
+  z-index: 1003;
+}
 
 .modal-create-exercise {
-  display: grid;
-  grid-template-rows: 0.75fr 4fr;
+  @include mixins.dgrid(0.75fr 4fr, auto, normal, normal);
   border-radius: 0.25rem;
   position: absolute;
   top: 0;
@@ -156,27 +146,25 @@
   z-index: 1001;
   background-color: white;
   .header-create {
-    display: flex;
-    justify-content: space-between;
+    @include mixins.dflex(space-between, center, row);
     padding: 0 1rem;
-    align-items: center;
     font-weight: 600;
     button {
-      border: 0;
-      color: red;
-      background-color: transparent;
-      cursor: pointer;
+      @include mixins.button-primary(
+        transparent,
+        transparent,
+        $color-primary,
+        $color-primary-hover-button,
+        0,
+        0
+      );
       &:hover {
         text-decoration: underline;
-      }
-      &:active {
-        transform: scale(0.95);
       }
     }
   }
   .form-create {
-    display: grid;
-    grid-template-rows: 2.5vh 1fr 1fr 1fr 7.5vh;
+    @include mixins.dgrid(2.5vh 1fr 1fr 1fr 7.5vh, auto, normal, normal);
     align-self: center;
     height: 100%;
     .errors {
@@ -187,9 +175,7 @@
     .name-input-create,
     .muscle-input-create,
     .type-input-create {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+      @include mixins.dflex(center, stretch, column);
       label {
         padding-left: 1rem;
         margin-bottom: 0.5rem;
@@ -202,9 +188,7 @@
       }
     }
     .container-submit {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      @include mixins.dflex(center, center, row);
       input {
         cursor: pointer;
         background-color: #e94560;
@@ -224,25 +208,22 @@
 .modal-delete.exercise {
   height: 30vh;
   margin: 35vh 1rem;
-  grid-template-rows: 0.75fr 0.75fr 1fr 0.75fr;
+  grid-template-rows: 0.75fr 0.75fr 1fr 0.75fr !important;
   .container-text {
-    flex-direction: column;
+    flex-direction: column !important;
   }
   .text-warning {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    @include mixins.dflex(center, center, row);
     font-style: italic;
     text-align: center;
   }
 }
 
 .modal-delete {
+  @include mixins.dgrid(0.75fr 1fr 0.75fr, auto, normal, normal);
   padding: 0.45rem;
-  display: grid;
   position: absolute;
   top: 0;
-  grid-template-rows: 0.75fr 1fr 0.75fr;
   box-shadow: -0.5px -0.5px 10px rgba($color: #000000, $alpha: 0.15),
     0.5px 0.5px 10px rgba($color: #000000, $alpha: 0.15);
   z-index: 1004;
@@ -255,42 +236,94 @@
     padding: 0 0.65;
   }
   .container-text {
+    @include mixins.dflex(center, center, row);
     text-align: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     font-weight: 600;
   }
   .list-exercises-delete,
   .routine-delete {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
+    @include mixins.dflex(center, center, column);
     font-style: italic;
   }
   .container-buttons {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    @include mixins.dgrid(auto, repeat(2, 1fr), normal, normal);
     align-items: center;
     justify-items: center;
     button {
+      @include mixins.button-primary(
+        rgb(234 231 231),
+        rgb(224, 224, 224),
+        black,
+        black,
+        0,
+        0
+      );
       width: 90%;
       height: 60%;
-      border: 0;
-      border-radius: 0.25rem;
       font-weight: 500;
-      &:active {
-        transform: scale(0.9);
-      }
     }
     .accept {
-      background-color: #e94560;
-      color: white;
-      border: 0;
-      &:hover {
-        background-color: #ca3049;
-      }
+      @include mixins.button-primary(
+        $color-primary,
+        $color-primary-hover-button,
+        white,
+        white,
+        0,
+        0
+      );
+    }
+  }
+}
+
+.modal-uncompleted-routine {
+  background-color: white;
+  width: 80%;
+  height: 30vh;
+  z-index: 1004;
+  position: absolute;
+  border-radius: 0.25rem;
+  box-shadow: 1px 1px 8px rgba($color: #000000, $alpha: 0.15);
+  top: 35vh;
+  left: 10%;
+  display: grid;
+  .modal-emoji {
+    place-self: center;
+    p {
+      font-size: 2rem;
+    }
+  }
+  .modal-text {
+    p {
+      text-align: center;
+    }
+  }
+  .modal-buttons {
+    @include mixins.dflex(space-between, center, row);
+    padding: 0 1rem;
+    place-self: center;
+    width: 100%;
+    height: 100%;
+    button {
+      @include mixins.button-primary(
+        rgb(234 231 231),
+        rgb(224, 224, 224),
+        black,
+        black,
+        0,
+        0
+      );
+      width: 48%;
+      height: 60%;
+    }
+    .button-continue {
+      @include mixins.button-primary(
+        $color-primary,
+        $color-primary-hover-button,
+        white,
+        white,
+        0,
+        0
+      );
     }
   }
 }

@@ -16,7 +16,6 @@ const Text = ({id,className, style, text, onClick}) => {
     :
     <p
     id={id}
-
     style={style}
     className={className}
     >

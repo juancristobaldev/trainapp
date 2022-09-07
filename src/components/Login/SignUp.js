@@ -78,8 +78,6 @@ const SingUp = () => {
 
     }
 
-    console.log(errors)
-
     useEffect(() => {
         setErrors([])
     },[dataFormRegister])

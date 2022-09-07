@@ -8,7 +8,7 @@ const ProgressiveCount = ({id}) => {
 
     return ( 
         <>
-            <Text id={id}  text={`Tiempo actual : ${timeRoutine.hour ? `${timeRoutine.hour}:${timeRoutine.min}:${timeRoutine.seg}` : "00:00:00"}`}/>
+            <Text id={id}  text={`Tiempo actual ⏱️: ${timeRoutine.hour ? `${timeRoutine.hour}:${timeRoutine.min}:${timeRoutine.seg}` : "00:00:00"}`}/>
         </>
 
     )

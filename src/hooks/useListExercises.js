@@ -19,13 +19,6 @@ const useListExercises = ( token , listObject ) => {
         if(data){
             let newData = [...JSON.parse(JSON.stringify(data.getExercisesByToken))];
 
-            if(state.listOnCreate.length > 0){
-                state.listOnCreate.forEach( item => {
-                    const index = newData.findIndex(filt => filt.nameEx === item.nameEx)
-                    newData.splice(index,1)
-                })
-            }
-
             if(!state.searchValue.length >= 1){
                 setListExercisesSelect(newData)
             }
@@ -50,14 +43,6 @@ const useListExercises = ( token , listObject ) => {
                 item['isAdded'] = false;
                 item['select'] = false;
             })
-
-            if(state.listOnCreate.length > 0){
-                state.listOnCreate.forEach(item => {
-                    const index = dataBack.findIndex(itemData => itemData.nameEx === item.nameEx);
-                    if(index >= 0) dataBack.splice(index,1)
-                })
-            }
-            setListOriginal([...JSON.parse(JSON.stringify(data.getExercisesByToken))])
             setListExercisesSelect(dataBack)
         }
     }
@@ -81,29 +66,35 @@ const useListExercises = ( token , listObject ) => {
         const newFormCreate  = {...state.dataFormCreate}
 
         if(listSelectFilt.length > 0){
-            listSelect.forEach(item => {
+            
+            await listSelect.forEach(item => {
                 if(item.select === true){
                     item.select = false
-                    item.isAdded = true
                     item.seriesEx = JSON.parse(item.seriesEx)
+
                     newList.push(item)
                     newFormCreate.exercises.push(item)
                 }
             })
 
-            const filtList = listSelect.filter(item => item.isAdded !== true);
+            for(var i = 0; i < newList.length; i++){
+                newList[i].idList = i
+            }
+
             updateState({...state, listOnCreate:newList, modal:false, dataFormCreate:newFormCreate})
-            setListExercisesSelect(filtList)
         }
     }
 
     const deleteExerciseOfList = (exercise) => {
         const newList = [...state.listOnCreate]
-        const index = newList.findIndex(item => item.nameEx === exercise.nameEx)
-        newList.splice(index,1)
-        updateState({...state, listOnCreate:newList})
-        
+        const newFormCreate = {...state.dataFormCreate}
 
+        const index = newList.findIndex(item => item.idList === exercise.idList)
+
+        newFormCreate.exercises.splice(index,1)
+        newList.splice(index,1)
+
+        updateState({...state, listOnCreate:newList, dataFormCreate:newFormCreate})
     }
 
     useEffect(() =>{

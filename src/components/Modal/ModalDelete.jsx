@@ -31,7 +31,7 @@ const ModalDelete = ({token,objectState,exercise}) => {
                 </Container>
                 {exercise && 
                     <Container className={'text-warning'}>
-                        <Text text={'Estos ejercicios seran eliminados de todas las rutinas donde esten involucrados'}/>
+                        <Text text={'Al eliminar estos ejercicios no se eliminiran de tus rutinas creadas, pero ya no podras seleccionarlo para rutinas futuras.'}/>
                     </Container>
                 }
                 <Container className={'list-exercises-delete'}>
