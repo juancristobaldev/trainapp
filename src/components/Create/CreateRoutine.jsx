@@ -45,6 +45,7 @@ const CreateRoutine =  ( ) => {
         modalDelete:{boolean:false,items:[]},
         searchValue:'',
         totalData:0,
+        errors:{},
         dataFormCreate:{
             token:token,
             nameRoutine:'',
@@ -90,15 +91,14 @@ const CreateRoutine =  ( ) => {
 
     const handleSubmit = async (e,confirmation) => {
         e.preventDefault();
+        const objError = {}
 
         const {exercises,nameRoutine} = state.dataFormCreate
 
-        const posiblyErrors = [
-            {property:exercises,error:'Debes agregar al menos un ejercicio'},
-            {property:nameRoutine,error:'Debes escribir un nombre para la rutina'}
-        ]
+       if(exercises.length === 0) objError.exercises = 'Debes agregar al menos un ejercicio.'
+       if(nameRoutine.length === 0) objError.nameRoutine = 'Debes escribir un nombre para tu rutina.'
 
-        const {errorsForm} = getErrorsForm(posiblyErrors)
+       const errorsForm = Object.values(objError)
 
         if(errorsForm.length === 0){
 
@@ -126,7 +126,7 @@ const CreateRoutine =  ( ) => {
         }
     }
     useEffect(() => {
-        setState({...state, modalErrors:{error:false,errors:[]}})
+        setState({...state, modalErrors:{error:false,errors:{}}})
     },[state.dataFormCreate,state.listOnCreate,state.modal,state.modalCreate])
 
     return(
@@ -144,6 +144,7 @@ const CreateRoutine =  ( ) => {
             onSubmit={handleSubmit}
             textSubmit='Crear rutina'>
                 <FormControl
+                error={[state.errors.nameRoutine]}
                 typeControl={'input'}
                 className={'input-name-routine'}
                 type="text"

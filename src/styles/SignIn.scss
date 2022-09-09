@@ -1,0 +1,82 @@
+@use "src/styles/shared/mixins.scss";
+@import "src/styles/shared/variables.scss";
+
+.main-signin {
+  height: 100vh;
+  @include mixins.dgrid(12.5% 77.5% 10%, auto, normal, normal);
+  .form-signin {
+    place-self: center;
+    grid-area: 2/ 1/ 3 / 2;
+    width: 100%;
+    height: 70%;
+
+    @include mixins.dgrid(repeat(4, 1fr), auto, normal, normal);
+    .header-signin {
+      @include mixins.dflex(flex-start, center, row);
+      padding-left: 1rem;
+      grid-area: 1 / 1 / 2/ 2;
+    }
+    .div-error {
+      padding-left: 1rem;
+      align-self: center;
+    }
+    .div-input {
+      @include mixins.dflex(center, stretch, column);
+      padding: 0 1rem;
+
+      label {
+        font-weight: 500;
+      }
+      input {
+        transition: 0.25s;
+        background-color: white !important;
+        padding: 0.8rem 0.25rem;
+        margin: 0.5rem 0;
+        border: 1px solid white I !important;
+        @include mixins.input-default($color-primary);
+      }
+      input:-webkit-autofill,
+      input:-webkit-autofill:focus {
+        transition: background-color 600000s 0s, color 600000s 0s;
+      }
+      .error {
+        border: 1px solid red;
+      }
+    }
+    .container-submit {
+      @include mixins.dflex(center, center, row);
+
+      input {
+        @include mixins.button-primary(
+          $color-primary,
+          $color-primary-hover-button,
+          white,
+          white,
+          0,
+          0
+        );
+        padding: 0 1rem;
+        width: calc(100% - 2rem);
+        height: 35px;
+      }
+    }
+    .alter-form {
+      @include mixins.dflex(center, center, column);
+      button {
+        border: 0;
+        background-color: transparent;
+        text-decoration: underline;
+        cursor: pointer;
+      }
+    }
+  }
+  .container-doit {
+    @include mixins.dflex(center, center, row);
+    .p-doit {
+      span {
+        font-weight: 700;
+      }
+    }
+    grid-area: 3/ 1/ 4 / 2;
+  }
+}

@@ -207,8 +207,8 @@
 
 .modal-delete.exercise {
   height: 30vh;
-  margin: 35vh 1rem;
-  grid-template-rows: 0.75fr 0.75fr 1fr 0.75fr !important;
+  height: 40vh;
+  margin: 30vh 1rem;
   .container-text {
     flex-direction: column !important;
   }
@@ -220,7 +220,7 @@
 }
 
 .modal-delete {
-  @include mixins.dgrid(0.75fr 1fr 0.75fr, auto, normal, normal);
+  @include mixins.dgrid(repeat(4, 0.75fr), auto, normal, normal);
   padding: 0.45rem;
   position: absolute;
   top: 0;
@@ -240,8 +240,11 @@
     text-align: center;
     font-weight: 600;
   }
+
   .list-exercises-delete,
   .routine-delete {
+    overflow: auto;
+    min-height: 60%;
     @include mixins.dflex(center, center, column);
     font-style: italic;
   }

@@ -1,0 +1,21 @@
+@use "src/styles/shared/mixins.scss";
+@import "src/styles/shared/variables.scss";
+
+@include mixins.media-up(md-md) {
+  .main-signup {
+    @include mixins.dgrid(12.5% 77.5% 10%, 49% 2% 49%, normal, normal);
+    .form-singup {
+      place-self: center;
+      width: 60%;
+      height: 100%;
+    }
+    &::before {
+      grid-area: 2/ 2/ 3 / 3;
+      width: 2px;
+      height: 80%;
+      background-color: rgba($color: #000000, $alpha: 0.1);
+      place-self: center;
+      content: "";
+    }
+  }
+}

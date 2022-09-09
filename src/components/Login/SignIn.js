@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react"
-import { Container } from "../generals/Container"
 import { FormControl } from "../Form/FormControl"
 import { Form } from "../Form/Form"
 import { ChangeSign } from "./ChangeSign"
@@ -8,12 +7,13 @@ import { Main } from "../generals/Main"
 import { USER_SIGN_IN } from "../../data/mutations"
 import { useMutation } from "@apollo/client"
 import Cookies from "universal-cookie/es6"
-import { useNavigate } from "react-router-dom"
 
+import "../../styles/SignIn.scss"
+import "../../styles/responsive/SignIn.scss"
+import { Container } from "../generals/Container"
 
+const SingIn = () => {
 
-const SingIn = ({ setID }) => {
-    const navigate = useNavigate()
     const cookies = new Cookies()
     const [userSignIn] = useMutation(USER_SIGN_IN)
 
@@ -21,8 +21,8 @@ const SingIn = ({ setID }) => {
         user: '',
         pass: ''
     })
-    const [error, setError] = useState([]),
-        [loading, setLoading] = useState(false)
+    const [error, setError] = useState({}),
+    [loading, setLoading] = useState(false)
 
     const handleChange = (e, name) => {
         const newData = { ...dataFormLogin };
@@ -33,46 +33,84 @@ const SingIn = ({ setID }) => {
     const handleSubmit = async event => {
         event.preventDefault()
         setLoading(true)
-        await userSignIn({
-            variables: {
-                input: {
-                    ...dataFormLogin
+
+        const {user,pass} = dataFormLogin,
+        newErrors = {};
+        
+        if(!user) newErrors.user = 'Ingresa un nombre de usuario.'
+        if(!pass) newErrors.pass = 'Ingresa una contraseña.'
+
+        const errorsArray = Object.values(newErrors)
+
+        if(errorsArray.length === 0){
+            await userSignIn({
+                variables: {
+                    input: {
+                        ...dataFormLogin
+                    }
                 }
-            }
-        }).then(async ({ data }) => {
-            const {success, token } = data.userSignIn
-            if (success) {
-                cookies.set( 'session-token', token , {
-                    path: '/',
-                    maxAge:86400
-                })
-                navigate('/')
-            }
-        })
+            }).then(async ({ data }) => {
+                const {success, errors, token } = data.userSignIn
+                if (success) {
+                    cookies.set( 'session-token', token , {
+                        path: '/',
+                        maxAge:86400
+                    })
+                    window.location.reload()
+                }else{
+                    setError(JSON.parse(errors))
+                }
+                
+            })
+        }else{
+            setError({...newErrors})
+        }
     }
+    console.log(error)
 
     useEffect(() => {
         setError([])
     }, [dataFormLogin])
 
     return (
-        <Main>
-            {error.length > 0 &&
-                <p
-                    style={{ color: 'red' }}
-                >{error[0]}</p>}
+        <>
+        <Main
+        className={'main-signin'}
+        
+        >
             <Form
+                autoComplete={"off"}
+                className={'form-signin'}
                 textSubmit="Iniciar sesion"
                 onSubmit={handleSubmit}
+                alter={true}
+                onAlter={() => 
+                    <ChangeSign
+                        className={'alter-form'}
+                        text={'¿No tienes cuenta?'}
+                        textButton={'Crea una cuenta aqui'}
+                        route={'/signup'}
+                    />
+                }
             >
+                <Container
+                className={'header-signin'}
+                >
+                    <h1>Iniciar sesion</h1>
+                </Container>
                 <FormControl
+                    autoComplete={'new-user'}
+                    error={[error.user_auth]}
+                    className={'div-input user'}
                     typeControl='input'
                     type="text"
-                    label="Nombre:"
+                    label="Usuario:"
                     name='user'
                     onChange={handleChange}
                 />
                 <FormControl
+                error={[error.user_pass]}
+                    className={'div-input pass'}
                     typeControl='input'
                     type="password"
                     label="Contraseña:"
@@ -80,12 +118,11 @@ const SingIn = ({ setID }) => {
                     onChange={handleChange}
                 />
             </Form>
-            <ChangeSign
-                text={'¿No tienes cuenta?'}
-                textButton={'Crea una cuenta aqui'}
-                route={'/signup'}
-            />
+            <Container className="container-doit">
+                <p className="p-doit"><span>Do</span>It</p>
+            </Container>
         </Main>
+        </>
     )
 }
 

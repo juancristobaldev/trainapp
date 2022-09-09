@@ -1,2 +1,13 @@
 $color-primary: #e94560;
 $color-primary-hover-button: #ca3049;
+$breakpoints: (
+  sm: 300px,
+  sm-md: 400px,
+  md-sm: 500px,
+  md: 768px,
+  md-md-lg: 824px,
+  md-md: 965px,
+  sm-lg: 1100px,
+  lg: 1224px,
+  lg-lg: 1424px,
+);

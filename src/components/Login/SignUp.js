@@ -4,11 +4,13 @@ import { FormControl } from "../Form/FormControl"
 import { Form } from "../Form/Form"
 import { ChangeSign } from "./ChangeSign"
 import { Main } from "../generals/Main"
-import { getErrorsForm } from "../functions/getFormsError"
-
 import { CREATE_USER } from "../../data/mutations"
 import { useMutation } from "@apollo/client"
 import { useNavigate } from "react-router-dom"
+
+import "../../styles/SignUp.scss"
+import "../../styles/responsive/SignUp.scss"
+import { Text } from "../generals/Text"
 
 
 
@@ -16,142 +18,203 @@ const SingUp = () => {
     const navigate = useNavigate()
 
     const [createUser] = useMutation(CREATE_USER)
-    const [loading,setLoading] = useState(false)
+    const [typeForm,setForm] = useState('about-u')
 
     const [dataFormRegister, setDataFormRegister] = useState({
         "user": "",
         "first_name": "",
         "last_name": "",
-        "email": "",
         "date": "",
-        "pass": ""
     })
-    
+    const [dataFormRegisterTwo, setDataFormRegisterTwo] = useState({
+        "email": "",
+        "pass": "",
+        "passConfirm": ""
+    })
+    console.log(dataFormRegister,dataFormRegisterTwo)
     const [errors,setErrors] = useState([])
-
-    const [success,setSucess] = useState({success:false,message:null})
     
-    const handleChange = (e) => {
-        const newData = {...dataFormRegister};
+    const handleChange = (e,state,setState) => {
+        const newData = {...state};
         newData[e.target.name] = e.target.value  
-        setDataFormRegister(newData)
+        setState(newData)
     }
+    
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e,stage) => {
         e.preventDefault()
-        const { first_name, last_name,user,email,pass,passConfirm } = dataFormRegister
+        const dataFusion = Object.assign({}, dataFormRegister, dataFormRegisterTwo)
+        const { first_name, last_name,user,email,pass,passConfirm } = dataFusion,
+        objectErrors = {};
 
-        const posiblyErrors = [
-            {property:last_name,error:'Debes escribir un apellido'},
-            {property:first_name,error:'Debes escribir un nombre'},
-            {property:user,error:'Debes escribir un usuario'},
-            {property:email,error:'El email es obligatorio'},
-            {property:pass, error:'Debes escribir una contraseña'}
-        ]
-
-        const {errorsForm} = getErrorsForm(posiblyErrors)
-        if(pass !== passConfirm) errorsForm.push('Las contraseñas deben coincidir')
-
-        if(errorsForm.length === 0){
-            const dataForm = {...dataFormRegister}
+        if(stage === "first"){
+            if(!first_name) objectErrors.first_name = 'Debes escribir un nombre.';
+            if(!last_name) objectErrors.last_name = 'Debes escribir un apellido.';
+        }else{
+            if(!user) objectErrors.user = 'Debes escribir un usuario.';
+            if( !email || !email.includes("@") || !email.includes(".")){
+                objectErrors.email = 'Debes escribir un email valido.';
+            }
+            if(!pass) objectErrors.pass = 'Debes escribir una contraseña.';
+            if(pass !== passConfirm || !pass) objectErrors.passConfirm = 'Las contraseñas deben ser iguales.';
+        }
+        console.log(Object.values(objectErrors))
+        if(Object.values(objectErrors).length === 0){
+            const dataForm = {...dataFusion}
+            console.log(dataForm)
             delete dataForm.passConfirm
-            
-            await createUser({
-                variables: {
-                    input:{
-                        ...dataForm
+            if(stage === 'first'){
+                setForm('auth')
+            }else{
+                await createUser({
+                    variables: {
+                        input:{
+                            ...dataForm,
+                        }
                     }
-                }
-            }).then( async ({data}) => {
-                const {errors,success} = data.createUser
-                if(errors.length){
-                    setErrors(JSON.parse(errors))
-                }
-                if(success){
-                    navigate('/signin')
-                }
-            })
+                }).then( async ({data}) => {
+                    const {errors,success} = data.createUser
+                    if(errors.length){
+                        console.log(JSON.parse(errors))
+                        setErrors(JSON.parse(errors))
+                    }
+                    console.log(success)
+                    if(success){
+                        navigate('/signin')
+                    }
+                })
+            }
         }
         else{
-            setErrors(errorsForm)
+            setErrors(objectErrors)
         }
 
     }
 
     useEffect(() => {
-        setErrors([])
+        setErrors({})
     },[dataFormRegister])
 
     return(
-        <Main>
+        <>
+        <Main className={'main-signup'}>
+            {typeForm === 'about-u' ?
+            <>
             <Form
-            onSubmit={handleSubmit}
+            className={`form-singup ${typeForm === 'about-u' ? 'about-u' : 'auth'}`}
+            onSubmit={typeForm === 'about-u' ? e => handleSubmit(e,'first') : e => handleSubmit(e,'two')}
             textSubmit="Registrarse"
-            >
-                {errors.length > 0 && 
-                    errors.map(item => 
-                        <p
-                        style={{color:"red"}}
-                        key={item}
-                        >{item}</p>
-                    )
-                }
-                <FormControl
-                    typeControl='input'
-                    type="text"
-                    label="Usuario:"
-                    name="user"
-                    onChange={handleChange}
-                />
-                <FormControl
-                    typeControl='input'
-                    type="text"
-                    name="first_name"
-                    label="Nombre:"
-                    onChange={handleChange}
-                />
-                <FormControl
-                    typeControl='input'
-                    type="text"
-                    name="last_name"
-                    label="Apellido:"
-                    onChange={handleChange}
-                />
-                <FormControl
-                    typeControl='input'
-                    type="email"
-                    label="Email:"
-                    name="email"
-                    onChange={handleChange}
-                />
-                <FormControl
-                    typeControl='input'
-                    type="date"
-                    label="Fecha de nacimiento:"
-                    name="date"
-                    onChange={handleChange}
-                />
-                <FormControl
-                    typeControl='input'
-                    type="password"
-                    label="Contraseña:"
-                    name="pass"
-                    onChange={handleChange}
-                />
-                <FormControl
-                    typeControl='input'
-                    type="password"
-                    label="Confirma tu contraseña:"
-                    name="passConfirm"
-                    onChange={handleChange}
-                />
-            </Form>
-            <ChangeSign
+            alter={true}
+            onAlter={() => 
+                <ChangeSign
+                className={'alter-form'}
                 text={'¿Ya tienes cuenta?'}
                 textButton={'Inicia sesion aqui'}
                 route={'/signin'}
                 />
+            }
+            >
+                <Container className={'header-signup'}>
+                    <h1>Registrate</h1>
+                    <h2>Sobre tí</h2>
+                </Container>
+                <FormControl
+                    error={[errors.first_name]}
+                    className={'div-input first-name'}
+                    typeControl='input'
+                    type="text"
+                    name="first_name"
+                    label="Nombre:"
+                    onChange={(e) => handleChange(e,dataFormRegister,setDataFormRegister)}
+
+                />
+                <FormControl
+                    error={[errors.last_name]}
+                    className={'div-input last-name'}
+                    typeControl='input'
+                    type="text"
+                    name="last_name"
+                    label="Apellido:"
+                    onChange={(e) => handleChange(e,dataFormRegister,setDataFormRegister)}
+                />
+                <FormControl
+                    error={[errors.date]}
+                    className={'div-input date'}
+                    typeControl='input'
+                    type="date"
+                    label="Fecha de nacimiento:"
+                    name="date"
+                    onChange={(e) => handleChange(e,dataFormRegister,setDataFormRegister)}
+                />
+            </Form>
+            </>
+            :
+            <Form
+            autoComplete="off"
+            className={`form-singup ${typeForm === 'about-u' ? 'about-u' : 'auth'}`}
+            onSubmit={typeForm === 'about-u' ? e => handleSubmit(e,'first') : e => handleSubmit(e,'two')}
+            textSubmit="Registrarse"
+            alter={true}
+            onAlter={() => 
+                <ChangeSign
+                className={'alter-form'}
+                text={'¿Ya tienes cuenta?'}
+                textButton={'Inicia sesion aqui'}
+                route={'/signin'}
+                />
+            }
+            >
+                <Container className={'header-signup'}>
+                    <h1>Registrate</h1>
+                    <h2>Sobre tí</h2>
+                </Container>
+                <FormControl
+                    value=''
+                    error={[errors.user,errors.user_exist]}
+                    className={'div-input user'}
+                    typeControl='input'
+                    type="text"
+                    label="Usuario:"
+                    name="user"
+                    onChange={(e) => handleChange(e,dataFormRegister,setDataFormRegister)}
+                />
+                <FormControl
+                    value=''
+                    error={[errors.email,errors.email_exist]}
+                    className={'div-input email'}
+                    typeControl='input'
+                    type="text"
+                    label="Email:"
+                    name="email"
+                    onChange={(e) => handleChange(e,dataFormRegisterTwo,setDataFormRegisterTwo)}
+                    />
+                <FormControl
+                    value=''
+                    error={[errors.pass]}
+                    className={'div-input pass'}
+                    typeControl='input'
+                    type="password"
+                    label="Contraseña:"
+                    name="pass"
+                    onChange={(e) => handleChange(e,dataFormRegisterTwo,setDataFormRegisterTwo)}
+                />
+                <FormControl
+                    value=''
+                    error={[errors.passConfirm]}
+                    className={'div-input pass-confirm'}
+                    typeControl='input'
+                    type="password"
+                    label="Confirma tu contraseña:"
+                    name="passConfirm"
+                    onChange={(e) => handleChange(e,dataFormRegisterTwo,setDataFormRegisterTwo)}
+                />
+            </Form>
+            }
+            <Container className="container-doit">
+                <p className="p-doit"><span>Do</span>It</p>
+            </Container>
         </Main>
+        </>
     )
 }
 

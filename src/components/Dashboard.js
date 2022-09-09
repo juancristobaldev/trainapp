@@ -48,7 +48,7 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
     const {darkMode,updateDarkMode} = viewMode
     
     const closeSesion = async () => {
-        await cookies.remove('user')
+        await cookies.remove('session-token')
         window.location.reload()
     }
 
