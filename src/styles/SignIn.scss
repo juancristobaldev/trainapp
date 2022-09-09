@@ -33,7 +33,7 @@
         padding: 0.8rem 0.25rem;
         margin: 0.5rem 0;
         border: 1px solid white I !important;
-        @include mixins.input-default($color-primary);
+        @include mixins.input-default();
       }
       input:-webkit-autofill,
       input:-webkit-autofill:focus {

@@ -46,7 +46,7 @@
         transition: 0.15s;
         padding: 0.8rem 0.25rem;
         margin: 0.5rem 0;
-        @include mixins.input-default($color-primary);
+        @include mixins.input-default();
       }
       .error {
         border: 1px solid red;

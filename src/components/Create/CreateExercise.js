@@ -25,7 +25,7 @@ const CreateExercise = ({token,objectState}) => {
         handleChange,
         createNewExercise,
     } = useExercises(token,{list:listExercisesSelect,updateList:setListExercisesSelect},{stateValue:state,setState:setState})
-
+    console.log(errors.alreadyExist)
     
     return (
         <Create
@@ -43,16 +43,8 @@ const CreateExercise = ({token,objectState}) => {
                     onSubmit={createNewExercise}
                     textSubmit="Crear"
                     >
-                        <Container className={'errors'}>
-                            {
-                                errors.error && 
-                                <p
-                                style={{color:"red"}}
-                                >*{errors.errors.map(item => item)}</p>
-                                
-                            }
-                        </Container>
                         <FormControl
+                        error={[errors.name,errors.alreadyExist]}
                         className={'name-input-create'}
                         label="Nombre ejercicio:"
                         typeControl="input"
