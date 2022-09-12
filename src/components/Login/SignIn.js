@@ -109,7 +109,7 @@ const SingIn = () => {
                     onChange={handleChange}
                 />
                 <FormControl
-                error={[error.user_pass]}
+                    error={[error.user_pass]}
                     className={'div-input pass'}
                     typeControl='input'
                     type="password"

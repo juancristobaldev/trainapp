@@ -20,15 +20,8 @@
     p {
       font-weight: 700;
     }
-    button {
-      @include mixins.button-primary(
-        transparent,
-        transparent,
-        $color-primary,
-        $color-primary-hover-button,
-        0,
-        0
-      );
+    .close-button {
+      @include mixins.x-button();
     }
   }
   .modal-exercises-search {
@@ -37,6 +30,8 @@
       width: 100%;
       height: 60%;
       margin: 0.5rem 1rem;
+      @include mixins.input-default();
+      padding: 0 0.5rem;
     }
   }
   .modal-exercises-list {
@@ -149,18 +144,8 @@
     @include mixins.dflex(space-between, center, row);
     padding: 0 1rem;
     font-weight: 600;
-    button {
-      @include mixins.button-primary(
-        transparent,
-        transparent,
-        $color-primary,
-        $color-primary-hover-button,
-        0,
-        0
-      );
-      &:hover {
-        text-decoration: underline;
-      }
+    .close-button {
+      @include mixins.x-button();
     }
   }
   .form-create {
@@ -250,6 +235,10 @@
     @include mixins.dflex(center, center, row);
     text-align: center;
     font-weight: 600;
+  }
+  .warning-text {
+    @include mixins.dflex(center, center, row);
+    text-align: center;
   }
 
   .list-exercises-delete,

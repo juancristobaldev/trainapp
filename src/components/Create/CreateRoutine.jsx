@@ -122,21 +122,22 @@ const CreateRoutine =  ( ) => {
             redirect('/')
 
         }else{ 
-            setState({...state, modalErrors:{error:true,errors:errorsForm}})
+            setState({...state, modalErrors:{error:true,errors:errorsForm}, errors:objError})
         }
     }
     useEffect(() => {
-        setState({...state, modalErrors:{error:false,errors:{}}})
+        setState({...state, modalErrors:{error:false,errors:{}},errors:{}})
     },[state.dataFormCreate,state.listOnCreate,state.modal,state.modalCreate])
 
     return(
         <>
         <Container className={'header-create-routine'}>
-                <Text text={'Estas creando una rutina:'}/>
-                <GrClose
-                cursor={'pointer'}
+            <Text text={'Estas creando una rutina:'}/>
+            <Container className={'close-button'}>
+                <IoMdClose
                 onClick={() => redirect('/')}
                 />
+            </Container>
         </Container>
         <Main className={'main-create-routine'}>
             <Form
@@ -153,6 +154,7 @@ const CreateRoutine =  ( ) => {
                 onChange={getDataRoutine}
                 />
                 <List
+                    errors={[state.errors.exercises]}
                     className={'exercises-list-routine'}
                     item={state.listOnCreate}
                     onEmpty={() => 
@@ -248,17 +250,6 @@ const CreateRoutine =  ( ) => {
                     </Exercise>                 
                     )}
                 />
-                {state.modalErrors.error  === true && 
-                    <Container className={'create-errors'}>
-                        {
-                            state.modalErrors.errors.map(item => 
-                                <p 
-                                key={item}
-                                style={{color:'red'}}>*{item}</p>   
-                            )
-                        }
-                    </Container>
-                }
                 </Form>
                 <Container className={'container-add-new-exercise'}>
                     <Button

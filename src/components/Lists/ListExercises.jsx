@@ -1,4 +1,5 @@
 import React from "react";
+import { IoMdClose } from "react-icons/io";
 import { useExercises } from "../../hooks/useExercises";
 import { useListExercises } from "../../hooks/useListExercises";
 import CheckBox from "../Checkbox";
@@ -26,19 +27,17 @@ const ListExercises = ({token,objectState}) => {
         deleteSomeExercise
     } = useExercises(token,{list:listExercisesSelect,updateList:setListExercisesSelect},{stateValue:state,setState:setState})
 
-
-    console.log(listExercisesSelect)
-
     const totalSelectItem = listExercisesSelect.filter(item => item.select === true).length
 
     return(
         <Container className={'modal-exercises'}>
             <Container className={'modal-exercises-header'}>
                 <Text text={'Lista de ejercicios'}/>
-                <Button
-                onClick={() => setState({...state, modal:false})}
-                textButton="Cancelar"
-                />
+                <Container className={'close-button'}>
+                    <IoMdClose
+                    onClick={() => setState({...state, modal:false})}
+                    />
+                </Container>
             </Container>
             <Container className={'modal-exercises-search'}>
                 <input onChange={e => setState({...state, searchValue:e.target.value})} type={'text'} placeholder='Buscar ejercicios'/>

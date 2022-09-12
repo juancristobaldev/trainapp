@@ -16,9 +16,7 @@ const ModalDelete = ({token,objectState,exercise}) => {
 
 
     const {
-        deleteSomeExercise,
-        modalDelete,
-        setModalDelete,
+        deleteSomeExercise
     } = useExercises(token,{list:listExercisesSelect,updateList:setListExercisesSelect},{stateValue:state,setState:setState})
 
 

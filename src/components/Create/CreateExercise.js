@@ -1,4 +1,5 @@
 import React from "react";
+import { IoMdClose } from "react-icons/io";
 import { useExercises } from "../../hooks/useExercises";
 import { useListExercises } from "../../hooks/useListExercises";
 import { Form } from "../Form/Form";
@@ -33,10 +34,11 @@ const CreateExercise = ({token,objectState}) => {
                 >
                     <Container className={'header-create'}>
                         <Text text='Estas creando un ejercicio:'/>
-                        <Button
-                        onClick={() => setState({ ...state, modalCreate:false, modal:true})}
-                        textButton={'Cerrar'}
-                        />
+                        <Container className={'close-button'}>
+                            <IoMdClose
+                            onClick={() => setState({ ...state, modalCreate:false, modal:true})}
+                            />
+                        </Container>
                     </Container>
                     <Form
                     className={'form-create'}

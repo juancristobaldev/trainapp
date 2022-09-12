@@ -29,6 +29,7 @@ export const GET_ROUTINES_AND_USER_BY_TOKEN = gql`
             date
             pass
             token
+            last_workouts
         }
     }
 `
@@ -72,7 +73,7 @@ export const GET_USERS = gql`
 
 export const GET_USER = gql`
     query getUser {
-        getUser(token:String){
+        getUser(id:Int){
         user
         }
     }

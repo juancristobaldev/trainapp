@@ -13,6 +13,7 @@
     font-weight: thin;
     font-style: italic;
     color: silver;
+    font-size: 0.85rem;
   }
   .exercise {
     background-color: white;
@@ -31,6 +32,9 @@
         font-weight: 300;
         font-size: 0.75rem;
         font-style: italic;
+      }
+      .delete-button {
+        @include mixins.x-button();
       }
     }
     .exercise-info {

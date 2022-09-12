@@ -6,6 +6,9 @@
   height: 7.5vh;
   font-weight: 600;
   @include mixins.dflex(space-between, center, row);
+  .close-button {
+    @include mixins.x-button();
+  }
 }
 
 .main-create-routine {
@@ -15,25 +18,34 @@
   margin: 0px 2.5vw;
   @include mixins.dgrid(75vh 7.5vh 10vh, none, normal, normal);
   .form-create-routine {
-    @include mixins.dgrid(7.5vh 1fr 7.5vh 7.5vh, none, normal, normal);
+    @include mixins.dgrid(12.5vh 1fr 7.5vh, none, normal, normal);
+    .exercises-list-routine.error {
+      .empty-list-routine p {
+        color: red;
+      }
+    }
     .input-name-routine {
-      @include mixins.dflex(center, center, row);
+      @include mixins.dflex(center, center, column);
       input {
-        width: 100%;
+        @include mixins.input-default();
+        width: 90%;
         height: 55%;
         border: 1px solid silver;
         border-radius: 0.2rem;
-        margin: 1rem;
         text-align: center;
         &::placeholder {
           text-align: center;
           font-style: italic;
         }
       }
+      p {
+        margin-top: 5px;
+        font-size: 0.85rem;
+      }
     }
     .container-submit {
       @include mixins.dflex(center, center, row);
-      grid-area: 4/ 1 / 5 /2;
+      grid-area: 3/ 1 / 4 /2;
       input {
         @include mixins.button-primary(
           $color-primary,

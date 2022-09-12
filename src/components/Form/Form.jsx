@@ -2,7 +2,6 @@ import React from "react";
 import { Container } from "../generals/Container";
 
 const Form = ({autoComplete,method,children,textSubmit,onSubmit, className, alter,onAlter}) => {
-    console.log(autoComplete)
     return(
         <form 
         autoComplete={autoComplete}

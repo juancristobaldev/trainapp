@@ -30,7 +30,9 @@ const Exercise = ({children,item,deleteExerciseOfList}) => {
                 <Text 
                 className={'exercise-type'}
                 text={item.typeEx}/>
-                <IoMdClose onClick={() => deleteExerciseOfList(item)}/>
+                <Container className={'delete-button'}>
+                    <IoMdClose onClick={() => deleteExerciseOfList(item)}/>
+                </Container>
             </Container>
             <Container className={'exercise-info'}
             style={openSeries ? {display:"block"} : {display:"none"}}

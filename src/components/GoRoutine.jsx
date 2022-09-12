@@ -1,8 +1,7 @@
 import { useMutation, useQuery } from "@apollo/client";
-import React from "react";
+import React, { useContext } from "react";
 import { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import { GET_ROUTINES_AND_USER_BY_TOKEN, GET_ROUTINE_BY_ID } from "../data/query";
 import { Main } from "./generals/Main";
 import { Text } from "./generals/Text";
 import { Loading } from "./Loading";
@@ -36,7 +35,10 @@ import { ModalDelete } from "./Modal/ModalDelete";
 import { Create } from "./Create/Create";
 import { FaCheck } from "react-icons/fa";
 import { ProgressiveCount } from "./ProgressiveCount";
-import { UPDATE_ROUTINE } from "../data/mutations";
+
+import { GET_ROUTINES_AND_USER_BY_TOKEN, GET_ROUTINE_BY_ID, GET_USER } from "../data/query";
+import { UPDATE_ROUTINE,UPDATE_USER } from "../data/mutations";
+import { DataContext } from "../context/DataProvider";
 
 const token = new Cookies().get('session-token')
 
@@ -44,7 +46,8 @@ const token = new Cookies().get('session-token')
 const GoRoutine = ({routine}) => {
     const navigate = useNavigate()
 
-    const [updateRoutine] = useMutation(UPDATE_ROUTINE)
+    const [updateRoutine] = useMutation(UPDATE_ROUTINE),
+    [updateUser] = useMutation(UPDATE_USER)
 
 
     const [state,updateState] = useState({
@@ -76,6 +79,11 @@ const GoRoutine = ({routine}) => {
             dones:routine.routine.dones + 1
         }
     })
+
+    const {
+        me
+    } = useContext(DataContext)
+
 
     const timer = JSON.parse(localStorage.getItem('timer'))
 
@@ -111,7 +119,6 @@ const GoRoutine = ({routine}) => {
         let error = false
 
         await newList.forEach(item => {
-            console.log(item)
             item.seriesEx.forEach(serie => {
                 if(serie.checked === false){
                     serie["need"] = true
@@ -180,6 +187,32 @@ const GoRoutine = ({routine}) => {
             })
         })
 
+        let lastWorkOuts = []
+        if(me.last_workouts !== undefined){
+            lastWorkOuts = JSON.parse(me.last_workouts);
+            const index = lastWorkOuts.findIndex(item => item.nameRoutine === dataRoutine.nameRoutine)
+            let someRoutine;
+            if(index >= 0) {
+                someRoutine = lastWorkOuts[index]
+                lastWorkOuts.splice(index,1)
+            }else if(lastWorkOuts.length >= 3){
+                lastWorkOuts.pop()
+            }
+            lastWorkOuts.unshift({...dataRoutine})
+        }
+        
+        await updateUser({
+            variables:{
+                input:{
+                    id:me.id,
+                    last_workouts:JSON.stringify([...lastWorkOuts])
+                }
+            },
+            refetchQueries:[{GET_USER, variables:{
+                token:token
+            }}]
+        })
+
         await updateRoutine({
             variables:{
                 input:{
@@ -200,8 +233,6 @@ const GoRoutine = ({routine}) => {
         })
         }
     }
-    console.log(state.dataFormCreate)
-
 
     const getDataRoutine = async (e,nameEx,objEx) => {
 
@@ -491,9 +522,11 @@ const GoRoutine = ({routine}) => {
                                     key={serie.idSerie}
                                     className={classControl(exercise.typeEx) + ` serie ${serie.need ? "need" : "false"} ${serie.checked ? "checked" : "unchecked"}`}
                                     >
-                                        <IoMdClose
-                                        onClick={() => deleteSeries(serie,exercise)}
-                                        />
+                                        <Container className={'delete-button'}>
+                                            <IoMdClose
+                                            onClick={() => deleteSeries(serie,exercise)}
+                                            />
+                                        </Container>
                                         <Text text={serie.lastMoment}/>
                                         <>
                                             {exercise.typeEx === 'Peso adicional' || exercise.typeEx === 'Peso asistido' ?

@@ -6,9 +6,13 @@ import { Main } from "./generals/Main";
 import { Section } from "./generals/Section";
 import { Routine } from "./Routine";
 
+import { ImHome,ImProfile } from "react-icons/im"
+import {IoDocumentTextSharp} from "react-icons/io5"
 import {GiHamburgerMenu} from "react-icons/gi"
-import {RiDeleteBin2Fill} from "react-icons/ri"
+import {RiDeleteBin2Fill,RiFoldersFill} from "react-icons/ri"
 import {MdDarkMode,MdLightMode,MdClose} from "react-icons/md"
+import {BsFillDoorOpenFill} from "react-icons/bs"
+import {AiOutlineSearch} from "react-icons/ai"
 
 
 import '../styles/Dashboard.scss'
@@ -25,6 +29,8 @@ import { useMutation } from "@apollo/client";
 import { DELETE_ROUTINE } from "../data/mutations";
 import { GET_ROUTINES_AND_USER_BY_TOKEN } from "../data/query";
 import { Modal } from "./Modal/Modal";
+import { ButtonIcon } from "./ButtonIcon";
+import { InputSearch } from "./InputSearch";
 
 const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
     const navigate = useNavigate()
@@ -36,8 +42,10 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
     [error,setError] = useState(null),
     [stateNav,updateStateNav] = useState('none'),
     [modalDelete,updateModalDelete] = useState({ boolean:false, item:{id:null,name:null}}),
-    [deleteRoutine] = useMutation(DELETE_ROUTINE)
+    [view , updateView ] = useState('home'),
+    [deleteRoutine] = useMutation(DELETE_ROUTINE);
     
+    const listEmpty = [];
 
     const {
         routines,
@@ -78,6 +86,8 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
 
     }
 
+    console.log(me)
+
     if(token){
         return(
             <Main 
@@ -88,11 +98,14 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                     :
                     {background:'white'}
             } 
-            className={`main-dashboard ${darkMode && "darkMode"}`}>
+            className={`main-dashboard ${darkMode && "darkMode"}`}
+            >
                 {loadingData && 
                     <Loading/>
                 }
-                <nav className="section-nav-dashboard">
+                {!loadingData &&
+                    <>
+                    <nav className="section-nav-dashboard">
                     <Container className={'pic-nav'}>      
                     </Container>
                     <GiHamburgerMenu
@@ -114,12 +127,44 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                                 onClick={() => updateStateNav('unactived')}
                                 />
                             </Container>
-                            <Button
-                            className={'button-menu'}
+                            <ButtonIcon
+                            icon={<ImHome/>}
+                            onClick={() => {
+                                updateStateNav('unactived')
+                                updateView('home')
+                            }}
+                            classNameContainer={'button-menu home'}
+                            textButton={'Inicio'}
+                            />
+                            <ButtonIcon
+                            icon={<IoDocumentTextSharp/>}
+                            onClick={() => {
+                                updateStateNav('unactived')
+                                updateView('routines')
+                            }}
+                            classNameContainer={'button-menu'}
+                            textButton={'Rutinas'}
+                            />
+                            <ButtonIcon
+                            icon={<RiFoldersFill/>}
+                            onClick={() => {
+                                updateStateNav('unactived')
+                                updateView('folders')
+                            }}
+                            classNameContainer={'button-menu'}
+                            textButton={'Carpetas'}
+                            />
+                            <ButtonIcon
+                            icon={<ImProfile/>}
+                            onClick={() => {
+                                updateStateNav('unactived')
+                            }}
+                            classNameContainer={'button-menu'}
                             textButton={'Mi perfil'}
                             />
-                            <Button
-                            className={'button-menu'}
+                            <ButtonIcon
+                            icon={<BsFillDoorOpenFill/>}
+                            classNameContainer={'button-menu'}
                             textButton={'Cerrar sesion'}
                             onClick={() => closeSesion()}
                             />
@@ -142,77 +187,175 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                             </Container>
                     </Container>
                 </nav>
-                <Section className="section-user-dashboard">
-                    <h2>¡Hola {me.first_name}!</h2>
-                    <Text
-                    text={'¿Que entrenaras hoy?'}
-                    />
-                </Section>
-                <Section className='section-add-routine'>
-                    <Title onClick={() => navigate('/create-routine')} buttonText={'Nuevo'}>Tus rutinas</Title>
-                </Section>
-                <ListApi
-                    className={`section-list-routines 
-                    ${darkMode && "darkMode"}`}
-                    error={error}
-                    loading={loading}
-                    data={routines}
-                    onError={() => <Text text={'Ooops hay un error...'}/>}
-                    onLoading={() => <Text text={'Cargando...'}/>}
-                    onEmpty={() => <Text style={
-                        {width:'100%',
-                        placeSelf: "center",
-                        textAlign: 'center', 
-                        opacity:'40%'
-                        }} 
-                        text={'Crea tu primera rutina 🏋️'} />}
-                        render={ routine => (
+                {
+                    view === 'home'&&
+                    <Section
+                    className={'home'}>
+                        <Container className="container-user-dashboard">
+                            <h2>¡Hola {me.first_name}!</h2>
+                            <Text
+                            text={'¿Que entrenaras hoy?'}
+                            />
+                        </Container>
+                        <Container
+                        className={'header-last-workouts'}
+                        >
+                            <Text
+                            text={'Tus ultimos entrenamientos:'}
+                            />
+                        </Container>
+                        <ListApi className={'list-last-routines'}
+                        error={error}
+                        loading={loading}
+                        data={me.last_workouts === undefined ? [] : JSON.parse(me.last_workouts)}
+                        onError={() => <Text text={'Ooops hay un error...'}/>}
+                        onLoading={() => <Text text={'Cargando...'}/>}
+                        onEmpty={() => 
+                            <Container
+                            style={{
+                                height:"100%",
+                                display:"flex"
+                            }}>
+                                <Text style={
+                                {width:'100%',
+                                placeSelf: "center",
+                                textAlign: 'center', 
+                                opacity:'40%'
+                                }} 
+                                text={'No has utilizado ninguna rutina 🏋️'} />
+                            </Container>
+                        }
+                        render={routine =>
                             <Routine
-                            key={routine.id}
-                            >
-                                <Container
-                                className={`routine-container
-                                ${darkMode && "darkMode"}`}>
-                                    <Container className={"routine-container-header"}>
-                                    <Text text={routine.nameRoutine}/>
-                                    <RiDeleteBin2Fill
-                                    onClick={() => updateModalDelete({boolean:true,item:{id:routine.id,name:routine.nameRoutine}})}
-                                    fill="#e94560"
-                                    cursor={'pointer'}
-                                    />
-                                </Container>
-                                <Container className={'routine-container-stats'}>
-                                    <Text text={`Record 🎉: ${routine.timeRecord}`}/>
-                                    <Text text={`Veces realizadas: ${routine.dones}`} />
-                                </Container>
-                                <Container className={'routine-container-button'}>
-                                    <Button
-                                    onClick={() => {
-                                        navigate('/go-routine')
-                                        updateRoutineOnPlay({active:true, id:routine.id, routine:routine})
-                                    }}
-                                    textButton={'Empezar rutina'}
-                                    />
-                                </Container>
-
-                                </Container>
-                            </Routine>
-                        )}
+                                key={routine.id}
+                                >
+                                    <Container
+                                    className={`routine-container
+                                    ${darkMode && "darkMode"}`}>
+                                        <Container className={"routine-container-header"}>
+                                        <Text text={routine.nameRoutine}/>
+                                        </Container>
+                                        <Container className={'routine-container-stats'}>
+                                            <Text text={`Record 🎉: ${routine.timeRecord}`}/>
+                                            <Text text={`Veces realizadas: ${routine.dones}`} />
+                                        </Container>
+                                        <Container className={'routine-container-button'}>
+                                            <Button
+                                            onClick={() => {
+                                                navigate('/go-routine')
+                                                updateRoutineOnPlay({active:true, id:routine.id, routine:routine})
+                                            }}
+                                            textButton={'Empezar rutina'}
+                                            />
+                                        </Container>
+                                    </Container>
+                                </Routine>
+                        }
                         />
-                <Section className='section-add-folder'>
-                    <Title buttonText={'Nuevo'}>Tus carpetas</Title>
-                </Section>
-                <Section className='section-folders'>
-                    
-                </Section>
-                <Section className={'footer'}>
-                </Section>
+                        <Container className={'footer'}>
+                        </Container>
+                    </Section>
+                }
+                {
+                    view === "routines" && 
+                    <Section
+                    className={'routines'}
+                    >
+                        <Section className='section-add-routine'>
+                            <Title onClick={() => navigate('/create-routine')} buttonText={'Nuevo'}>Rutinas</Title>
+                        </Section>
+                        <InputSearch
+                        classNameDiv={'div-search'}
+                        classNameSpan={'design-search'}
+                        textSearch={'Buscar rutina...'}
+                        />
+                        <ListApi
+                        className={`section-list-routines 
+                        ${darkMode && "darkMode"}`}
+                        error={error}
+                        loading={loading}
+                        data={routines}
+                        onError={() => <Text text={'Ooops hay un error...'}/>}
+                        onLoading={() => <Text text={'Cargando...'}/>}
+                        onEmpty={() => 
+                        
+                            <Container
+                            style={{width:"100%",
+                            height:"100%",
+                            display:"flex"
+                            }}>
+                                <Text style={
+                                {width:'100%',
+                                alignSelf: "center",
+                                textAlign: 'center', 
+                                opacity:'40%'
+                                }} 
+                                text={'Crea tu primera rutina 🏋️'} />
+                            </Container>
+                        }
+                            render={ routine => (
+                                <Routine
+                                key={routine.id}
+                                >
+                                    <Container
+                                    className={`routine-container
+                                    ${darkMode && "darkMode"}`}>
+                                        <Container className={"routine-container-header"}>
+                                        <Text text={routine.nameRoutine}/>
+                                        <ButtonIcon
+                                        classNameContainer={'delete-button'}
+                                        textButton={'Eliminar'}
+                                        onClick={() => updateModalDelete({boolean:true,item:{id:routine.id,name:routine.nameRoutine}})}
+                                        icon={<RiDeleteBin2Fill/>}
+                                        />
+                                    </Container>
+                                    <Container className={'routine-container-stats'}>
+                                        <Text text={`Record 🎉: ${routine.timeRecord}`}/>
+                                        <Text text={`Veces realizadas: ${routine.dones}`} />
+                                    </Container>
+                                    <Container className={'routine-container-button'}>
+                                        <Button
+                                        onClick={() => {
+                                            navigate('/go-routine')
+                                            updateRoutineOnPlay({active:true, id:routine.id, routine:routine})
+                                        }}
+                                        textButton={'Empezar rutina'}
+                                        />
+                                    </Container>
+
+                                    </Container>
+                                </Routine>
+                            )}
+                            />
+                    </Section>
+                }
+                {
+                    view === "folders" && 
+                    <Section
+                    className={'folders'}
+                    >
+                        <Section className='section-add-folder'>
+                        <Title buttonText={'Nuevo'}>Tus carpetas</Title>
+                        </Section>
+                        <InputSearch
+                        classNameDiv={'div-search'}
+                        classNameSpan={'design-search'}
+                        textSearch={'Buscar rutina...'}
+                        />
+                        <Section className='list-folders'>
+                            
+                        </Section>
+                    </Section>
+                }
                 { modalDelete.boolean && 
                     <Modal>
                         <Container className={'back delete'}/>
                         <Container className={'modal-delete'}>
                             <Container className={'container-text'}>
                                 <Text text={'¿Estas seguro de eliminar la siguiente rutina?'}/>
+                            </Container>
+                            <Container className={'warning-text'}>
+                                <Text text={'Se perdera todas tus estadisticas relacionadas a estas rutinas.'}/>
                             </Container>
                             <Container className={'routine-delete'}>
                                 <Text 
@@ -232,6 +375,9 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                             </Container>
                         </Container>
                     </Modal>
+                }
+                    </>
+
                 }
             </Main>
         )

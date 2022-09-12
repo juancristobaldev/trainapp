@@ -7,13 +7,16 @@ import { Dashboard } from "./components/Dashboard";
 import { CreateRoutine } from "./components/Create/CreateRoutine";
 import { GoRoutine } from "./components/GoRoutine";
 
+import {GET_USER} from "./data/query"
 
-function App() {
+
+const App = () => {
+  
   const cookies = new Cookies();
   const [darkMode,updateDarkMode] = useState(false),
-  [routineOnPlay,updateRoutineOnPlay] = useState({active:false,id:null})
-  const token = cookies.get('session-token')
-  
+  [routineOnPlay,updateRoutineOnPlay] = useState({active:false,id:null});
+  const token = cookies.get('session-token');
+
   return (
     <Router>
       <Routes>{
