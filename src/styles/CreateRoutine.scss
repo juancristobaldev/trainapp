@@ -12,10 +12,8 @@
 }
 
 .main-create-routine {
-  box-shadow: 1px 1px 6px rgba($color: #000000, $alpha: 0.25);
   border-top-left-radius: 0.25rem;
   border-top-right-radius: 0.25rem;
-  margin: 0px 2.5vw;
   @include mixins.dgrid(75vh 7.5vh 10vh, none, normal, normal);
   .form-create-routine {
     @include mixins.dgrid(12.5vh 1fr 7.5vh, none, normal, normal);
@@ -27,9 +25,8 @@
     .input-name-routine {
       @include mixins.dflex(center, center, column);
       input {
-        @include mixins.input-default();
         width: 90%;
-        height: 55%;
+        height: 40px;
         border: 1px solid silver;
         border-radius: 0.2rem;
         text-align: center;

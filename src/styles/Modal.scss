@@ -25,13 +25,18 @@
     }
   }
   .modal-exercises-search {
-    @include mixins.dflex(center, center, row);
-    input {
-      width: 100%;
-      height: 60%;
-      margin: 0.5rem 1rem;
-      @include mixins.input-default();
-      padding: 0 0.5rem;
+    @include mixins.input-search();
+    place-self: center;
+    width: calc(100% - 2rem);
+    height: 40px;
+    margin: 0 1rem;
+    span {
+      height: 100%;
+      input {
+        width: 100%;
+        margin: 0.5rem 1rem;
+        padding: 0 0.5rem;
+      }
     }
   }
   .modal-exercises-list {

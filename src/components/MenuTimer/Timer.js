@@ -82,7 +82,7 @@ function Timer({time}){
             <Container className={'timer-count'}>
                 <h2>{timer[0]}{timer[1]}:{timer[3]}{timer[4]}</h2>  
                 {finishTime && 
-                <audio id="audio" src="/TrainingApp.m4a"></audio>
+                <audio id="audio" src="/TrainingApp.mp3"></audio>
                 }
             </Container>
             <Container className="timer-buttons">

@@ -27,8 +27,6 @@
 }
 .main-goroutine {
   @include mixins.dgrid(75vh 7.5vh 10vh, none, normal, normal);
-  margin: 0px 2.5vw;
-  box-shadow: 1px 1px 6px rgba($color: #000000, $alpha: 0.25);
   border-top-left-radius: 0.25rem;
   border-top-right-radius: 0.25rem;
   .form-goroutine {

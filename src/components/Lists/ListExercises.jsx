@@ -6,6 +6,7 @@ import CheckBox from "../Checkbox";
 import { Button } from "../generals/Button";
 import { Container } from "../generals/Container";
 import { Text } from "../generals/Text";
+import { InputSearch } from "../InputSearch";
 import { ListApi } from "./ListApi";
 
 
@@ -39,9 +40,11 @@ const ListExercises = ({token,objectState}) => {
                     />
                 </Container>
             </Container>
-            <Container className={'modal-exercises-search'}>
-                <input onChange={e => setState({...state, searchValue:e.target.value})} type={'text'} placeholder='Buscar ejercicios'/>
-            </Container>
+            <InputSearch
+            classNameDiv={'modal-exercises-search'}
+            textSearch={'Buscar ejercicios...'}
+            onChange={e => setState({...state, searchValue:e.target.value})}
+            />
             <ListApi 
             className={'modal-exercises-list'}
             error={error}

@@ -43,6 +43,10 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
     [stateNav,updateStateNav] = useState('none'),
     [modalDelete,updateModalDelete] = useState({ boolean:false, item:{id:null,name:null}}),
     [view , updateView ] = useState('home'),
+    [searchContents,updateSearchContents] = useState({
+        routines:[],
+        folders:[]
+    }),
     [deleteRoutine] = useMutation(DELETE_ROUTINE);
     
     const listEmpty = [];
@@ -340,7 +344,7 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                         <InputSearch
                         classNameDiv={'div-search'}
                         classNameSpan={'design-search'}
-                        textSearch={'Buscar rutina...'}
+                        textSearch={'Buscar carpeta...'}
                         />
                         <Section className='list-folders'>
                             

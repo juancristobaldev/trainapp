@@ -1,8 +1,6 @@
-import React, { useState } from "react";
-import {AiOutlineSearch} from "react-icons/ai"
-import { Container } from "./generals/Container";
+import { useEffect } from "react";
 
-const InputSearch = ({textSearch, onChange ,classNameDiv, classNameSpan, data ,item, updateContent}) => {
+const useSearch = (data,state,item) => {
 
     const searchExercise = () => {
         if(data){
@@ -27,18 +25,7 @@ const InputSearch = ({textSearch, onChange ,classNameDiv, classNameSpan, data ,i
         }
     }
 
-    return ( 
-        <Container className={classNameDiv}>
-            <span className={classNameSpan}>
-                <input
-                type={"text"}
-                onChange={onChange}
-                placeholder={textSearch}
-                />
-                <AiOutlineSearch/>
-            </span>
-        </Container>
-    )
+    useEffect(() => {
+        searchExercise()
+    },[state])
 }
-
-export { InputSearch }

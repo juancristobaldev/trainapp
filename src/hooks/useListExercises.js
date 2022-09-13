@@ -7,34 +7,12 @@ const useListExercises = ( token , listObject ) => {
 
     const {state,updateState} = listObject
     const [listExercisesSelect,setListExercisesSelect] = useState([]);
-    const [listOriginal,setListOriginal] = useState([])
 
     const { data,error } = useQuery(GET_EXERCISES_BY_TOKEN, {
         variables:{
             token:token
         }
     })
-
-    const searchExercise = () => {
-        if(data){
-            let newData = [...JSON.parse(JSON.stringify(data.getExercisesByToken))];
-
-            if(!state.searchValue.length >= 1){
-                setListExercisesSelect(newData)
-            }
-            else{
-                let newList = []
-                newData.forEach(exercise => {
-                    const nameEx = exercise.nameEx.toLowerCase(),
-                    searchExercise = state.searchValue.toLowerCase()
-                    if(nameEx.includes(searchExercise)){
-                        newList.push(exercise)
-                    }
-                })
-                setListExercisesSelect(newList)
-            }
-        }
-    }
 
     const getExercises = async () => {
         if(data){
@@ -99,11 +77,9 @@ const useListExercises = ( token , listObject ) => {
 
     useEffect(() =>{
         getExercises()
-        searchExercise()
-    },[data,state])
+    },[data])
 
     return {
-        listOriginal,
         error,
         listExercisesSelect,
         deleteExerciseOfList,
