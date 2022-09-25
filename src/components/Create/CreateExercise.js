@@ -50,7 +50,7 @@ const CreateExercise = ({token,objectState}) => {
                         className={'name-input-create'}
                         label="Nombre ejercicio:"
                         typeControl="input"
-                        name="nameEx"
+                        name="name"
                         type="text"
                         onChange={handleChange}
                         />

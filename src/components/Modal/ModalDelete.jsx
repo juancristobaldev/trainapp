@@ -35,8 +35,8 @@ const ModalDelete = ({token,objectState,exercise}) => {
                 <Container className={'list-exercises-delete'}>
                     {state.modalDelete.items.map(item =>
                         <Text 
-                        key={item.nameEx}
-                        text={item.nameEx} 
+                        key={item.name}
+                        text={item.name} 
                         style={{ color:'red'}}
                         />
                     )}

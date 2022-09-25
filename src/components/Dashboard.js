@@ -14,7 +14,6 @@ import {MdDarkMode,MdLightMode,MdClose} from "react-icons/md"
 import {BsFillDoorOpenFill} from "react-icons/bs"
 import {AiOutlineSearch} from "react-icons/ai"
 
-
 import '../styles/Dashboard.scss'
 
 import { Title } from "./Title";
@@ -26,11 +25,13 @@ import { DataContext } from "../context/DataProvider";
 import { Loading } from "./Loading";
 
 import { useMutation } from "@apollo/client";
-import { DELETE_ROUTINE } from "../data/mutations";
-import { GET_ROUTINES_AND_USER_BY_TOKEN } from "../data/query";
+import { DELETE_ROUTINE, UPDATE_USER } from "../data/mutations";
+import { GET_ROUTINES_AND_USER_BY_TOKEN, GET_USER } from "../data/query";
 import { Modal } from "./Modal/Modal";
 import { ButtonIcon } from "./ButtonIcon";
 import { InputSearch } from "./InputSearch";
+import { ContainerSearch } from "./ContainerSearch";
+import { AddItem } from "./AddItem";
 
 const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
     const navigate = useNavigate()
@@ -43,13 +44,15 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
     [stateNav,updateStateNav] = useState('none'),
     [modalDelete,updateModalDelete] = useState({ boolean:false, item:{id:null,name:null}}),
     [view , updateView ] = useState('home'),
-    [searchContents,updateSearchContents] = useState({
-        routines:[],
-        folders:[]
+    [searchValues,updateSearchValues] = useState({
+        routines:'',
+        folders:''
     }),
-    [deleteRoutine] = useMutation(DELETE_ROUTINE);
-    
-    const listEmpty = [];
+    [ widthScreen,updateWidthScreen ] = useState(window.innerWidth),
+    [deleteRoutine] = useMutation(DELETE_ROUTINE),
+    [updateUser] = useMutation(UPDATE_USER)
+
+    console.log(widthScreen)
 
     const {
         routines,
@@ -58,17 +61,48 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
     } = useContext(DataContext)
 
     const {darkMode,updateDarkMode} = viewMode
-    
+
+    const searchSomething = (e) => {
+        updateSearchValues({ ...searchValues, [e.target.name]:e.target.value })
+    }
+
     const closeSesion = async () => {
         await cookies.remove('session-token')
         window.location.reload()
     }
+
+    const windowWidthChange = () => {
+        updateWidthScreen(window.innerWidth);
+    };
+    
+      window.addEventListener('resize', () => {
+        windowWidthChange();
+      });
 
     const deleteRoutineDB = async (id) => {
         const inputVariables = {
             token:token,
             id:id
         }
+
+        let lastWorkOuts = [];
+        if(me.last_workouts !== undefined){
+            lastWorkOuts = JSON.parse(me.last_workouts)
+            const index = lastWorkOuts.findIndex(item => item.id === inputVariables.id)
+            if(index >= 0) lastWorkOuts.splice(index,1) 
+        }
+
+        await updateUser({
+            variables:{
+                input:{
+                    id:me.id,
+                    last_workouts:JSON.stringify([...lastWorkOuts])
+                }
+            },
+            refetchQueries:[{GET_USER, variables:{
+                token:token
+            }}]
+        })
 
         await deleteRoutine({
             variables:{
@@ -90,8 +124,6 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
 
     }
 
-    console.log(me)
-
     if(token){
         return(
             <Main 
@@ -102,26 +134,33 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                     :
                     {background:'white'}
             } 
-            className={`main-dashboard ${darkMode && "darkMode"}`}
+            className={`main-dashboard ${darkMode && "darkMode"} ${widthScreen > 650 && "grid-web"}`}
             >
-                {loadingData && 
-                    <Loading/>
-                }
-                {!loadingData &&
-                    <>
-                    <nav className="section-nav-dashboard">
-                    <Container className={'pic-nav'}>      
+            {loadingData && 
+                <Loading/>
+            }
+            {!loadingData && 
+            <>
+                <nav className={`section-nav-dashboard ${widthScreen > 650 && "nav-big-screen"}`}>
+                    <Container className={'pic-nav'}>  
                     </Container>
-                    <GiHamburgerMenu
-                    cursor={'pointer'}
-                    onClick={() => updateStateNav('actived')}
-                    />
-                    <Container className={`menu 
-                    ${stateNav === 'none' && ''} 
-                    ${stateNav === 'actived' && 'active'}
-                    ${stateNav === 'unactived' && 'unactived'}
+                    <h3 className={`view ${widthScreen > 650 && "web"}`}>{view === "home" ? 'Inicio' : view === "routines" ? 'Tus rutinas' 
+                        : view === "folders" ? "Tus carpetas" : "Mi perfil"}</h3>
+                    {
+                        widthScreen < 650 && 
+                        <GiHamburgerMenu
+                        cursor={'pointer'}
+                        onClick={() => updateStateNav('actived')}
+                        />
+                    }
+                </nav>
+                <Container className={` menu ${ (widthScreen > 650) ? 'active web' :
+                        stateNav === 'none' ? '' : stateNav === 'actived' ? 'active' :  'unactived' 
+                        }
                     `}>
-                            <Container className={'header-menu'}>
+                            {
+                                widthScreen < 650 &&
+                                <Container className={'header-menu'}>
                                 <Text
                                 text={'Menu'}
                                 />
@@ -130,14 +169,15 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                                 cursor={'pointer'}
                                 onClick={() => updateStateNav('unactived')}
                                 />
-                            </Container>
+                                </Container>
+                            }
                             <ButtonIcon
                             icon={<ImHome/>}
                             onClick={() => {
                                 updateStateNav('unactived')
                                 updateView('home')
                             }}
-                            classNameContainer={'button-menu home'}
+                            classNameContainer={`button-menu home ${view === "home" && true}`}
                             textButton={'Inicio'}
                             />
                             <ButtonIcon
@@ -146,7 +186,7 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                                 updateStateNav('unactived')
                                 updateView('routines')
                             }}
-                            classNameContainer={'button-menu'}
+                            classNameContainer={`button-menu ${view === "routines" && true}`}
                             textButton={'Rutinas'}
                             />
                             <ButtonIcon
@@ -155,7 +195,7 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                                 updateStateNav('unactived')
                                 updateView('folders')
                             }}
-                            classNameContainer={'button-menu'}
+                            classNameContainer={`button-menu ${view === "folders" && true}`}
                             textButton={'Carpetas'}
                             />
                             <ButtonIcon
@@ -163,12 +203,12 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                             onClick={() => {
                                 updateStateNav('unactived')
                             }}
-                            classNameContainer={'button-menu'}
+                            classNameContainer={`button-menu ${view === "profile" && true}`}
                             textButton={'Mi perfil'}
                             />
                             <ButtonIcon
                             icon={<BsFillDoorOpenFill/>}
-                            classNameContainer={'button-menu'}
+                            classNameContainer={`button-menu`}
                             textButton={'Cerrar sesion'}
                             onClick={() => closeSesion()}
                             />
@@ -190,9 +230,8 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                                 />
                             </Container>
                     </Container>
-                </nav>
                 {
-                    view === 'home'&&
+                    view === 'home' &&
                     <Section
                     className={'home'}>
                         <Container className="container-user-dashboard">
@@ -208,7 +247,8 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                             text={'Tus ultimos entrenamientos:'}
                             />
                         </Container>
-                        <ListApi className={'list-last-routines'}
+                        <ListApi 
+                        className={`list-last-routines ${ widthScreen > 650 && 'web'}`}
                         error={error}
                         loading={loading}
                         data={me.last_workouts === undefined ? [] : JSON.parse(me.last_workouts)}
@@ -231,87 +271,13 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                         }
                         render={routine =>
                             <Routine
-                                key={routine.id}
-                                >
-                                    <Container
-                                    className={`routine-container
-                                    ${darkMode && "darkMode"}`}>
-                                        <Container className={"routine-container-header"}>
-                                        <Text text={routine.nameRoutine}/>
-                                        </Container>
-                                        <Container className={'routine-container-stats'}>
-                                            <Text text={`Record 🎉: ${routine.timeRecord}`}/>
-                                            <Text text={`Veces realizadas: ${routine.dones}`} />
-                                        </Container>
-                                        <Container className={'routine-container-button'}>
-                                            <Button
-                                            onClick={() => {
-                                                navigate('/go-routine')
-                                                updateRoutineOnPlay({active:true, id:routine.id, routine:routine})
-                                            }}
-                                            textButton={'Empezar rutina'}
-                                            />
-                                        </Container>
-                                    </Container>
-                                </Routine>
-                        }
-                        />
-                        <Container className={'footer'}>
-                        </Container>
-                    </Section>
-                }
-                {
-                    view === "routines" && 
-                    <Section
-                    className={'routines'}
-                    >
-                        <Section className='section-add-routine'>
-                            <Title onClick={() => navigate('/create-routine')} buttonText={'Nuevo'}>Rutinas</Title>
-                        </Section>
-                        <InputSearch
-                        classNameDiv={'div-search'}
-                        classNameSpan={'design-search'}
-                        textSearch={'Buscar rutina...'}
-                        />
-                        <ListApi
-                        className={`section-list-routines 
-                        ${darkMode && "darkMode"}`}
-                        error={error}
-                        loading={loading}
-                        data={routines}
-                        onError={() => <Text text={'Ooops hay un error...'}/>}
-                        onLoading={() => <Text text={'Cargando...'}/>}
-                        onEmpty={() => 
-                        
-                            <Container
-                            style={{width:"100%",
-                            height:"100%",
-                            display:"flex"
-                            }}>
-                                <Text style={
-                                {width:'100%',
-                                alignSelf: "center",
-                                textAlign: 'center', 
-                                opacity:'40%'
-                                }} 
-                                text={'Crea tu primera rutina 🏋️'} />
-                            </Container>
-                        }
-                            render={ routine => (
-                                <Routine
-                                key={routine.id}
-                                >
-                                    <Container
-                                    className={`routine-container
-                                    ${darkMode && "darkMode"}`}>
-                                        <Container className={"routine-container-header"}>
-                                        <Text text={routine.nameRoutine}/>
-                                        <ButtonIcon
-                                        classNameContainer={'delete-button'}
-                                        textButton={'Eliminar'}
-                                        onClick={() => updateModalDelete({boolean:true,item:{id:routine.id,name:routine.nameRoutine}})}
-                                        icon={<RiDeleteBin2Fill/>}
-                                        />
+                            key={routine.id}
+                            >
+                                <Container
+                                className={`routine-container
+                                ${darkMode && "darkMode"}`}>
+                                    <Container className={"routine-container-header"}>
+                                        <Text text={routine.name}/>
                                     </Container>
                                     <Container className={'routine-container-stats'}>
                                         <Text text={`Record 🎉: ${routine.timeRecord}`}/>
@@ -326,11 +292,89 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                                         textButton={'Empezar rutina'}
                                         />
                                     </Container>
-
+                                </Container>
+                            </Routine>
+                        }
+                        />
+                        <Container className={'footer'}>
+                        </Container>
+                    </Section>
+                }
+                {
+                    view === "routines" && 
+                    <Section
+                    className={'routines'}
+                    >
+                        <ContainerSearch
+                        searchValues={searchValues}
+                        data={routines}
+                        name={'routines'}
+                        classContainer={'container-search'}
+                        classDiv={'div-search'}
+                        classSpan={'design-search'}
+                        classList={`section-list-routines ${darkMode && "darkMode"}`}
+                        textSearch={'Buscar rutina...'}
+                        onChange={ e => searchSomething(e)}
+                        onError={() => 
+                            <Container className={'container-center'}>
+                                <Text text={'Ooops hay un error...'}/>
+                            </Container>
+                        }
+                        onLoading={() => 
+                            <Container className={'container-center'}>
+                                <Text text={'Cargando...'}/>
+                            </Container>
+                        }
+                        onEmptySearch={() => 
+                            <Container className={'container-center'}>
+                                <Text text={`No existen busquedas relacionadas a "${searchValues.routines}"`}/>
+                            </Container>
+                        }
+                        onEmpty={() => 
+                            <Container className={'container-center'}>
+                                <Text text={'Crea tu primera rutina 🏋️'} />
+                            </Container>
+                        }
+                        render={ routine => (
+                            <Routine
+                            key={routine.id}
+                            >
+                                <Container
+                                className={`routine-container
+                                ${darkMode && "darkMode"}`}>
+                                    <Container className={"routine-container-header"}>
+                                    <Text text={routine.name}/>
+                                    <ButtonIcon
+                                    classNameContainer={`delete-button ${ viewMode === true && "darkmode"}`}
+                                    textButton={'Eliminar'}
+                                    onClick={() => updateModalDelete({boolean:true,item:{id:routine.id,name:routine.nameRoutine}})}
+                                    icon={<RiDeleteBin2Fill/>}
+                                    />
                                     </Container>
-                                </Routine>
-                            )}
+                                    <Container className={'routine-container-stats'}>
+                                        <Text text={`Tiempo record 🎉: ${routine.timeRecord}`}/>
+                                        <Text text={`Veces realizadas: ${routine.dones}`} />
+                                    </Container>
+                                    <Container className={'routine-container-button'}>
+                                        <Button
+                                        onClick={() => {
+                                            navigate('/go-routine')
+                                            updateRoutineOnPlay({active:true, id:routine.id, routine:routine})
+                                        }}
+                                        textButton={'Empezar rutina'}
+                                        />
+                                    </Container>
+                                </Container>
+                            </Routine>
+                        )}
+                        >
+                            <AddItem
+                            text={'Crear rutina nueva'}
+                            darkMode={darkMode}
+                            widthScreen={widthScreen}
+                            onClick={() => navigate('/create-routine')}
                             />
+                        </ContainerSearch>
                     </Section>
                 }
                 {
@@ -338,9 +382,6 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                     <Section
                     className={'folders'}
                     >
-                        <Section className='section-add-folder'>
-                        <Title buttonText={'Nuevo'}>Tus carpetas</Title>
-                        </Section>
                         <InputSearch
                         classNameDiv={'div-search'}
                         classNameSpan={'design-search'}

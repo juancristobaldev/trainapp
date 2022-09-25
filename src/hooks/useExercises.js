@@ -11,7 +11,7 @@ const useExercises = (token,objectList,state) => {
     const [ dataFormCreateExercise, setDataFormCreateExercise ] = useState(
         {
             token:token,
-            nameEx:'',
+            name:'',
             typeEx:'Peso adicional',
             muscleEx:'Espalda',
             seriesEx:JSON.stringify([])
@@ -41,7 +41,7 @@ const useExercises = (token,objectList,state) => {
                         variables:{
                             input:{
                                 token:token,
-                                nameEx:item.nameEx
+                                name:item.name
                             }
                         },
                         refetchQueries:[{query:GET_EXERCISES_BY_TOKEN,variables:{
@@ -85,8 +85,8 @@ const useExercises = (token,objectList,state) => {
 
         const arrayFusion = [...list, ...stateValue.listOnCreate]
  
-        if(dataFormCreateExercise.nameEx.length === 0) newErrors.name = 'Debes ingresar un nombre para tu ejercicio.'
-        const index = arrayFusion.findIndex(item => item.nameEx === dataFormCreateExercise.nameEx)
+        if(dataFormCreateExercise.name.length === 0) newErrors.name = 'Debes ingresar un nombre para tu ejercicio.'
+        const index = arrayFusion.findIndex(item => item.name === dataFormCreateExercise.name)
         if(index >= 0) newErrors.alreadyExist = 'Ya creaste un ejercicio con este nombre.'
 
         const arrErrors = Object.values(newErrors)
@@ -110,7 +110,7 @@ const useExercises = (token,objectList,state) => {
 
                 if(stateValue.listOnCreate.length > 0){
                     stateValue.listOnCreate.forEach( item => {
-                        const index = filt.findIndex(filt => filt.nameEx === item.nameEx)
+                        const index = filt.findIndex(filt => filt.name === item.name)
                         filt.splice(index,1)
                     })
                 }

@@ -66,13 +66,13 @@ const ListExercises = ({token,objectState}) => {
             }
             render={exercise => (
                 <Container 
-                key={exercise.nameEx}
+                key={exercise.name}
                 className={`exercise-container ${exercise.select ?'onSelect' : 'offSelect' }`}
-                onClick={() => selectOfTheList(exercise.nameEx)}
+                onClick={() => selectOfTheList(exercise.name)}
                 >
                     <Text
-                    text={exercise.nameEx}
-                    key={exercise.nameEx}
+                    text={exercise.name}
+                    key={exercise.name}
                     />
                     <CheckBox
                     select={exercise.select}

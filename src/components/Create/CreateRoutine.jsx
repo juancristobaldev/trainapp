@@ -7,15 +7,11 @@ import { Text } from "../generals/Text";
 import { Modal } from "../Modal/Modal";
 import { List } from "../Lists/List";
 import { FormControl } from "../Form/FormControl";
-import { getErrorsForm } from "../functions/getFormsError";
 import { Exercise } from "../Exercise";
 import { Button } from "../generals/Button";
 import { useListExercises } from "../../hooks/useListExercises";
-import { useExercises } from "../../hooks/useExercises";
 import { useSeries } from "../../hooks/useSeries";
 import { IoMdClose } from "react-icons/io";
-import { GrClose } from "react-icons/gr";
-import { Serie } from "../Serie";
 import {HiLockClosed} from "react-icons/hi"
 
 import '../../styles/ListSeries.scss'
@@ -48,7 +44,7 @@ const CreateRoutine =  ( ) => {
         errors:{},
         dataFormCreate:{
             token:token,
-            nameRoutine:'',
+            name:'',
             exercises:[],
             timeRecord:'indefinido',
             dones:0
@@ -74,7 +70,7 @@ const CreateRoutine =  ( ) => {
         const newData = {...state.dataFormCreate};
         const newList = [...state.listOnCreate]
 
-        if(name !== 'nameRoutine'){
+        if(name !== 'name'){
             const {nameInput,idList,serie} = objEx
             await newList.forEach(item => {
                 if(item.idList === idList){
@@ -89,16 +85,16 @@ const CreateRoutine =  ( ) => {
     }
 
 
-    const handleSubmit = async (e,confirmation) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const objError = {}
 
-        const {exercises,nameRoutine} = state.dataFormCreate
+        const {exercises,name} = state.dataFormCreate
 
-       if(exercises.length === 0) objError.exercises = 'Debes agregar al menos un ejercicio.'
-       if(nameRoutine.length === 0) objError.nameRoutine = 'Debes escribir un nombre para tu rutina.'
+        if(exercises.length === 0) objError.exercises = 'Debes agregar al menos un ejercicio.'
+        if(name.length === 0) objError.name = 'Debes escribir un nombre para tu rutina.'
 
-       const errorsForm = Object.values(objError)
+        const errorsForm = Object.values(objError)
 
         if(errorsForm.length === 0){
 
@@ -120,7 +116,6 @@ const CreateRoutine =  ( ) => {
             })
 
             redirect('/')
-
         }else{ 
             setState({...state, modalErrors:{error:true,errors:errorsForm}, errors:objError})
         }
@@ -145,11 +140,11 @@ const CreateRoutine =  ( ) => {
             onSubmit={handleSubmit}
             textSubmit='Crear rutina'>
                 <FormControl
-                error={[state.errors.nameRoutine]}
+                error={[state.errors.name]}
                 typeControl={'input'}
                 className={'input-name-routine'}
                 type="text"
-                name={'nameRoutine'}
+                name={'name'}
                 placeholder="Nombre de la rutina"
                 onChange={getDataRoutine}
                 />
@@ -192,7 +187,7 @@ const CreateRoutine =  ( ) => {
                                             <InputSerie
                                                 className={'input-type'}
                                                 style={{width:"35%"}}
-                                                name={exercise.nameEx}
+                                                name={exercise.name}
                                                 idList={exercise.idList}
                                                 type="number"
                                                 objEx={{nameInput:'other',idList:exercise.idList,serie:serie.idSerie}}
@@ -201,7 +196,7 @@ const CreateRoutine =  ( ) => {
                                             <InputSerie
                                                 className={'input-reps'}
                                                 style={{width:"35%"}}
-                                                name={exercise.nameEx}
+                                                name={exercise.name}
                                                 objEx={{nameInput:'reps',idList:exercise.idList,serie:serie.idSerie}}
                                                 onChange={getDataRoutine}
                                                 type="number"
@@ -212,7 +207,7 @@ const CreateRoutine =  ( ) => {
                                             <InputSerie
                                             className={'input-duracion'}
                                             className='inputSerie'
-                                            name={exercise.nameEx}
+                                            name={exercise.name}
                                             idList={exercise.idList}
                                             objEx={{nameInput:'time',idList:exercise.idList,serie:serie.idSerie}}
                                             onChange={getDataRoutine}
@@ -223,7 +218,7 @@ const CreateRoutine =  ( ) => {
                                             <InputSerie
                                             className={'input-reps'}
                                             className='inputSerie'
-                                            name={exercise.nameEx}
+                                            name={exercise.name}
                                             idList={exercise.idList}
                                             objEx={{nameInput:'reps',idList:exercise.idList,serie:serie.idSerie}}
                                             onChange={getDataRoutine}

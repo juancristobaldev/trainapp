@@ -1,5 +1,8 @@
 @use "src/styles/shared/mixins.scss";
 @import "src/styles/shared/variables.scss";
+.close-button {
+  @include mixins.x-button();
+}
 
 .header-goroutine {
   height: 7.5vh;

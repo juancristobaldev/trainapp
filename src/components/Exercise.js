@@ -11,7 +11,7 @@ const Exercise = ({children,item,deleteExerciseOfList}) => {
     return(
         <Container
         className={'exercise'}
-        key={item.nameEx}>
+        key={item.name}>
             <Container 
             className={'exercise-header'}
             onClick={() => {
@@ -26,7 +26,7 @@ const Exercise = ({children,item,deleteExerciseOfList}) => {
             }}>
                 <Text
                 className={'exercise-name'}
-                text={item.nameEx}/>
+                text={item.name}/>
                 <Text 
                 className={'exercise-type'}
                 text={item.typeEx}/>

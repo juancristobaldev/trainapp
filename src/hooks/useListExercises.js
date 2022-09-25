@@ -14,6 +14,26 @@ const useListExercises = ( token , listObject ) => {
         }
     })
 
+    const searchExercise = () => {
+        if(data){
+            let newData = [...JSON.parse(JSON.stringify(data.getExercisesByToken))];
+            if(!state.searchValue.length >= 1){
+                setListExercisesSelect(newData)
+            }
+            else{
+                let newList = []
+                newData.forEach(exercise => {
+                    const nameEx = exercise.nameEx.toLowerCase(),
+                    searchExercise = state.searchValue.toLowerCase()
+                    if(nameEx.includes(searchExercise)){
+                        newList.push(exercise)
+                    }
+                })
+                setListExercisesSelect(newList)
+            }
+        }
+    }
+
     const getExercises = async () => {
         if(data){
             let dataBack = [...JSON.parse(JSON.stringify(data.getExercisesByToken))];
@@ -29,7 +49,7 @@ const useListExercises = ( token , listObject ) => {
         const newList = [...listExercisesSelect];
 
         newList.forEach(item => {
-            if(item.nameEx === name){
+            if(item.name === name){
                 if(item.select) item.select = false
                 else item.select = true
             } 
@@ -77,7 +97,8 @@ const useListExercises = ( token , listObject ) => {
 
     useEffect(() =>{
         getExercises()
-    },[data])
+        searchExercise()
+    },[data,state])
 
     return {
         error,

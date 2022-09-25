@@ -73,7 +73,7 @@ const GoRoutine = ({routine}) => {
         },
         dataFormCreate:{
             id:routine.routine.id,
-            nameRoutine:routine.routine.nameRoutine,
+            name:routine.routine.name,
             exercises:[],
             timeRecord:routine.routine.timeRecord,
             dones:routine.routine.dones + 1
@@ -190,7 +190,7 @@ const GoRoutine = ({routine}) => {
         let lastWorkOuts = []
         if(me.last_workouts !== undefined){
             lastWorkOuts = JSON.parse(me.last_workouts);
-            const index = lastWorkOuts.findIndex(item => item.nameRoutine === dataRoutine.nameRoutine)
+            const index = lastWorkOuts.findIndex(item => item.name === dataRoutine.name)
             let someRoutine;
             if(index >= 0) {
                 someRoutine = lastWorkOuts[index]
@@ -234,7 +234,7 @@ const GoRoutine = ({routine}) => {
         }
     }
 
-    const getDataRoutine = async (e,nameEx,objEx) => {
+    const getDataRoutine = async (e,name,objEx) => {
 
         const newData = {...state.dataFormCreate};
         const newList = [...state.listOnCreate]
@@ -329,15 +329,17 @@ const GoRoutine = ({routine}) => {
                     <Container className={`modal-timer ${state.timer.secondPlane ? "second-plane" : "undefined"}`}>
                         <Container className={'header-timer'}>
                             <Text text="Temporizador"/>
-                            <GrClose
-                            cursor={'pointer'}
-                            onClick={
-                                state.timer.time === false ? 
-                                () => updateState({...state, timer:{...state.timer,modalTimer:false,time:''}}) 
-                                : 
-                                () => updateState({...state, timer:{...state.timer, secondPlane: !state.timer.secondPlane}})}
-                                style={state.timer.secondPlane ? {display:"none"} : {display:"block"}} 
-                                />
+                            <Container className={'close-button'}>
+                                <IoMdClose
+                                cursor={'pointer'}
+                                onClick={
+                                    state.timer.time === false ? 
+                                    () => updateState({...state, timer:{...state.timer,modalTimer:false,time:''}}) 
+                                    : 
+                                    () => updateState({...state, timer:{...state.timer, secondPlane: !state.timer.secondPlane}})}
+                                    style={state.timer.secondPlane ? {display:"none"} : {display:"block"}} 
+                                    />
+                            </Container>
                         </Container>
                         <List
                         className={'list-timer-select'}
@@ -367,10 +369,11 @@ const GoRoutine = ({routine}) => {
                     <Create className={`modal-timer ${state.timer.secondPlane ? "second-plane" : "undefined"}`}>
                         <Container className={'header-timer'}>
                             <Text text="Temporizador"/>
-                            <MdOutlineKeyboardReturn
-                            onClick={() => updateState({...state,timer:{...state.timer, type:'select', clock:{minutes:'',seconds:''},errors:{error:false,errors:[]}}})}
-                            cursor={'pointer'}
-                            />
+                            <Container className={'close-button'}>
+                                <MdOutlineKeyboardReturn
+                                onClick={() => updateState({...state,timer:{...state.timer, type:'select', clock:{minutes:'',seconds:''},errors:{error:false,errors:[]}}})}
+                                />
+                            </Container>
                         </Container>
                         <Container className={'create-timer'}>
                             {state.timer.errors.error && 
@@ -425,10 +428,12 @@ const GoRoutine = ({routine}) => {
                     className={'header-timer'}
                     >
                         <Text text={'Temporizador'}/>
-                        <MdOutlineKeyboardReturn
-                            cursor={'pointer'}
-                            onClick={() => updateState({...state,timer:{...state.timer, type:'select', time:''}})}
+                        <Container className={'close-button'}>
+                            <MdOutlineKeyboardReturn
+                                cursor={'pointer'}
+                                onClick={() => updateState({...state,timer:{...state.timer, type:'select', time:''}})}
                             />
+                        </Container>
                     </Container>
                     <Timer
                         time={state.timer.time}
@@ -476,7 +481,7 @@ const GoRoutine = ({routine}) => {
             onSubmit={(e) => handleSubmit(e)}
             >
                 <Container className={'stats-goroutine'}>
-                    <h2>{state.dataRoutine.nameRoutine}</h2>
+                    <h2>{state.dataRoutine.name}</h2>
                     <Text
                     text={`Mejor tiempo 🎉: ${state.dataRoutine.timeRecord}`}
                     />
@@ -534,7 +539,7 @@ const GoRoutine = ({routine}) => {
                                                 <InputSerie
                                                     className={'input-type'}
                                                     style={{width:"35%"}}
-                                                    name={exercise.nameEx}
+                                                    name={exercise.name}
                                                     type="number"
                                                     objEx={{nameInput:'other',idList:exercise.idList,serie:serie.idSerie}}
                                                     onChange={getDataRoutine}                                        
@@ -543,7 +548,7 @@ const GoRoutine = ({routine}) => {
                                                     className={'input-reps'}
                                                     idList={exercise.idList}
                                                     style={{width:"35%"}}
-                                                    name={exercise.nameEx}
+                                                    name={exercise.name}
                                                     objEx={{nameInput:'reps',idList:exercise.idList,serie:serie.idSerie}}
                                                     onChange={getDataRoutine}
                                                     type="number"
@@ -554,7 +559,7 @@ const GoRoutine = ({routine}) => {
                                                 <InputSerie
                                                 className='inputSerie'
                                                 idList={exercise.idList}
-                                                name={exercise.nameEx}
+                                                name={exercise.name}
                                                 objEx={{nameInput:'time',idList:exercise.idList,serie:serie.idSerie}}
                                                 onChange={getDataRoutine}
                                                 style={{width:"50%"}}
@@ -565,7 +570,7 @@ const GoRoutine = ({routine}) => {
                                                 className={'input-reps'}
                                                 idList={exercise.idList}
                                                 className='inputSerie'
-                                                name={exercise.nameEx}
+                                                name={exercise.name}
                                                 objEx={{nameInput:'reps',idList:exercise.idList,serie:serie.idSerie}}
                                                 onChange={getDataRoutine}
                                                 style={{width:"35%"}}
