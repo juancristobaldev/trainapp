@@ -22,7 +22,8 @@ const ContainerSearch = (
         onLoading,
         onEmpty,
         render,
-        children
+        children,
+        button
     }
     ) => {
 
@@ -56,6 +57,7 @@ const ContainerSearch = (
                 classNameDiv={classDiv}
                 onChange={onChange}
                 name={name}
+                button={button}
                 /> 
                 <ListApi
                 children={children}

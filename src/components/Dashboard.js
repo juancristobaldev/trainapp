@@ -12,11 +12,9 @@ import {GiHamburgerMenu} from "react-icons/gi"
 import {RiDeleteBin2Fill,RiFoldersFill} from "react-icons/ri"
 import {MdDarkMode,MdLightMode,MdClose} from "react-icons/md"
 import {BsFillDoorOpenFill} from "react-icons/bs"
-import {AiOutlineSearch} from "react-icons/ai"
 
 import '../styles/Dashboard.scss'
 
-import { Title } from "./Title";
 import { Button } from "./generals/Button";
 import { Text } from "./generals/Text";
 import { ListApi } from "./Lists/ListApi";
@@ -31,7 +29,6 @@ import { Modal } from "./Modal/Modal";
 import { ButtonIcon } from "./ButtonIcon";
 import { InputSearch } from "./InputSearch";
 import { ContainerSearch } from "./ContainerSearch";
-import { AddItem } from "./AddItem";
 
 const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
     const navigate = useNavigate()
@@ -57,6 +54,7 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
     const {
         routines,
         me,
+        folders,
         loadingData
     } = useContext(DataContext)
 
@@ -79,6 +77,7 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
         windowWidthChange();
       });
 
+    console.log(folders)
     const deleteRoutineDB = async (id) => {
         const inputVariables = {
             token:token,
@@ -309,6 +308,7 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                         searchValues={searchValues}
                         data={routines}
                         name={'routines'}
+                        button={{function:() => navigate('/create-routine'), text: '+ Crear', className: 'create-routine'}}
                         classContainer={'container-search'}
                         classDiv={'div-search'}
                         classSpan={'design-search'}
@@ -368,12 +368,6 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                             </Routine>
                         )}
                         >
-                            <AddItem
-                            text={'Crear rutina nueva'}
-                            darkMode={darkMode}
-                            widthScreen={widthScreen}
-                            onClick={() => navigate('/create-routine')}
-                            />
                         </ContainerSearch>
                     </Section>
                 }
@@ -382,14 +376,47 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                     <Section
                     className={'folders'}
                     >
-                        <InputSearch
-                        classNameDiv={'div-search'}
-                        classNameSpan={'design-search'}
-                        textSearch={'Buscar carpeta...'}
+                        <ContainerSearch
+                        searchValues={searchValues}
+                        data={folders}
+                        name={'folders'}
+                        button={{text:'+ Crear'}}
+                        classContainer={'container-search'}
+                        classDiv={'div-search'}
+                        classSpan={'design-search'}
+                        classList={`section-list-folders ${darkMode && "darkMode"}`}
+                        textSearch={'Buscar carpetas...'}
+                        onChange={ e => searchSomething(e)}
+                        onError={() => 
+                            <Container className={'container-center'}>
+                                <Text text={'Ooops hay un error...'}/>
+                            </Container>
+                        }
+                        onLoading={() => 
+                            <Container className={'container-center'}>
+                                <Text text={'Cargando...'}/>
+                            </Container>
+                        }
+                        onEmptySearch={() => 
+                            <Container className={'container-center'}>
+                                <Text text={`No existen busquedas con "${searchValues.folders}"`}/>
+                            </Container>
+                        }
+                        onEmpty={() => 
+                            <Container className={'container-center'}>
+                                <Text text={'Crea tu primera carpeta 🏋️'} />
+                            </Container>
+                        }
+                        render={ folder => (
+                            <Container>
+                                <Text
+                                text={folder.name}
+                                />
+                            </Container>
+                        )
+                        }
                         />
-                        <Section className='list-folders'>
-                            
-                        </Section>
+                    
                     </Section>
                 }
                 { modalDelete.boolean && 
