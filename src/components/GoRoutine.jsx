@@ -39,6 +39,7 @@ import { ProgressiveCount } from "./ProgressiveCount";
 import { GET_ROUTINES_AND_USER_BY_TOKEN, GET_ROUTINE_BY_ID, GET_USER } from "../data/query";
 import { UPDATE_ROUTINE,UPDATE_USER } from "../data/mutations";
 import { DataContext } from "../context/DataProvider";
+import { ModalAreUSure } from "./Modal/ModalAreUSure";
 
 const token = new Cookies().get('session-token')
 
@@ -654,33 +655,15 @@ const GoRoutine = ({routine}) => {
                 }
                 {
                     state.modalUncompletedRoutine === true && 
-                    <Modal>
-                        <Container className={'modal-uncompleted-routine'}>
-                            <Container className={'modal-emoji'}>
-                                <Text text={'🤔'}/>
-                            </Container>
-                            <Container className={'modal-text'}>
-                                <p>
-                                Algunos ejercicios estan incompletos... <br/> <strong>¿Deseas continuar?</strong>
-                                </p>
-                            </Container>
-                            <Container className={'modal-buttons'}>
-                                <Button 
-                                className={'button-continue'}
-                                textButton={'Continuar'}
-                                onClick={(e) => {
-                                    updateState({...state, modalUncompletedRoutine: false})
-                                    handleSubmit(e,true)
-                                }}
-                                />
-                                <Button 
-                                className={'button-cancel'}
-                                onClick={() => updateState({...state, modalUncompletedRoutine: false})}
-                                textButton={'Cancelar'}/>
-                            </Container>
-                        </Container>
-                        <Container className={'back uncompleted'}/>
-                    </Modal>
+                    
+                    <ModalAreUSure
+                    text={"Algunos ejercicios estan incompletos..."}
+                    acceptFunction={(e) => {
+                        updateState({...state, modalUncompletedRoutine: false})
+                        handleSubmit(e,true)
+                    }}
+                    cancelFunction={() => updateState({...state, modalUncompletedRoutine: false})}
+                    />
                 }
             </Modal>
         </>

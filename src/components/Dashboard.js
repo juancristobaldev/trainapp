@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import Cookies from "universal-cookie/es6";
 import { useNavigate, Navigate } from "react-router-dom";
 import { Container } from "./generals/Container";
@@ -25,10 +25,10 @@ import { Loading } from "./Loading";
 import { useMutation } from "@apollo/client";
 import { DELETE_ROUTINE, UPDATE_USER } from "../data/mutations";
 import { GET_ROUTINES_AND_USER_BY_TOKEN, GET_USER } from "../data/query";
-import { Modal } from "./Modal/Modal";
 import { ButtonIcon } from "./ButtonIcon";
-import { InputSearch } from "./InputSearch";
 import { ContainerSearch } from "./ContainerSearch";
+import { Folder } from "./Folder";
+import { ModalAreUSure } from "./Modal/ModalAreUSure";
 
 const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
     const navigate = useNavigate()
@@ -48,8 +48,6 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
     [ widthScreen,updateWidthScreen ] = useState(window.innerWidth),
     [deleteRoutine] = useMutation(DELETE_ROUTINE),
     [updateUser] = useMutation(UPDATE_USER)
-
-    console.log(widthScreen)
 
     const {
         routines,
@@ -77,7 +75,6 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
         windowWidthChange();
       });
 
-    console.log(folders)
     const deleteRoutineDB = async (id) => {
         const inputVariables = {
             token:token,
@@ -345,7 +342,7 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                                     <Container className={"routine-container-header"}>
                                     <Text text={routine.name}/>
                                     <ButtonIcon
-                                    classNameContainer={`delete-button ${ viewMode === true && "darkmode"}`}
+                                    classNameContainer={`delete-button-dashboard ${ viewMode === true && "darkmode"}`}
                                     textButton={'Eliminar'}
                                     onClick={() => updateModalDelete({boolean:true,item:{id:routine.id,name:routine.nameRoutine}})}
                                     icon={<RiDeleteBin2Fill/>}
@@ -408,11 +405,28 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                             </Container>
                         }
                         render={ folder => (
-                            <Container>
-                                <Text
-                                text={folder.name}
+                           <Folder
+                           routines={routines}
+                           key={folder.id}
+                           folder={folder}
+                           classNameFolder={"folder-container"}
+                           viewMode={viewMode}
+                           functionDelete={() => console.log('delete')}
+                           >
+                                <ListApi
+                                data={JSON.parse(folder.content)}
+                                className={'folder-list-routines'}
+                                loading={loading}
+                                onLoading={() => <Container className={'container-center'}><Text text={'Cargando...'}/></Container>}
+                                onError={() => <Container className={'container-center'}><Text text={'Oops hay un error...'}/></Container>}
+                                onEmpty={() => <Container className={'container-center'}><Text text={'No has agregado ninguna rutina...'}/></Container>}
+                                render={ routine => 
+                                    <Routine>
+                                        <h3>rutina</h3>
+                                    </Routine>
+                                }
                                 />
-                            </Container>
+                           </Folder>
                         )
                         }
                         />
@@ -420,35 +434,14 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                     </Section>
                 }
                 { modalDelete.boolean && 
-                    <Modal>
-                        <Container className={'back delete'}/>
-                        <Container className={'modal-delete'}>
-                            <Container className={'container-text'}>
-                                <Text text={'¿Estas seguro de eliminar la siguiente rutina?'}/>
-                            </Container>
-                            <Container className={'warning-text'}>
-                                <Text text={'Se perdera todas tus estadisticas relacionadas a estas rutinas.'}/>
-                            </Container>
-                            <Container className={'routine-delete'}>
-                                <Text 
-                                style={{color:"red", fontStyle:"italic"}}
-                                text={modalDelete.item.name}/>
-                            </Container>
-                            <Container className={'container-buttons'}>
-                                <Button
-                                className={'accept'}
-                                onClick={() => deleteRoutineDB(modalDelete.item.id)}
-                                textButton={'Aceptar'}
-                                />
-                                <Button
-                                onClick={() => updateModalDelete({boolean:false})}
-                                textButton={'Cancelar'}
-                                />
-                            </Container>
-                        </Container>
-                    </Modal>
+
+                    <ModalAreUSure
+                    text={"Si eliminas la rutina no podras recuperarla despues..."}
+                    acceptFunction={() => deleteRoutineDB(modalDelete.item.id)}
+                    cancelFunction={() => updateModalDelete({boolean:false})}
+                    />
                 }
-                    </>
+                </>
 
                 }
             </Main>

@@ -85,6 +85,9 @@
           .input-type {
             border: 1px silver solid;
           }
+          .delete-button {
+            @include mixins.x-button();
+          }
         }
 
         .serie.need {

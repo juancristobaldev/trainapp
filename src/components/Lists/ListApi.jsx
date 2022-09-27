@@ -1,7 +1,6 @@
 import React from "react";
 
 function ListApi(props) {
-  console.log(props.searchContents)
     return (
       <section className={props.className}>
         {props.error && props.onError()}
