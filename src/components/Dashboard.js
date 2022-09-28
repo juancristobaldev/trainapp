@@ -18,9 +18,11 @@ import '../styles/Dashboard.scss'
 import { Button } from "./generals/Button";
 import { Text } from "./generals/Text";
 import { ListApi } from "./Lists/ListApi";
-import { Switch } from "@mui/material";
+import { Checkbox, Switch } from "@mui/material";
 import { DataContext } from "../context/DataProvider";
 import { Loading } from "./Loading";
+
+import { Modal } from "./Modal/Modal";
 
 import { useMutation } from "@apollo/client";
 import { DELETE_ROUTINE, UPDATE_USER } from "../data/mutations";
@@ -29,6 +31,9 @@ import { ButtonIcon } from "./ButtonIcon";
 import { ContainerSearch } from "./ContainerSearch";
 import { Folder } from "./Folder";
 import { ModalAreUSure } from "./Modal/ModalAreUSure";
+import { ListArray } from "./Lists/ListArray";
+import CheckBox from "./Checkbox";
+import { ModalSelect } from "./Modal/ModalSelect";
 
 const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
     const navigate = useNavigate()
@@ -46,6 +51,7 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
         folders:''
     }),
     [ widthScreen,updateWidthScreen ] = useState(window.innerWidth),
+    [ modalCreateRoutine,updateModalCreateRoutine] = useState(false),
     [deleteRoutine] = useMutation(DELETE_ROUTINE),
     [updateUser] = useMutation(UPDATE_USER)
 
@@ -377,7 +383,7 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                         searchValues={searchValues}
                         data={folders}
                         name={'folders'}
-                        button={{text:'+ Crear'}}
+                        button={{text:'+ Crear',function:() => updateModalCreateRoutine(true)}}
                         classContainer={'container-search'}
                         classDiv={'div-search'}
                         classSpan={'design-search'}
@@ -441,6 +447,56 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                     cancelFunction={() => updateModalDelete({boolean:false})}
                     />
                 }
+                {modalCreateRoutine && 
+                    <ModalSelect
+                    title={'Carpeta nueva'}
+                    functionClose={() => updateModalCreateRoutine(false)}
+                    classNameHeader={'modal-add-routines-header'}
+                    classNameModal={'modal-add-routines'}
+                    textSelect
+                    list={
+                        <>
+                            <p 
+                            style={{'alignSelf':"center"}}
+                            className="text-select">
+                                Selecciona las rutinas que deseas agregar:
+                            </p>
+                            <ListArray
+                            className={'list-routines-folder'}
+                            data={routines}
+                            textOnError={"Hay un error..."}
+                            textOnEmpty={"Esta vacio..."}
+                            render={routine => 
+                            <Routine >
+                                <Container className={'container-routine-folder'}>
+                                    <Container className={'routine-header'}>
+                                        <Text text={routine.name}/>
+                                        <CheckBox/>
+                                    </Container>    
+                                    <Container className={'routine-stats'}>
+                                        <Text className={'text-record'} text={`Tiempo record 🎉: ${routine.timeRecord}`}/>
+                                        <Text className={'text-dones'} text={`Veces realizadas: ${routine.dones}`} />
+                                    </Container>
+                                </Container>
+                            </Routine>
+                            }
+                            />
+                        </>
+                        }
+                    childrenTop={
+
+                        <Container className={'name-folder'}>
+                            <label>Ingresa un nombre para tu carpeta:</label>
+                            <input type="text"/>
+                        </Container>
+                    }
+                    childrenBottom={
+                        <Container className={'button-add'}>
+                            <Button textButton={'Crear carpeta'}/>
+                        </Container>
+                    }
+                    />
+                } 
                 </>
 
                 }

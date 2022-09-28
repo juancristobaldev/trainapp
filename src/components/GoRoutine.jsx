@@ -658,10 +658,7 @@ const GoRoutine = ({routine}) => {
                     
                     <ModalAreUSure
                     text={"Algunos ejercicios estan incompletos..."}
-                    acceptFunction={(e) => {
-                        updateState({...state, modalUncompletedRoutine: false})
-                        handleSubmit(e,true)
-                    }}
+                    acceptFunction={event => handleSubmit(event,true)}
                     cancelFunction={() => updateState({...state, modalUncompletedRoutine: false})}
                     />
                 }

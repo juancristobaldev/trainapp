@@ -7,6 +7,7 @@ import { Button } from "../generals/Button";
 import { Container } from "../generals/Container";
 import { Text } from "../generals/Text";
 import { InputSearch } from "../InputSearch";
+import { ModalSelect } from "../Modal/ModalSelect";
 import { ListApi } from "./ListApi";
 
 
@@ -31,20 +32,20 @@ const ListExercises = ({token,objectState}) => {
     const totalSelectItem = listExercisesSelect.filter(item => item.select === true).length
 
     return(
-        <Container className={'modal-exercises'}>
-            <Container className={'modal-exercises-header'}>
-                <Text text={'Lista de ejercicios'}/>
-                <Container className={'close-button'}>
-                    <IoMdClose
-                    onClick={() => setState({...state, modal:false})}
-                    />
-                </Container>
-            </Container>
+        <ModalSelect
+        classNameModal={'modal-exercises'}
+        classNameHeader={'modal-exercises-header'}
+        classNameButtonClose={'close-button'}
+        functionClose={() => setState({...state, modal:false})}
+        title={'Lista de ejercicios'}
+        childrenTop={
             <InputSearch
             classNameDiv={'modal-exercises-search'}
             textSearch={'Buscar ejercicios...'}
             onChange={e => setState({...state, searchValue:e.target.value})}
             />
+        }
+        list={
             <ListApi 
             className={'modal-exercises-list'}
             error={error}
@@ -80,7 +81,10 @@ const ListExercises = ({token,objectState}) => {
                 </Container>
             )}
             />
-                <Container className={'modal-exercises-actions'}>
+        }
+        childrenBottom={
+            <>
+            <Container className={'modal-exercises-actions'}>
                 {
                     totalSelectItem > 0 &&
                         <>
@@ -99,8 +103,8 @@ const ListExercises = ({token,objectState}) => {
                         />       
                         </>                    
                 }
-                </Container>
-                <Container
+            </Container>
+            <Container
                 className={'modal-exercises-create'}
                 >
                     <Button
@@ -116,7 +120,9 @@ const ListExercises = ({token,objectState}) => {
                     }}
                     />
                 </Container>
-            </Container>
+            </>
+        }
+        />
     )
 }
 

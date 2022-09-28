@@ -18,12 +18,12 @@ const ModalAreUSure = ({text,acceptFunction,cancelFunction}) => {
             </Container>
                 <Container className={'modal-buttons'}>
                 <Button 
-                onClick={() => acceptFunction()}
+                onClick={acceptFunction}
                 className={'button-continue'}
                 textButton={'Continuar'}
                 />
                 <Button 
-                onClick={() => cancelFunction()}
+                onClick={cancelFunction}
                 className={'button-cancel'}
                 textButton={'Cancelar'}/>
                 </Container>

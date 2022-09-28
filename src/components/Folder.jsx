@@ -6,9 +6,8 @@ import { Container } from "./generals/Container";
 import { Text } from "./generals/Text";
 import { Modal } from "./Modal/Modal";
 import { ModalAreUSure } from "./Modal/ModalAreUSure";
-import {ListApi} from "./Lists/ListApi"
-import { List } from "./Lists/List";
 import { ListArray } from "./Lists/ListArray";
+import { useFolderMenu } from "../hooks/useFolderMenu";
 
 import "../styles/Folder.scss"
 import { IoMdClose } from "react-icons/io";
@@ -18,7 +17,10 @@ import { Routine } from "./Routine";
 const Folder = ({routines,children,classNameFolder,folder,viewMode,functionDelete}) => {
     const [showRoutines,updateShowRoutines] = useState(false),
     [deleteFolder,updateDeleteFolder] = useState(false),
-    [modalCreateRoutine,updateModalCreateRoutine] = useState(false)
+    [modalCreateRoutine,updateModalCreateRoutine] = useState(false),
+    {listRoutines} = useFolderMenu(routines,folder)
+
+    console.log(folder)
     
     return (
         <>
@@ -81,8 +83,10 @@ const Folder = ({routines,children,classNameFolder,folder,viewMode,functionDelet
                     <label>Ingresa un nombre para tu rutina:</label>
                     <input type="text"/>
                 </Container>
-                <Text className={'text-select'} 
-                text={"Selecciona alguna rutina:"}/>
+                <Text 
+                className={'text-select'} 
+                text={"Selecciona alguna rutina:"}
+                />
                 <ListArray
                 className={'list-routines-folder'}
                 data={routines}
@@ -96,15 +100,15 @@ const Folder = ({routines,children,classNameFolder,folder,viewMode,functionDelet
                             <CheckBox/>
                         </Container>    
                         <Container className={'routine-stats'}>
-                            <Text text={`Tiempo record 🎉: ${routine.timeRecord}`}/>
-                            <Text text={`Veces realizadas: ${routine.dones}`} />
+                            <Text className={'text-record'} text={`Tiempo record 🎉: ${routine.timeRecord}`}/>
+                            <Text className={'text-dones'} text={`Veces realizadas: ${routine.dones}`} />
                         </Container>
                     </Container>
                 </Routine>
                 }
                 />
                 <Container className={'button-add'}>
-                    <Button textButton={'Agregar rutinas'} onClick={() => updateModalCreateRoutine(true)}/>
+                    <Button textButton={'Crear carpeta'} onClick={() => updateModalCreateRoutine(true)}/>
                 </Container>
             </Container>
         </Modal>   
