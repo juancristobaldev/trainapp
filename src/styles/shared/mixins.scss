@@ -41,9 +41,7 @@ $breakpoints: (
 }
 
 @mixin input-default() {
-  border: 0;
-  box-shadow: inset 1px 1px 2px rgba($color: #000000, $alpha: 0.25),
-    inset -1px -1px 2px rgba($color: #000000, $alpha: 0.05);
+  border: 1px solid silver;
   border-radius: 0.2rem;
   &:focus {
     background-color: white;

@@ -1,7 +1,7 @@
 @use "src/styles/shared/mixins.scss";
 @import "src/styles/shared/variables.scss";
 
-.modal-add-routines {
+.modal-select {
   border-radius: 0.25rem;
   position: absolute;
   top: 0;
@@ -13,8 +13,8 @@
   margin: 10vh 1rem;
   box-shadow: 1.5px 1.5px 8px rgba($color: #000000, $alpha: 0.1),
     1.5px 1.5px 8px rgba($color: #000000, $alpha: 0.1);
-  @include mixins.dgrid(12.5% 12.5% 1fr 15vh, 100%, normal, normal);
-  .modal-add-routines-header {
+  @include mixins.dgrid(12.5% 12.5% 1fr 7.5vh, 100%, normal, normal);
+  .modal-select-header {
     width: calc(100% - 2rem);
     margin: 0 1rem;
     @include mixins.dflex(space-between, center, row);
@@ -27,28 +27,18 @@
     }
   }
 
-  .name-folder {
-    padding: 0 1rem;
-    @include mixins.dflex(center, center, column);
-    input {
-      @include mixins.input-default();
-      width: 100%;
-      height: 40px;
-      padding: 0 1rem;
-    }
-    p {
-      align-self: stretch;
-      font-size: 0.75rem;
-      margin-top: 5px;
-      font-style: italic;
-    }
-  }
-  .text-select {
-    align-self: center;
+  .modal-select-search {
+    width: calc(100% - 2rem);
     margin: 0 1rem;
+    @include mixins.input-search();
+    display: flex;
+    span {
+      width: 100%;
+      align-self: center;
+    }
   }
 
-  .list-routines-folder {
+  .modal-select-list {
     overflow: auto;
     .container-routine-folder {
       height: 17.5vh;
@@ -59,6 +49,9 @@
         height: 40%;
         p {
           font-weight: 700;
+        }
+        .close-button {
+          @include mixins.x-button();
         }
       }
       .routine-stats {
@@ -73,21 +66,14 @@
     }
   }
 
-  .list-routines-folder.error {
-    .container-center {
-      opacity: 100%;
-      color: red;
-    }
-  }
-
   .buttons {
     width: 100%;
-    @include mixins.dgrid(repeat(2, 50%), 100%, normal, normal);
+    @include mixins.dflex(center, center, row);
     button {
       place-self: center;
       width: calc(100% - 2rem);
       height: 65%;
-      &.create {
+      &.add {
         @include mixins.button-primary(
           $color-primary,
           $color-primary-hover-button,
@@ -95,16 +81,6 @@
           white,
           0,
           0
-        );
-      }
-      &.add {
-        @include mixins.button-primary(
-          transparent,
-          $color-primary,
-          $color-primary,
-          white,
-          1px solid $color-primary,
-          1px solid $color-primary
         );
       }
     }

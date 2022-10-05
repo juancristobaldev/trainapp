@@ -16,13 +16,11 @@ import { Button } from "./generals/Button";
 import { InputSerie } from "./InputSerie";
 import { Exercise } from "./Exercise";
 import { IoMdClose } from "react-icons/io";
-import { useListExercises } from "../hooks/useListExercises";
 import { useSeries } from "../hooks/useSeries";
 import { Form } from "./Form/Form";
 import { Serie } from "./Serie";
 import { Modal } from "./Modal/Modal";
 import {MdOutlineKeyboardReturn} from "react-icons/md"
-import { GrClose } from "react-icons/gr";
 
 import '../styles/Exercises.scss'
 import '../styles/Timer.scss'
@@ -36,10 +34,11 @@ import { Create } from "./Create/Create";
 import { FaCheck } from "react-icons/fa";
 import { ProgressiveCount } from "./ProgressiveCount";
 
-import { GET_ROUTINES_AND_USER_BY_TOKEN, GET_ROUTINE_BY_ID, GET_USER } from "../data/query";
+import { GET_EXERCISES_BY_TOKEN, GET_ROUTINES_AND_USER_BY_TOKEN, GET_ROUTINE_BY_ID, GET_USER } from "../data/query";
 import { UPDATE_ROUTINE,UPDATE_USER } from "../data/mutations";
 import { DataContext } from "../context/DataProvider";
 import { ModalAreUSure } from "./Modal/ModalAreUSure";
+import { useList } from "../hooks/useList";
 
 const token = new Cookies().get('session-token')
 
@@ -59,7 +58,6 @@ const GoRoutine = ({routine}) => {
         modalDelete:{boolean:false,items:[]},
         modalCreate:false,
         modalUncompletedRoutine:false,
-        searchValue:'',
         timer:{
             errors:{error:false,errors:[]},
             secondPlane:false,
@@ -94,8 +92,8 @@ const GoRoutine = ({routine}) => {
     }
 
     const {
-        deleteExerciseOfList,
-    } = useListExercises (token,{state:state,updateState:updateState})
+        deleteItem,
+    } = useList ('exercises',{state:state,updateState:updateState},false,{ nameGql:"getExercisesByToken",gql:GET_EXERCISES_BY_TOKEN,variables:{ variables:{ token:token } } })
 
     const {
         addSerie,
@@ -507,7 +505,7 @@ const GoRoutine = ({routine}) => {
                     <Exercise 
                     key={exercise.idList}
                     item={exercise}
-                    deleteExerciseOfList={deleteExerciseOfList}
+                    deleteExerciseOfList={deleteItem}
                     >
                         <List
                         className='listSerie'

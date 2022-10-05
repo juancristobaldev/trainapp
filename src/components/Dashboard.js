@@ -29,19 +29,16 @@ import { DELETE_ROUTINE, UPDATE_USER } from "../data/mutations";
 import { GET_ROUTINES_AND_USER_BY_TOKEN, GET_USER } from "../data/query";
 import { ButtonIcon } from "./ButtonIcon";
 import { ContainerSearch } from "./ContainerSearch";
-import { Folder } from "./Folder";
+import { Folder } from "./Folders/Folder";
 import { ModalAreUSure } from "./Modal/ModalAreUSure";
-import { ListArray } from "./Lists/ListArray";
-import CheckBox from "./Checkbox";
-import { ModalSelect } from "./Modal/ModalSelect";
+import { CreateFolder } from "./Folders/CreateFolder";
+
 
 const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
     const navigate = useNavigate()
 
     const cookies = new Cookies();
-    const token = cookies.get('session-token');
-
-    const [loading,setLoading] = useState(false),
+    const token = cookies.get('session-token'),
     [error,setError] = useState(null),
     [stateNav,updateStateNav] = useState('none'),
     [modalDelete,updateModalDelete] = useState({ boolean:false, item:{id:null,name:null}}),
@@ -51,7 +48,7 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
         folders:''
     }),
     [ widthScreen,updateWidthScreen ] = useState(window.innerWidth),
-    [ modalCreateRoutine,updateModalCreateRoutine] = useState(false),
+    [ modalCreateFolder,updateModalCreateFolder] = useState(false),
     [deleteRoutine] = useMutation(DELETE_ROUTINE),
     [updateUser] = useMutation(UPDATE_USER)
 
@@ -141,7 +138,7 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
             {loadingData && 
                 <Loading/>
             }
-            {!loadingData && 
+            {!loadingData  && 
             <>
                 <nav className={`section-nav-dashboard ${widthScreen > 650 && "nav-big-screen"}`}>
                     <Container className={'pic-nav'}>  
@@ -252,7 +249,7 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                         <ListApi 
                         className={`list-last-routines ${ widthScreen > 650 && 'web'}`}
                         error={error}
-                        loading={loading}
+                        loading={loadingData}
                         data={me.last_workouts === undefined ? [] : JSON.parse(me.last_workouts)}
                         onError={() => <Text text={'Ooops hay un error...'}/>}
                         onLoading={() => <Text text={'Cargando...'}/>}
@@ -383,7 +380,7 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                         searchValues={searchValues}
                         data={folders}
                         name={'folders'}
-                        button={{text:'+ Crear',function:() => updateModalCreateRoutine(true)}}
+                        button={{text:'+ Crear',function:() => updateModalCreateFolder(true)}}
                         classContainer={'container-search'}
                         classDiv={'div-search'}
                         classSpan={'design-search'}
@@ -422,13 +419,16 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                                 <ListApi
                                 data={JSON.parse(folder.content)}
                                 className={'folder-list-routines'}
-                                loading={loading}
+                                loading={loadingData}
                                 onLoading={() => <Container className={'container-center'}><Text text={'Cargando...'}/></Container>}
                                 onError={() => <Container className={'container-center'}><Text text={'Oops hay un error...'}/></Container>}
                                 onEmpty={() => <Container className={'container-center'}><Text text={'No has agregado ninguna rutina...'}/></Container>}
                                 render={ routine => 
-                                    <Routine>
-                                        <h3>rutina</h3>
+                                    <Routine
+                                    key={routine.id}
+                                    >
+                                        <h3
+                                        >{routine.name}</h3>
                                     </Routine>
                                 }
                                 />
@@ -447,54 +447,12 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                     cancelFunction={() => updateModalDelete({boolean:false})}
                     />
                 }
-                {modalCreateRoutine && 
-                    <ModalSelect
-                    title={'Carpeta nueva'}
-                    functionClose={() => updateModalCreateRoutine(false)}
-                    classNameHeader={'modal-add-routines-header'}
-                    classNameModal={'modal-add-routines'}
-                    textSelect
-                    list={
-                        <>
-                            <p 
-                            style={{'alignSelf':"center"}}
-                            className="text-select">
-                                Selecciona las rutinas que deseas agregar:
-                            </p>
-                            <ListArray
-                            className={'list-routines-folder'}
-                            data={routines}
-                            textOnError={"Hay un error..."}
-                            textOnEmpty={"Esta vacio..."}
-                            render={routine => 
-                            <Routine >
-                                <Container className={'container-routine-folder'}>
-                                    <Container className={'routine-header'}>
-                                        <Text text={routine.name}/>
-                                        <CheckBox/>
-                                    </Container>    
-                                    <Container className={'routine-stats'}>
-                                        <Text className={'text-record'} text={`Tiempo record 🎉: ${routine.timeRecord}`}/>
-                                        <Text className={'text-dones'} text={`Veces realizadas: ${routine.dones}`} />
-                                    </Container>
-                                </Container>
-                            </Routine>
-                            }
-                            />
-                        </>
-                        }
-                    childrenTop={
+                {modalCreateFolder && 
 
-                        <Container className={'name-folder'}>
-                            <label>Ingresa un nombre para tu carpeta:</label>
-                            <input type="text"/>
-                        </Container>
-                    }
-                    childrenBottom={
-                        <Container className={'button-add'}>
-                            <Button textButton={'Crear carpeta'}/>
-                        </Container>
-                    }
+                    <CreateFolder
+                    token={token}
+                    routines={routines}
+                    closeFunction={() => updateModalCreateFolder(false)}
                     />
                 } 
                 </>

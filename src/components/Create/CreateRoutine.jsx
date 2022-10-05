@@ -9,7 +9,6 @@ import { List } from "../Lists/List";
 import { FormControl } from "../Form/FormControl";
 import { Exercise } from "../Exercise";
 import { Button } from "../generals/Button";
-import { useListExercises } from "../../hooks/useListExercises";
 import { useSeries } from "../../hooks/useSeries";
 import { IoMdClose } from "react-icons/io";
 import {HiLockClosed} from "react-icons/hi"
@@ -22,10 +21,11 @@ import Cookies from "universal-cookie/es6";
 import { InputSerie } from "../InputSerie";
 import { useMutation } from "@apollo/client";
 import { CREATE_ROUTINE } from "../../data/mutations";
-import { GET_ROUTINES_AND_USER_BY_TOKEN } from "../../data/query";
+import { GET_EXERCISES_BY_TOKEN, GET_ROUTINES_AND_USER_BY_TOKEN } from "../../data/query";
 import { ListExercises } from "../Lists/ListExercises";
 import { CreateExercise } from "./CreateExercise";
 import { ModalDelete } from "../Modal/ModalDelete";
+import { useList } from "../../hooks/useList";
 
 const token = new Cookies().get('session-token')
 
@@ -56,8 +56,8 @@ const CreateRoutine =  ( ) => {
     const redirect = useNavigate()
 
     const {
-        deleteExerciseOfList,
-    } = useListExercises (token,{state:state,updateState:setState},state.listOnCreate)
+        deleteItem,
+    } = useList ("exercises",{state:state,updateState:setState},false,{ nameGql:"getExercisesByToken",gql:GET_EXERCISES_BY_TOKEN,variables:{ variables:{ token:token } } })
 
     const {
         addSerie,
@@ -161,7 +161,7 @@ const CreateRoutine =  ( ) => {
                         <Exercise 
                         key={exercise.idList}
                         item={exercise}
-                        deleteExerciseOfList={deleteExerciseOfList}
+                        deleteExerciseOfList={deleteItem}
                         >
                             <List
                             className='listSerie'

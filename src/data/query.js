@@ -3,6 +3,7 @@ import { gql } from "@apollo/client";
 export const GET_EXERCISES_BY_TOKEN = gql`
 query getExercisesByToken($token:String!) {
     getExercisesByToken(token:$token){
+            id
             name
             typeEx
             muscleEx
@@ -64,10 +65,10 @@ export const GET_ROUTINES_FOLDERS_USER_BY_TOKEN = gql`
 `
 
 export const GET_ROUTINES_BY_TOKEN = gql`
-        query getRoutinesByToken {
-            getRoutinesByToken(token:String){
+        query getRoutinesByToken($token:String!){
+            getRoutinesByToken(token:$token){
             id
-            user
+            token
             name
             dones
             timeRecord

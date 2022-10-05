@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { Text } from "../generals/Text";
 
 const  FormControl = (
-    {autoComplete,type,name,children,placeholder,typeControl,label,onChange,className,error}
+    {autoComplete,value,type,name,children,placeholder,typeControl,label,onChange,className,error}
     ) => {
         console.log(error)
         let errorsItem;
@@ -34,6 +34,7 @@ const  FormControl = (
                         <input
                         autoComplete={autoComplete}
                         placeholder={placeholder}
+                        value={value}
                         className={`${errorsItem.length > 0 && 'error'}`}
                         name={name}
                         type={type}

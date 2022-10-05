@@ -71,3 +71,29 @@ export const UPDATE_ROUTINE = gql`
         }
     }
 `
+export const CREATE_FOLDER = gql`
+    mutation createFolder($input:CreateFolderInput!){
+        createFolder(input:$input){
+        errors
+        success
+        }
+    }
+`
+
+export const UPDATE_FOLDER = gql`
+    mutation deleteFolder($input:DeleteFolderInput!){
+        deleteFolder(input:$input){
+        errors
+        success
+        }
+    }  
+`
+
+export const DELETE_FOLDER = gql`
+    mutation deleteFolder($input:DeleteFolderInput!){
+        deleteFolder(input:$input){
+        errors
+        success
+        }
+    }  
+`

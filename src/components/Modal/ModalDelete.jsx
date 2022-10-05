@@ -1,6 +1,7 @@
 import React from "react";
+import { GET_EXERCISES_BY_TOKEN } from "../../data/query";
 import { useExercises } from "../../hooks/useExercises";
-import { useListExercises } from "../../hooks/useListExercises";
+import { useList } from "../../hooks/useList";
 import { Button } from "../generals/Button";
 import { Container } from "../generals/Container";
 import { Text } from "../generals/Text";
@@ -10,14 +11,14 @@ const ModalDelete = ({token,objectState,exercise}) => {
     const {state,setState} = objectState
 
     const {
-        listExercisesSelect,
-        setListExercisesSelect,
-    } = useListExercises (token,{state:state,updateState:setState},state.listOnCreate)
+        listForSelect,
+        updateListForSelect,
+    } = useList("exercises",{state:state,updateState:setState},false,{ nameGql:"getExercisesByToken",gql:GET_EXERCISES_BY_TOKEN,variables:{ variables:{ token:token } } })
 
 
     const {
         deleteSomeExercise
-    } = useExercises(token,{list:listExercisesSelect,updateList:setListExercisesSelect},{stateValue:state,setState:setState})
+    } = useExercises(token,{list:listForSelect,updateList:updateListForSelect},{stateValue:state,setState:setState})
 
 
     return (

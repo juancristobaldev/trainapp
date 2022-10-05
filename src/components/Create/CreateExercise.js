@@ -1,7 +1,8 @@
 import React from "react";
 import { IoMdClose } from "react-icons/io";
+import { GET_EXERCISES_BY_TOKEN } from "../../data/query";
 import { useExercises } from "../../hooks/useExercises";
-import { useListExercises } from "../../hooks/useListExercises";
+import { useList } from "../../hooks/useList";
 import { Form } from "../Form/Form";
 import { FormControl } from "../Form/FormControl";
 import { Options } from "../Form/Options";
@@ -17,15 +18,15 @@ const CreateExercise = ({token,objectState}) => {
     const {state,setState} = objectState
 
     const {
-        listExercisesSelect,
-        setListExercisesSelect,
-    } = useListExercises (token,{state:state,updateState:setState},state.listOnCreate)
+        listForSelect,
+        updateListForSelect,
+    } = useList ("exercises",{state:state,updateState:setState},false,{ nameGql:"getExercisesByToken",gql:GET_EXERCISES_BY_TOKEN,variables:{ variables:{ token:token } } })
 
     const {
         errors,
         handleChange,
         createNewExercise,
-    } = useExercises(token,{list:listExercisesSelect,updateList:setListExercisesSelect},{stateValue:state,setState:setState})
+    } = useExercises(token,{list:listForSelect,updateList:updateListForSelect},{stateValue:state,setState:setState})
     console.log(errors.alreadyExist)
     
     return (
