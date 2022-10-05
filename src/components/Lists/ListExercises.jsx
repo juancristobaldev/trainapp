@@ -42,15 +42,8 @@ const ListExercises = ({token,objectState}) => {
         classNameButtonClose={'close-button'}
         functionClose={() => setState({...state, modal:false})}
         title={'Lista de ejercicios'}
-        childrenTop={
-            <InputSearch
-            classNameDiv={'modal-exercises-search'}
-            textSearch={'Buscar ejercicios...'}
-            onChange={e => setState({...state, searchValue:e.target.value})}
-            />
-        }
         list={
-            /*
+            
             <ContainerSearch
             name={"exercises"}
             searchValues={searchValue}
@@ -59,17 +52,10 @@ const ListExercises = ({token,objectState}) => {
             loading={loading}
             error={error}
             classContainer={'container-search'}
-            classDiv={'modal-select-search'}
+            classDiv={'modal-exercises-search'}
             classNameSpan={'input-search'}
-            classList={`modal-select-list`}
-            textSearch={placeHolderSearch}
-            />*/
-            <ListApi 
-            className={'modal-exercises-list'}
-            error={error}
-            loading={loading}
-            data={listForSelect}
-            total={listForSelect.length}
+            classList={`modal-exercises-list`}
+            textSearch={'Buscar ejercicios...'}
             onError={() => 
                 <Container className={'error-container'}>
                     <Text 
@@ -77,6 +63,11 @@ const ListExercises = ({token,objectState}) => {
                 </Container>
             }
             onLoading={() => <Text text={'Cargando ejercicios'}/>}
+            onEmptySearch={() => 
+                <Container className={'container-center'}>
+                    <Text text={`No existen busquedas relacionadas a "${searchValue.exercises}"`}/>
+                </Container>
+            }
             onEmpty={() => 
                 <Container className={'empty-container'}>
                     <Text 
