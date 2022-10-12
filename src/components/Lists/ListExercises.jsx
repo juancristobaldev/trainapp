@@ -8,9 +8,8 @@ import { ContainerSearch } from "../ContainerSearch";
 import { Button } from "../generals/Button";
 import { Container } from "../generals/Container";
 import { Text } from "../generals/Text";
-import { InputSearch } from "../InputSearch";
 import { ModalSelect } from "../Modal/ModalSelect";
-import { ListApi } from "./ListApi";
+
 
 
 
@@ -27,7 +26,9 @@ const ListExercises = ({token,objectState}) => {
         listForSelect,
         selectOfTheList,
         addItem,
-    } = useList ("exercises",{state:{...state,searchValue:searchValue},updateState:setState},false,{ nameGql:"getExercisesByToken",gql:GET_EXERCISES_BY_TOKEN,variables:{ variables:{ token:token } } })
+    } = useList ("exercises",{state:{...state,searchValue:searchValue},updateState:setState},true,{ nameGql:"getExercisesByToken",gql:GET_EXERCISES_BY_TOKEN,variables:{variables:{ token:token }}})
+
+    console.log(listForSelect)
 
     const {
         deleteSomeExercise
@@ -108,9 +109,7 @@ const ListExercises = ({token,objectState}) => {
                         <Button 
                         className={'button-add'}
                         textButton={`Agregar (${totalSelectItem})`}
-                        onClick={ async () => {
-                            await addItem('exercise')
-                        } }
+                        onClick={ async () => addItem('exercise') }
                         />       
                         </>                    
                 }

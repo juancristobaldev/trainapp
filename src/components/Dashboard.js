@@ -11,7 +11,7 @@ import {IoDocumentTextSharp} from "react-icons/io5"
 import {GiHamburgerMenu} from "react-icons/gi"
 import {RiDeleteBin2Fill,RiFoldersFill} from "react-icons/ri"
 import {MdDarkMode,MdLightMode,MdClose} from "react-icons/md"
-import {BsFillDoorOpenFill} from "react-icons/bs"
+import {BsFillDoorOpenFill, BsThreeDots} from "react-icons/bs"
 
 import '../styles/Dashboard.scss'
 
@@ -115,10 +115,7 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
         }).then( ({data}) => {
             const { errors, success } = data.deleteRoutine
             if(errors) console.log(errors)
-            if(success){
-                console.log('Rutina eliminada con exito')
-                updateModalDelete({boolean:false,item:{name:null,id:null}})
-            }
+            if(success) updateModalDelete({boolean:false,item:{name:null,id:null}})
         })
 
     }
@@ -271,13 +268,12 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                         render={routine =>
                             <Routine
                             key={routine.id}
+                            routine={routine}
+                            popOver={false}
+                            classNameContainer={`routine-container
+                            ${darkMode && "darkMode"}`}
+                            classNameHeader={"routine-container-header"}
                             >
-                                <Container
-                                className={`routine-container
-                                ${darkMode && "darkMode"}`}>
-                                    <Container className={"routine-container-header"}>
-                                        <Text text={routine.name}/>
-                                    </Container>
                                     <Container className={'routine-container-stats'}>
                                         <Text text={`Record 🎉: ${routine.timeRecord}`}/>
                                         <Text text={`Veces realizadas: ${routine.dones}`} />
@@ -291,7 +287,6 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                                         textButton={'Empezar rutina'}
                                         />
                                     </Container>
-                                </Container>
                             </Routine>
                         }
                         />
@@ -337,33 +332,37 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                         }
                         render={ routine => (
                             <Routine
+                            routine={routine}
                             key={routine.id}
-                            >
-                                <Container
-                                className={`routine-container
-                                ${darkMode && "darkMode"}`}>
-                                    <Container className={"routine-container-header"}>
-                                    <Text text={routine.name}/>
-                                    <ButtonIcon
-                                    classNameContainer={`delete-button-dashboard ${ viewMode === true && "darkmode"}`}
-                                    textButton={'Eliminar'}
+                            popOver={true}
+                            classNameContainer={`routine-container
+                            ${darkMode && "darkMode"}`}
+                            classNameHeader={"routine-container-header"}
+                            childrenPopover={
+                                <>
+                                    <Text 
+                                    className={'optionMenu'}
+                                    text={'Editar'}/>
+                                    <Text 
+                                    className={'optionMenu'}
                                     onClick={() => updateModalDelete({boolean:true,item:{id:routine.id,name:routine.nameRoutine}})}
-                                    icon={<RiDeleteBin2Fill/>}
+                                    style={{color:"red"}} 
+                                    text={'Eliminar'}/>
+                                </>
+                            }
+                            >
+                                <Container className={'routine-container-stats'}>
+                                    <Text text={`Tiempo record 🎉: ${routine.timeRecord}`}/>
+                                    <Text text={`Veces realizadas: ${routine.dones}`} />
+                                </Container>
+                                <Container className={'routine-container-button'}>
+                                    <Button
+                                    onClick={() => {
+                                        navigate('/go-routine')
+                                        updateRoutineOnPlay({active:true, id:routine.id, routine:routine})
+                                    }}
+                                    textButton={'Empezar rutina'}
                                     />
-                                    </Container>
-                                    <Container className={'routine-container-stats'}>
-                                        <Text text={`Tiempo record 🎉: ${routine.timeRecord}`}/>
-                                        <Text text={`Veces realizadas: ${routine.dones}`} />
-                                    </Container>
-                                    <Container className={'routine-container-button'}>
-                                        <Button
-                                        onClick={() => {
-                                            navigate('/go-routine')
-                                            updateRoutineOnPlay({active:true, id:routine.id, routine:routine})
-                                        }}
-                                        textButton={'Empezar rutina'}
-                                        />
-                                    </Container>
                                 </Container>
                             </Routine>
                         )}
@@ -414,7 +413,6 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                            folder={folder}
                            classNameFolder={"folder-container"}
                            viewMode={viewMode}
-                           functionDelete={() => console.log('delete')}
                            >
                                 <ListApi
                                 data={JSON.parse(folder.content)}
@@ -426,9 +424,10 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                                 render={ routine => 
                                     <Routine
                                     key={routine.id}
+                                    routine={routine}
+                                    classNameContainer={'container-routine-on-folder'}
+                                    classNameHeader={'container-routine-on-folder-header'}
                                     >
-                                        <h3
-                                        >{routine.name}</h3>
                                     </Routine>
                                 }
                                 />

@@ -93,7 +93,7 @@ const GoRoutine = ({routine}) => {
 
     const {
         deleteItem,
-    } = useList ('exercises',{state:state,updateState:updateState},false,{ nameGql:"getExercisesByToken",gql:GET_EXERCISES_BY_TOKEN,variables:{ variables:{ token:token } } })
+    } = useList ('exercises',{state:state,updateState:updateState},true,{ nameGql:"getExercisesByToken",gql:GET_EXERCISES_BY_TOKEN,variables:{ variables:{ token:token } } })
 
     const {
         addSerie,
@@ -134,10 +134,9 @@ const GoRoutine = ({routine}) => {
         else {
             dataRoutine.exercises = newList
 
-            const timeNow = document.getElementById('progressive-count').innerHTML.substring(16,25)
-
-            if(dataRoutine.timeRecord !== 'indefinido'){   
-            
+            const timeNow = document.getElementById('progressive-count').innerHTML.substring(18,26)
+            console.log(timeNow)
+        if(dataRoutine.timeRecord !== 'indefinido'){   
             const timeRoutine = {
                 hour:parseInt(`${timeNow[0]}${timeNow[1]}`),
                 min:parseInt(`${timeNow[3]}${timeNow[4]}`),
@@ -157,27 +156,19 @@ const GoRoutine = ({routine}) => {
                 const minRoutine = parseInt(timeRoutine.min)
                 if(minRecord == minRoutine){
                     const segRoutine = parseInt(timeRoutine.seg)
-                    if(segRecord == segRoutine){
-                        dataRoutine.timeRecord = dataRoutine.timeRecord
-                    }else{
-                        if(segRecord > segRoutine){
-                            dataRoutine.timeRecord = `${timeRoutine.hour <= 9 ? `0${timeRoutine.hour}`:`${timeRoutine.hour}`}:${timeRoutine.min <= 9 ? `0${timeRoutine.min}` : timeRoutine.min }:${timeRoutine.seg <= 9 ? `0${timeRoutine.seg}` : timeRoutine.seg}`
-                        }else dataRoutine.timeRecord = dataRoutine.timeRecord;
+                    if(segRecord == segRoutine) dataRoutine.timeRecord = dataRoutine.timeRecord
+                    else{
+                        if(segRecord > segRoutine) dataRoutine.timeRecord = `${timeRoutine.hour <= 9 ? `0${timeRoutine.hour}`:`${timeRoutine.hour}`}:${timeRoutine.min <= 9 ? `0${timeRoutine.min}` : timeRoutine.min }:${timeRoutine.seg <= 9 ? `0${timeRoutine.seg}` : timeRoutine.seg}`  
+                        else dataRoutine.timeRecord = dataRoutine.timeRecord;
                     }
                 }else{
-                    if(minRecord > minRoutine){
-                        dataRoutine.timeRecord = `${timeRoutine.hour <= 9 ? `0${timeRoutine.hour}`:`${timeRoutine.hour}`}:${timeRoutine.min <= 9 ? `0${timeRoutine.min}` : timeRoutine.min }:${timeRoutine.seg <= 9 ? `0${timeRoutine.seg}` : timeRoutine.seg}`
-                    }else dataRoutine.timeRecord = dataRoutine.timeRecord;
+                    if(minRecord > minRoutine) dataRoutine.timeRecord = `${timeRoutine.hour <= 9 ? `0${timeRoutine.hour}`:`${timeRoutine.hour}`}:${timeRoutine.min <= 9 ? `0${timeRoutine.min}` : timeRoutine.min }:${timeRoutine.seg <= 9 ? `0${timeRoutine.seg}` : timeRoutine.seg}`
+                    else dataRoutine.timeRecord = dataRoutine.timeRecord;
                 }
-            }else{
-                if(hourRoutine < hourRecord){
-                    dataRoutine.timeRecord = `${timeRoutine.hour <= 9 ? `0${timeRoutine.hour}`:`${timeRoutine.hour}`}:${timeRoutine.min <= 9 ? `0${timeRoutine.min}` : timeRoutine.min }:${timeRoutine.seg <= 9 ? `0${timeRoutine.seg}` : timeRoutine.seg}`
-                }else dataRoutine.timeRecord = dataRoutine.timeRecord;
-            }
+            }else if(hourRoutine < hourRecord) dataRoutine.timeRecord = `${timeRoutine.hour <= 9 ? `0${timeRoutine.hour}`:`${timeRoutine.hour}`}:${timeRoutine.min <= 9 ? `0${timeRoutine.min}` : timeRoutine.min }:${timeRoutine.seg <= 9 ? `0${timeRoutine.seg}` : timeRoutine.seg}`
+            else dataRoutine.timeRecord = dataRoutine.timeRecord;
         }
-        else { 
-            dataRoutine.timeRecord = timeNow 
-        }
+        else dataRoutine.timeRecord = timeNow 
 
         await dataRoutine.exercises.forEach(exercise => {
             exercise.seriesEx.forEach(serie => {
@@ -189,7 +180,7 @@ const GoRoutine = ({routine}) => {
         let lastWorkOuts = []
         if(me.last_workouts !== undefined){
             lastWorkOuts = JSON.parse(me.last_workouts);
-            const index = lastWorkOuts.findIndex(item => item.name === dataRoutine.name)
+            const index = lastWorkOuts.findIndex(item => item.name === dataRoutine.name);
             let someRoutine;
             if(index >= 0) {
                 someRoutine = lastWorkOuts[index]
@@ -199,7 +190,9 @@ const GoRoutine = ({routine}) => {
             }
             lastWorkOuts.unshift({...dataRoutine})
         }
-        
+
+        console.log(dataRoutine)
+       
         await updateUser({
             variables:{
                 input:{
@@ -212,7 +205,7 @@ const GoRoutine = ({routine}) => {
             }}]
         })
 
-        await updateRoutine({
+       await updateRoutine({
             variables:{
                 input:{
                     ...dataRoutine,

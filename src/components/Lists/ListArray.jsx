@@ -6,7 +6,6 @@ const ListArray = (props) => {
 
     let arrErrors = false;
     if(props.errors !== undefined && props.errors[0] !== undefined) arrErrors = Object.values(props.errors)
-    console.log(props.errors)
     return (
     <Container className={`${props.className} ${arrErrors && 'error'}`}>
         {props.data === undefined && props.onError()}

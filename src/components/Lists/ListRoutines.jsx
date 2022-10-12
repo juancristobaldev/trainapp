@@ -67,27 +67,30 @@ const ListRoutines = ({titleList,type,placeHolderSearch,objHookList}) => {
                 }
                 onEmpty={() => 
                     <Container className={'container-center'}>
-                        <Text text={'Crea tu primera rutina 🏋️'} />
+                        <Text text={'Tu lista de rutinas esta vacia... 🏋️'} />
                     </Container>
                 }
                 render={
                     type === "routines" ?  
                     routine => 
                             <Routine
+                            routine={routine}
                             key={routine.id}
-                            >
-                                <Container className={'container-routine-folder'}>
-                                    <Container className={'routine-header'}>
+                            classNameContainer={'container-routine-folder'}
+                            classNameHeader={'routine-header'}
+                            header={
+                                <Container className={'routine-header'}>
                                         <Text text={routine.name}/>
                                         <CheckBox 
                                         select={routine.select}
                                         onClick={() => selectOfTheList(routine.id)}
                                         />
-                                    </Container>    
-                                    <Container className={'routine-stats'}>
+                                </Container> 
+                            }
+                            >
+                                <Container className={'routine-stats'}>
                                         <Text className={'text-record'} text={`Tiempo record 🎉: ${routine.timeRecord}`}/>
                                         <Text className={'text-dones'} text={`Veces realizadas: ${routine.dones}`} />
-                                    </Container>
                                 </Container>
                             </Routine>
                     :

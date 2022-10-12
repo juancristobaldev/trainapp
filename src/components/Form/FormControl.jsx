@@ -5,7 +5,6 @@ import { Text } from "../generals/Text";
 const  FormControl = (
     {autoComplete,value,type,name,children,placeholder,typeControl,label,onChange,className,error}
     ) => {
-        console.log(error)
         let errorsItem;
         if(error !== undefined){
          errorsItem = Object.values(error).filter(item => item !== undefined)

@@ -17,18 +17,21 @@ const CreateExercise = ({token,objectState}) => {
     
     const {state,setState} = objectState
 
+
     const {
         listForSelect,
+        refetchList,
         updateListForSelect,
-    } = useList ("exercises",{state:state,updateState:setState},false,{ nameGql:"getExercisesByToken",gql:GET_EXERCISES_BY_TOKEN,variables:{ variables:{ token:token } } })
+    } = useList ("exercises",{state:state,updateState:setState},true,{ nameGql:"getExercisesByToken",gql:GET_EXERCISES_BY_TOKEN,variables:{ variables:{ token:token } } })
 
     const {
         errors,
         handleChange,
         createNewExercise,
-    } = useExercises(token,{list:listForSelect,updateList:updateListForSelect},{stateValue:state,setState:setState})
-    console.log(errors.alreadyExist)
+    } = useExercises(token,{list:listForSelect,updateList:updateListForSelect},{stateValue:state,setState:setState},{ nameGql:"getExercisesByToken",gql:GET_EXERCISES_BY_TOKEN,variables:{variables:{ token:token }}})
     
+    console.log(listForSelect)
+
     return (
         <Create
                 className={'modal-create-exercise'}

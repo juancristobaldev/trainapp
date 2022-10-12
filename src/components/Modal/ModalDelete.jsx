@@ -10,6 +10,8 @@ const ModalDelete = ({token,objectState,exercise}) => {
 
     const {state,setState} = objectState
 
+    console.log(exercise)
+
     const {
         listForSelect,
         updateListForSelect,

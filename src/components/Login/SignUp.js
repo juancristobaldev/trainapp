@@ -31,7 +31,6 @@ const SingUp = () => {
         "pass": "",
         "passConfirm": ""
     })
-    console.log(dataFormRegister,dataFormRegisterTwo)
     const [errors,setErrors] = useState([])
     
     const handleChange = (e,state,setState) => {
@@ -58,10 +57,8 @@ const SingUp = () => {
             if(!pass) objectErrors.pass = 'Debes escribir una contraseña.';
             if(pass !== passConfirm || !pass) objectErrors.passConfirm = 'Las contraseñas deben ser iguales.';
         }
-        console.log(Object.values(objectErrors))
         if(Object.values(objectErrors).length === 0){
             const dataForm = {...dataFusion}
-            console.log(dataForm)
             delete dataForm.passConfirm
             if(stage === 'first'){
                 setForm('auth')
@@ -75,7 +72,6 @@ const SingUp = () => {
                 }).then( async ({data}) => {
                     const {errors,success} = data.createUser
                     if(errors.length){
-                        console.log(JSON.parse(errors))
                         setErrors(JSON.parse(errors))
                     }
                     console.log(success)

@@ -34,8 +34,6 @@ const CreateFolder = ({token,closeFunction}) => {
         modal:false
         })
 
-        console.log(state.dataFormCreate.content)
-
     const {dataFormCreate,modal} = state
 
     const handleChange = (e) => {
@@ -59,7 +57,6 @@ const CreateFolder = ({token,closeFunction}) => {
         if(arrErrors.length === 0){
             setLoading(true)
             const variables = {...dataFormCreate,content:JSON.stringify(dataFormCreate.content)}
-            console.log(variables)
             await createFolder({
                 variables:{
                     input:variables
@@ -97,22 +94,24 @@ const CreateFolder = ({token,closeFunction}) => {
                             className={'list-routines-folder'}
                             data={dataFormCreate.content}
                             onError={() => <Container className={'container-center'}><Text text={"Hay un error..."}/></Container>}
-                            onEmpty={() => <Container className={'container-center'}><Text text={"Tu lista de rutinas esta vacia..."}/></Container>}
+                            onEmpty={() => <Container className={'container-center'}><Text text={"Agrega tu primera rutina..."}/></Container>}
                             render={routine => 
                             <Routine
+                            routine={routine}
                             key={routine.id}
-                            >
-                                <Container className={'container-routine-folder'}>
-                                    <Container className={'routine-header'}>
-                                        <Text text={routine.name}/>
-                                        <Container onClick={() => deleteItem(routine)} className={'close-button'}>
-                                            <IoMdClose/>
-                                        </Container>
-                                    </Container>    
-                                    <Container className={'routine-stats'}>
-                                        <Text className={'text-record'} text={`Tiempo record 🎉: ${routine.timeRecord}`}/>
-                                        <Text className={'text-dones'} text={`Veces realizadas: ${routine.dones}`} />
+                            classNameContainer={'container-routine-folder'}
+                            header={
+                                <Container className={'routine-header'}>
+                                    <Text text={routine.name}/>
+                                    <Container onClick={() => deleteItem(routine)} className={'close-button'}>
+                                        <IoMdClose/>
                                     </Container>
+                                </Container>  
+                            }
+                            >
+                                <Container className={'routine-stats'}>
+                                    <Text className={'text-record'} text={`Tiempo record 🎉: ${routine.timeRecord}`}/>
+                                    <Text className={'text-dones'} text={`Veces realizadas: ${routine.dones}`} />
                                 </Container>
                             </Routine>
                             }

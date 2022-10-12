@@ -51,13 +51,11 @@ const CreateRoutine =  ( ) => {
         }
     })
 
-    console.log(state.dataFormCreate)
-
     const redirect = useNavigate()
 
     const {
         deleteItem,
-    } = useList ("exercises",{state:state,updateState:setState},false,{ nameGql:"getExercisesByToken",gql:GET_EXERCISES_BY_TOKEN,variables:{ variables:{ token:token } } })
+    } = useList ("exercises",{state:state,updateState:setState},true,{ nameGql:"getExercisesByToken",gql:GET_EXERCISES_BY_TOKEN,variables:{ variables:{ token:token } } })
 
     const {
         addSerie,

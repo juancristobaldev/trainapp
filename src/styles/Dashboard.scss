@@ -322,6 +322,19 @@
         .container-center {
           height: 7.5vh;
         }
+        .container-routine-on-folder {
+          height: 7.5vh;
+          background-color: white;
+          border: 0.5px solid rgb(230, 230, 230);
+          display: flex;
+          justify-content: flex-start;
+          align-items: center;
+          .container-routine-on-folder-header {
+            padding-left: 1rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+          }
+        }
       }
       .container-add {
         display: flex;
