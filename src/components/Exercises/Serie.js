@@ -1,5 +1,5 @@
 import React from "react";
-import { Container } from "./generals/Container";
+import { Container } from "../generals/Container";
 
 const Serie = ({children,className}) => {
     return(

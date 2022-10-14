@@ -4,10 +4,11 @@ import { SingIn } from "./components/Login/SignIn";
 import { SingUp } from "./components/Login/SignUp";
 import Cookies from "universal-cookie/es6";
 import { Dashboard } from "./components/Dashboard";
-import { CreateRoutine } from "./components/Create/CreateRoutine";
-import { GoRoutine } from "./components/GoRoutine";
+import { CreateRoutine } from "./components/Routines/CreateRoutine";
+import { GoRoutine } from "./components/Routines/GoRoutine";
 
 import {GET_USER} from "./data/query"
+import { ModifyRoutine } from "./components/Routines/ModifyRoutine";
 
 
 const App = () => {
@@ -26,6 +27,7 @@ const App = () => {
             <Route path="/" element={<Dashboard updateRoutineOnPlay={updateRoutineOnPlay} viewMode={{darkMode:darkMode,updateDarkMode:updateDarkMode}}/>}/>
             <Route path="/create-routine" element={ <CreateRoutine/> }/>
             <Route path="/go-routine" element={ <GoRoutine routine={routineOnPlay}/> }/>
+            <Route path="/modify-routine" element={ <ModifyRoutine routine={routineOnPlay}/> }/>
             <Route path="/signup" element={ <Navigate to={"/"}/> }/>
             <Route path="/signin" element={ <Navigate to={"/"}/> }/>
           </>

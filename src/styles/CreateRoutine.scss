@@ -35,6 +35,9 @@
           font-style: italic;
         }
       }
+      input.error {
+        border: 1px solid red;
+      }
       p {
         margin-top: 5px;
         font-size: 0.85rem;

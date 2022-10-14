@@ -93,12 +93,6 @@ const Folder = ({children,classNameFolder,folder,viewMode}) => {
             {
                 children
             }
-            <Container className={'container-add'}>
-                <Button
-                onClick={() => updateModalAddRoutine(true)}
-                textButton={'+ Rutina'}
-                />
-            </Container>
             </>
             }
         </Container>

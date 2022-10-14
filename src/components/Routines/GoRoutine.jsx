@@ -2,43 +2,43 @@ import { useMutation, useQuery } from "@apollo/client";
 import React, { useContext } from "react";
 import { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import { Main } from "./generals/Main";
-import { Text } from "./generals/Text";
-import { Loading } from "./Loading";
-import '../styles/Loading.scss'
+import { Main } from "../generals/Main";
+import { Text } from "../generals/Text";
+import { Loading } from "../Loading";
+import '../../styles/Loading.scss'
 import Cookies from "universal-cookie/es6";
 import { useEffect } from "react";
-import { Container } from "./generals/Container";
+import { Container } from "../generals/Container";
 import {BsClockHistory} from "react-icons/bs"
-import { List } from "./Lists/List";
-import { ListApi } from "./Lists/ListApi";
-import { Button } from "./generals/Button";
-import { InputSerie } from "./InputSerie";
-import { Exercise } from "./Exercise";
+import { List } from "../Lists/List";
+import { ListApi } from "../Lists/ListApi";
+import { Button } from "../generals/Button";
+import { InputSerie } from "../InputSerie";
+import { Exercise } from "../Exercises/Exercise";
 import { IoMdClose } from "react-icons/io";
-import { useSeries } from "../hooks/useSeries";
-import { Form } from "./Form/Form";
-import { Serie } from "./Serie";
-import { Modal } from "./Modal/Modal";
+import { useSeries } from "../../hooks/useSeries";
+import { Form } from "../Form/Form";
+import { Serie } from "../Exercises/Serie";
+import { Modal } from "../Modal/Modal";
 import {MdOutlineKeyboardReturn} from "react-icons/md"
 
-import '../styles/Exercises.scss'
-import '../styles/Timer.scss'
-import '../styles/GoRoutine.scss'
+import '../../styles/Exercises.scss'
+import '../../styles/Timer.scss'
+import '../../styles/GoRoutine.scss'
 
-import { Timer } from "./MenuTimer/Timer";
-import { ListExercises } from "./Lists/ListExercises";
-import { CreateExercise } from "./Create/CreateExercise";
-import { ModalDelete } from "./Modal/ModalDelete";
-import { Create } from "./Create/Create";
+import { Timer } from "../MenuTimer/Timer";
+import { ListExercises } from "../Exercises/ListExercises";
+import { CreateExercise } from "../Exercises/CreateExercise";
+import { ModalDelete } from "../Modal/ModalDelete";
+import { Create } from "../Create/Create";
 import { FaCheck } from "react-icons/fa";
-import { ProgressiveCount } from "./ProgressiveCount";
+import { ProgressiveCount } from "../ProgressiveCount";
 
-import { GET_EXERCISES_BY_TOKEN, GET_ROUTINES_AND_USER_BY_TOKEN, GET_ROUTINE_BY_ID, GET_USER } from "../data/query";
-import { UPDATE_ROUTINE,UPDATE_USER } from "../data/mutations";
-import { DataContext } from "../context/DataProvider";
-import { ModalAreUSure } from "./Modal/ModalAreUSure";
-import { useList } from "../hooks/useList";
+import { GET_EXERCISES_BY_TOKEN, GET_ROUTINES_AND_USER_BY_TOKEN, GET_ROUTINE_BY_ID, GET_USER } from "../../data/query";
+import { UPDATE_FOLDER, UPDATE_ROUTINE,UPDATE_USER } from "../../data/mutations";
+import { DataContext } from "../../context/DataProvider";
+import { ModalAreUSure } from "../Modal/ModalAreUSure";
+import { useList } from "../../hooks/useList";
 
 const token = new Cookies().get('session-token')
 
@@ -47,7 +47,8 @@ const GoRoutine = ({routine}) => {
     const navigate = useNavigate()
 
     const [updateRoutine] = useMutation(UPDATE_ROUTINE),
-    [updateUser] = useMutation(UPDATE_USER)
+    [updateUser] = useMutation(UPDATE_USER),
+    [updateFolder] = useMutation(UPDATE_FOLDER)
 
 
     const [state,updateState] = useState({
@@ -80,7 +81,8 @@ const GoRoutine = ({routine}) => {
     })
 
     const {
-        me
+        me,
+        folders
     } = useContext(DataContext)
 
 
@@ -109,6 +111,7 @@ const GoRoutine = ({routine}) => {
     })
 
     const handleSubmit = async (e,confirmation) => {
+
 
         const {listOnCreate,dataFormCreate} = state
 
@@ -191,18 +194,38 @@ const GoRoutine = ({routine}) => {
             lastWorkOuts.unshift({...dataRoutine})
         }
 
-        console.log(dataRoutine)
-       
+        folders.forEach( async folder => {
+            const content = JSON.parse(folder.content)
+            for(var i = 0; i < content.length; i++){
+                if(content[i].id === dataRoutine.id)   {
+                    let newContent = [...content]
+                    newContent[i] = {...dataRoutine, exercises: JSON.stringify(dataRoutine.exercises)}
+                    const variables = {
+                        input:{
+                            id:folder.id,
+                            name:folder.name,
+                            content:JSON.stringify(newContent)
+                        }
+                    }
+
+                    await updateFolder({
+                        variables:{...variables}
+                    }).then(({data}) => {
+                        const {errors,success} = data.updateFolder
+                        if(errors.length) console.log(error)
+                        else console.log('exito')
+                    })
+                } 
+            }
+        })
+
         await updateUser({
             variables:{
                 input:{
                     id:me.id,
                     last_workouts:JSON.stringify([...lastWorkOuts])
                 }
-            },
-            refetchQueries:[{GET_USER, variables:{
-                token:token
-            }}]
+            }
         })
 
        await updateRoutine({
@@ -211,10 +234,7 @@ const GoRoutine = ({routine}) => {
                     ...dataRoutine,
                     exercises:JSON.stringify(dataRoutine.exercises)
                 }
-            },
-            refetchQueries:[{GET_ROUTINES_AND_USER_BY_TOKEN, variables:{
-                token:token
-            }}]
+            }
         }).then( ({data}) => {
             const {error,success} = data.updateRoutine
             if(error) console.log(error)

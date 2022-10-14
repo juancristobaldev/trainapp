@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { Container } from "./generals/Container";
-import { Text } from "./generals/Text";
+import { Container } from "../generals/Container";
+import { Text } from "../generals/Text";
 import { IoMdClose } from "react-icons/io";
 
-import "../styles/Exercises.scss"
+import "../../styles/Exercises.scss"
 
 const Exercise = ({children,item,deleteExerciseOfList}) => {
     const [openSeries,setOpenSeries] = useState(false)

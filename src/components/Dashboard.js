@@ -4,7 +4,7 @@ import { useNavigate, Navigate } from "react-router-dom";
 import { Container } from "./generals/Container";
 import { Main } from "./generals/Main";
 import { Section } from "./generals/Section";
-import { Routine } from "./Routine";
+import { Routine } from "./Routines/Routine";
 
 import { ImHome,ImProfile } from "react-icons/im"
 import {IoDocumentTextSharp} from "react-icons/io5"
@@ -49,8 +49,12 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
     }),
     [ widthScreen,updateWidthScreen ] = useState(window.innerWidth),
     [ modalCreateFolder,updateModalCreateFolder] = useState(false),
+    [back,updateBack] = useState({active:false,id:null,folder:null}),
     [deleteRoutine] = useMutation(DELETE_ROUTINE),
     [updateUser] = useMutation(UPDATE_USER)
+
+
+    console.log(back)
 
     const {
         routines,
@@ -303,7 +307,9 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                         searchValues={searchValues}
                         data={routines}
                         name={'routines'}
-                        button={{function:() => navigate('/create-routine'), text: '+ Crear', className: 'create-routine'}}
+                        button={{function: async () => {
+                            navigate('/create-routine')
+                        }, text: '+ Crear', className: 'create-routine'}}
                         classContainer={'container-search'}
                         classDiv={'div-search'}
                         classSpan={'design-search'}
@@ -342,7 +348,12 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                                 <>
                                     <Text 
                                     className={'optionMenu'}
-                                    text={'Editar'}/>
+                                    text={'Editar'}
+                                    onClick={ async () => {
+                                        updateRoutineOnPlay({active:true, id:routine.id, routine:routine})
+                                        navigate('/modify-routine')
+                                    }}
+                                    />
                                     <Text 
                                     className={'optionMenu'}
                                     onClick={() => updateModalDelete({boolean:true,item:{id:routine.id,name:routine.nameRoutine}})}
@@ -372,9 +383,12 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                 }
                 {
                     view === "folders" && 
+                    
                     <Section
                     className={'folders'}
-                    >
+                    >   {back.active && 
+                        <Container onClick={() => updateBack({active:false,id:null,folder:null})} className={'back unblur'}/>
+                        }
                         <ContainerSearch
                         searchValues={searchValues}
                         data={folders}
@@ -422,13 +436,34 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                                 onError={() => <Container className={'container-center'}><Text text={'Oops hay un error...'}/></Container>}
                                 onEmpty={() => <Container className={'container-center'}><Text text={'No has agregado ninguna rutina...'}/></Container>}
                                 render={ routine => 
-                                    <Routine
-                                    key={routine.id}
-                                    routine={routine}
-                                    classNameContainer={'container-routine-on-folder'}
-                                    classNameHeader={'container-routine-on-folder-header'}
-                                    >
-                                    </Routine>
+                                        <Routine
+                                        key={routine.id}
+                                        routine={routine}
+                                        classNameContainer={`container-routine-on-folder ${(folder.id === back.folder && routine.id === back.id && back.active) && 'top'}`}
+                                        classNameHeader={'container-routine-on-folder-header'}
+                                        sandwichFunction={updateBack}
+                                        sandwichMode={true}
+                                        backinfo={{folder:folder.id, active:back.active, id:routine.id}}
+                                        >
+                                            {(back.active && back.id === routine.id && back.folder === folder.id) && 
+                                            <>
+                                                <Container className={'routine-container-stats'}>
+                                                    <Text text={`Tiempo record 🎉: ${routine.timeRecord}`}/>
+                                                    <Text text={`Veces realizadas: ${routine.dones}`} />
+                                                </Container>
+                                                <Container className={'routine-container-button'}>
+                                                    <Button
+                                                    onClick={() => {
+                                                        navigate('/go-routine')
+                                                        updateRoutineOnPlay({active:true, id:routine.id, routine:routine})
+                                                    }}
+                                                    textButton={'Empezar rutina'}
+                                                    />
+                                                </Container>
+                                            </>
+                                            }
+                                        </Routine>
+                                    
                                 }
                                 />
                            </Folder>

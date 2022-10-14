@@ -1,40 +1,35 @@
-import React, { useEffect, useState } from "react";
-import { Container } from "../generals/Container";
-import { useNavigate } from "react-router-dom";
-import { Main } from "../generals/Main";
-import { Form } from "../Form/Form";
-import { Text } from "../generals/Text";
-import { Modal } from "../Modal/Modal";
-import { List } from "../Lists/List";
-import { FormControl } from "../Form/FormControl";
-import { Exercise } from "../Exercise";
-import { Button } from "../generals/Button";
-import { useSeries } from "../../hooks/useSeries";
+import React from "react";
+import { useState } from "react";
+import { useEffect } from "react";
+import { HiLockClosed } from "react-icons/hi";
 import { IoMdClose } from "react-icons/io";
-import {HiLockClosed} from "react-icons/hi"
-
-import '../../styles/ListSeries.scss'
-import '../../styles/CreateRoutine.scss'
-import '../../styles/Modal.scss'
-
+import { useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie/es6";
-import { InputSerie } from "../InputSerie";
-import { useMutation } from "@apollo/client";
-import { CREATE_ROUTINE } from "../../data/mutations";
-import { GET_EXERCISES_BY_TOKEN, GET_ROUTINES_AND_USER_BY_TOKEN } from "../../data/query";
-import { ListExercises } from "../Lists/ListExercises";
-import { CreateExercise } from "./CreateExercise";
-import { ModalDelete } from "../Modal/ModalDelete";
+import { GET_EXERCISES_BY_TOKEN, GET_ROUTINES_FOLDERS_USER_BY_TOKEN, GET_ROUTINE_BY_ID } from "../../data/query";
 import { useList } from "../../hooks/useList";
-
+import { useSeries } from "../../hooks/useSeries";
+import { CreateExercise } from "../Exercises/CreateExercise";
+import { Exercise } from "../Exercises/Exercise";
+import { ListExercises } from "../Exercises/ListExercises";
+import { Form } from "../Form/Form";
+import { Button } from "../generals/Button";
+import { Container } from "../generals/Container";
+import { Main } from "../generals/Main";
+import { Text } from "../generals/Text";
+import { InputSerie } from "../InputSerie";
+import { List } from "../Lists/List";
+import { Modal } from "../Modal/Modal";
+import { ModalDelete } from "../Modal/ModalDelete";
+import { FormControl } from "../Form/FormControl";
+import { useMutation, useQuery } from "@apollo/client";
+import { UPDATE_ROUTINE } from "../../data/mutations";
 const token = new Cookies().get('session-token')
 
-const CreateRoutine =  ( ) => {
-
-    const [createRoutine] = useMutation(CREATE_ROUTINE)
-
+const ModifyRoutine = ({routine}) => {
+    
     const [state,setState] = useState({
         listOnCreate:[],
+        dataRoutine:{},
         modal:false,
         modalErrors:{error:false,errors:[]},
         modalCreate:false,
@@ -43,15 +38,23 @@ const CreateRoutine =  ( ) => {
         totalData:0,
         errors:{},
         dataFormCreate:{
-            token:token,
-            name:'',
+            id:routine.routine.id,
+            name:routine.routine.name,
             exercises:[],
-            timeRecord:'indefinido',
-            dones:0
+            timeRecord:routine.routine.timeRecord,
+            dones:routine.routine.dones
         }
     })
 
+    const [updateRoutine] = useMutation(UPDATE_ROUTINE)
+
     const redirect = useNavigate()
+
+    const { data,loading,error } = useQuery(GET_ROUTINE_BY_ID, {
+        variables:{
+            id:routine.id
+        }
+    })
 
     const {
         deleteItem,
@@ -98,17 +101,17 @@ const CreateRoutine =  ( ) => {
 
             const inputVariables = {...state.dataFormCreate, exercises:JSON.stringify(state.dataFormCreate.exercises)}
             
-            await createRoutine({
+            await updateRoutine({
                 variables:{
                     input:{
                         ...inputVariables
                     }
                 },
-                refetchQueries:[{query:GET_ROUTINES_AND_USER_BY_TOKEN,variables:{
+                refetchQueries:[{query:GET_ROUTINES_FOLDERS_USER_BY_TOKEN,variables:{
                     token:token
                 }}]
             }).then( ({data}) => {
-                const { errors, success } = data.createRoutine
+                const { errors, success } = data.updateRoutine
                 if(errors) console.log(errors)
                 if(success) console.log('Rutina creada con exito')
             })
@@ -119,13 +122,31 @@ const CreateRoutine =  ( ) => {
         }
     }
     useEffect(() => {
-        setState({...state, modalErrors:{error:false,errors:{}},errors:{}})
-    },[state.dataFormCreate,state.listOnCreate,state.modal,state.modalCreate])
+        if(error) console.log(error)
+        if(!loading){
+            let newListOnCreate = [...JSON.parse(data.getRoutineById[0].exercises)]
+            newListOnCreate.forEach(item => {
+                item.seriesEx.forEach(serie => {
+                    const lastSerie = serie.other ? `${serie.other} Kg / ${serie.reps} Reps` : serie.time ? `${serie.time} Min` : `${serie.reps} Reps`
+                    serie["lastMoment"] = lastSerie
+                })
+            })
 
-    return(
-        <>
+            setState(
+                {...state, 
+                dataRoutine:data.getRoutineById[0], 
+                dataFormCreate:{...state.dataFormCreate, exercises:JSON.parse(data.getRoutineById[0].exercises)},
+                listOnCreate:newListOnCreate
+                }
+            )
+
+        }
+    },[data])
+
+
+    return( <>
         <Container className={'header-create-routine'}>
-            <Text text={'Estas creando una rutina:'}/>
+            <Text text={'Estas modificando una rutina:'}/>
             <Container className={'close-button'}>
                 <IoMdClose
                 onClick={() => redirect('/')}
@@ -136,14 +157,14 @@ const CreateRoutine =  ( ) => {
             <Form
             className={'form-create-routine'}
             onSubmit={handleSubmit}
-            textSubmit='Crear rutina'>
+            textSubmit='Actualizar rutina'>
                 <FormControl
                 error={[state.errors.name]}
                 typeControl={'input'}
                 className={'input-name-routine'}
                 type="text"
                 name={'name'}
-                placeholder="Nombre de la rutina"
+                placeholder={routine.routine.name}
                 onChange={getDataRoutine}
                 />
                 <List
@@ -178,7 +199,7 @@ const CreateRoutine =  ( ) => {
                                     <IoMdClose
                                     onClick={() => deleteSeries(serie,exercise)}
                                     />
-                                    <Text text='-' />
+                                    <Text text={serie.lastMoment} />
                                     <>
                                         {exercise.typeEx === 'Peso adicional' || exercise.typeEx === 'Peso asistido' ?
                                         <React.Fragment>
@@ -296,4 +317,4 @@ const CreateRoutine =  ( ) => {
     )
 }
 
-export {CreateRoutine}
+export {ModifyRoutine}

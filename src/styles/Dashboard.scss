@@ -304,8 +304,7 @@
       margin: 1rem;
       box-shadow: 1px 1px 6px rgba($color: #000000, $alpha: 0.1);
       .header-folder,
-      .folder-list-routines,
-      .container-add {
+      .folder-list-routines {
         min-height: 7.5vh;
       }
       .header-folder {
@@ -322,35 +321,60 @@
         .container-center {
           height: 7.5vh;
         }
+        .back.unblur {
+          z-index: 1 !important;
+          backdrop-filter: none;
+          background-color: none;
+        }
         .container-routine-on-folder {
-          height: 7.5vh;
+          min-height: 7.5vh;
+          font-weight: 500;
           background-color: white;
           border: 0.5px solid rgb(230, 230, 230);
           display: flex;
           justify-content: flex-start;
           align-items: center;
           .container-routine-on-folder-header {
+            cursor: pointer;
+            width: 100%;
+            height: 7.5vh;
             padding-left: 1rem;
             font-size: 0.85rem;
-            font-weight: 500;
+            font-weight: 600;
+            display: flex;
+            p {
+              align-self: center;
+            }
           }
         }
-      }
-      .container-add {
-        display: flex;
-        button {
-          align-self: center;
-          height: 35px;
-          width: calc(100% - 2rem);
-          margin: 0 1rem;
-          @include mixins.button-primary(
-            $color-primary,
-            $color-primary-hover-button,
-            white,
-            white,
-            0,
-            0
-          );
+        .container-routine-on-folder.top {
+          position: relative !important;
+          @include mixins.dgrid(7.5vh 10vh 7.5vh, 100%, normal, normal);
+          .routine-container-stats {
+            font-size: 0.75rem;
+            @include mixins.dflex(space-between, stretch, column);
+            padding-left: 1rem;
+            margin: 1rem 0rem;
+          }
+          z-index: 100;
+          height: auto;
+        }
+        .routine-container-button {
+          display: flex;
+          button {
+            align-self: center;
+            @include mixins.button-primary(
+              $color-primary,
+              $color-primary-hover-button,
+              white,
+              white,
+              none,
+              none
+            );
+            width: calc(100% - 2rem);
+            margin: 0 1rem;
+            height: 35px;
+          }
         }
       }
     }

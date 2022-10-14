@@ -22,7 +22,7 @@ const useExercises = (token,objectList,state) => {
     const [createExercise] = useMutation(CREATE_EXERCISE)
     const [deleteExercise] = useMutation(DELETE_EXERCISE)
 
-    const deleteSomeExercise = async (confirmation,itemsDelete) => {
+    const deleteSomeExercise = async (confirmation) => {
         const {list,updateList} = objectList;
         let filter = list.filter(item => item.select === true)
 
@@ -31,14 +31,9 @@ const useExercises = (token,objectList,state) => {
             if(filter.length === 0) filter = [...stateValue.modalDelete.items]
 
             if(confirmation){
-
-                const deleteOfState = async () => {
-                    const listFilt = [...list]
-                    await itemsDelete.forEach(itemDelete => {
-                        const index = listFilt.findIndex(itemList => itemList.id === itemDelete.id)
-                        if(index >= 0) listFilt.splice(index,1)
-                    })
-                    updateList(listFilt)
+                const deleteOfState = () => {
+                    const unSelect = list.filter(item => item.select !== true)
+                    updateList(unSelect)
                 }
                 
                 filter.forEach( async (item) => {
@@ -61,9 +56,8 @@ const useExercises = (token,objectList,state) => {
     
                     })
                 })
-                await deleteOfState()   
                 setState({...stateValue, modal:true, modalDelete:{boolean:false,items:[]}})
-
+                deleteOfState()   
             }else{
                 const objDelete = {
                     boolean:true,
@@ -109,16 +103,22 @@ const useExercises = (token,objectList,state) => {
                 }}]
             }).then( async ({data}) => {
                 const {errors,success} = data.createExercise;
-                const listForSelect = [...list]
-                listForSelect.push({...dataFormCreateExercise, seriesEx:JSON.parse(dataFormCreateExercise.seriesEx)})
-
-                console.log(listForSelect)
+                const filt = [...list]
 
                 if(success) console.log('Ejercicio creado con exito')
-                if(errors.length) console.log(errors)
-                
-                updateList(listForSelect)
-                setState({...stateValue, modalCreate:false, modal:true})
+                if(errors) console.log(errors)
+
+                if(stateValue.listOnCreate.length > 0){
+                    stateValue.listOnCreate.forEach( item => {
+                        const index = filt.findIndex(filt => filt.name === item.name)
+                        filt.splice(index,1)
+                    })
+                }
+
+                setState({...stateValue, searchValue:'', modalCreate:false, modal:true})
+                setTimeout(() => {
+                    updateList(filt)
+                },50)
             })
         } 
     }

@@ -9,15 +9,19 @@ const useList = (nameContent,stateComponent,repeat,apollo) => {
     {state,updateState} = stateComponent
 
     const [ listForSelect,updateListForSelect] = useState([])
+    const [dataDone, updateDataDone] = useState([])
     const { data,loading, error } = useQuery(gql, variables)
-    const getItems = async () => {
 
+    const getItems = async () => {
         if(data){
             let dataBack = [...JSON.parse(JSON.stringify(data[nameGql]))];
-            
+
             await dataBack.forEach(item => {
+                const itemsSelected = listForSelect.filter(item => item.select === true)
+                const index = itemsSelected.findIndex(itemSelected => itemSelected.id === item.id)
+                if(listForSelect.length && itemsSelected.length && index >= 0) item['select'] = true;
+                else item['select'] = false;
                 item['added'] = false;
-                item['select'] = false;
             })
             
             if(!repeat){
@@ -34,6 +38,7 @@ const useList = (nameContent,stateComponent,repeat,apollo) => {
             }
 
             updateListForSelect(dataBack)
+            updateDataDone([...JSON.parse(JSON.stringify(data[nameGql]))])
         }
     }
 
@@ -91,9 +96,9 @@ const useList = (nameContent,stateComponent,repeat,apollo) => {
 
     useEffect(() => {
     getItems()
-    },[state.dataFormCreate[nameContent],state.searchValue,state.listOnCreate])
+    },[data,state.dataFormCreate[nameContent],state.searchValue,state.listOnCreate])
     return {
-        data,
+        dataDone,
         loading,
         error,
         listForSelect,

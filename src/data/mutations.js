@@ -81,8 +81,8 @@ export const CREATE_FOLDER = gql`
 `
 
 export const UPDATE_FOLDER = gql`
-    mutation deleteFolder($input:DeleteFolderInput!){
-        deleteFolder(input:$input){
+    mutation updateFolder($input:UpdateFolderInput!){
+        updateFolder(input:$input){
         errors
         success
         }

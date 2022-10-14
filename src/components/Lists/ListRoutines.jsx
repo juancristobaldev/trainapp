@@ -5,9 +5,10 @@ import "../../styles/ListSelect.scss"
 import { Container } from "../generals/Container";
 import { Text } from "../generals/Text";
 import CheckBox from "../Checkbox";
-import { Routine } from "../Routine";
+import { Routine } from "../Routines/Routine";
 import { Button } from "../generals/Button";
 import { ContainerSearch } from "../ContainerSearch";
+import { useNavigate } from "react-router-dom";
 
 const objectState = {
     modal:null,
@@ -15,12 +16,14 @@ const objectState = {
 };
 
 const ListRoutines = ({titleList,type,placeHolderSearch,objHookList}) => {
+    const navigate = useNavigate()
 
     const [searchValue,updateSearchValue] = useState({routines:''})
 
     const { content, stateObj, repeat, apollo } = objHookList
 
     const {
+        dataDone,
         loading,
         error,
         listForSelect,
@@ -30,6 +33,8 @@ const ListRoutines = ({titleList,type,placeHolderSearch,objHookList}) => {
 
     const { state, updateState } = stateObj
 
+    const totalSelect = listForSelect.filter(item => item.select === true).length
+    console.log(totalSelect)
     return (
         <ModalSelect
         classNameModal={'modal-select'}
@@ -113,8 +118,19 @@ const ListRoutines = ({titleList,type,placeHolderSearch,objHookList}) => {
             />
         }
         childrenBottom={
+            dataDone &&
+            dataDone.length === 0 ? 
             <Container className={'buttons'}>
                 <Button
+                onClick={ async () => navigate('/create-routine')}
+                className={'add'}
+                textButton={"Crear tu primera rutina"}
+                />
+            </Container>
+            :
+            <Container className={'buttons'}>
+                <Button
+                disable={(totalSelect === 0) && true}
                 onClick={ async () => {
                     await addItem()
                     updateState({...state, modal:false})

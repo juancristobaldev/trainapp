@@ -15,7 +15,7 @@ import { ListRoutines } from "../Lists/ListRoutines";
 import { Loading } from "../Loading";
 
 import { ModalSelect } from "../Modal/ModalSelect";
-import { Routine } from "../Routine";
+import { Routine } from "../Routines/Routine";
 
 
 const CreateFolder = ({token,closeFunction}) => {

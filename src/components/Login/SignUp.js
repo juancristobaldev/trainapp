@@ -165,7 +165,6 @@ const SingUp = () => {
                     <h2>Sobre tí</h2>
                 </Container>
                 <FormControl
-                    value=''
                     error={[errors.user,errors.user_exist]}
                     className={'div-input user'}
                     typeControl='input'
@@ -175,7 +174,6 @@ const SingUp = () => {
                     onChange={(e) => handleChange(e,dataFormRegister,setDataFormRegister)}
                 />
                 <FormControl
-                    value=''
                     error={[errors.email,errors.email_exist]}
                     className={'div-input email'}
                     typeControl='input'
@@ -185,7 +183,6 @@ const SingUp = () => {
                     onChange={(e) => handleChange(e,dataFormRegisterTwo,setDataFormRegisterTwo)}
                     />
                 <FormControl
-                    value=''
                     error={[errors.pass]}
                     className={'div-input pass'}
                     typeControl='input'
@@ -195,7 +192,6 @@ const SingUp = () => {
                     onChange={(e) => handleChange(e,dataFormRegisterTwo,setDataFormRegisterTwo)}
                 />
                 <FormControl
-                    value=''
                     error={[errors.passConfirm]}
                     className={'div-input pass-confirm'}
                     typeControl='input'

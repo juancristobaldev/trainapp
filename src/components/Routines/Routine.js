@@ -1,21 +1,23 @@
 import React, { useState } from "react"
 import { BsThreeDots } from "react-icons/bs"
-import { Container } from "./generals/Container"
-import { Text } from "./generals/Text"
-import { Popover } from "./Popover"
+import { Container } from "../generals/Container"
+import { Text } from "../generals/Text"
+import { Popover } from "../Popover"
 
 
-const Routine = ({classNameContainer,classNameHeader,header,style,children,popOver,childrenPopover,routine,darkMode}) => {
+const Routine = ({classNameContainer,classNameHeader,header,style,children,popOver,childrenPopover,routine,darkMode,backinfo,sandwichFunction,sandwichMode}) => {
     const [popover,updatePopover] = useState(false)
 
     return(
         <>
         {routine && 
-        
             <Container
             className={classNameContainer}>
                 {header ? header :
-                    <Container className={classNameHeader}>
+                    <Container onClick={ sandwichMode ? () => { 
+                        sandwichFunction({...backinfo, active:!backinfo.active, id:routine.id})
+                        } : null } 
+                        className={classNameHeader}>
                         <Text text={routine.name}/>
                         <Container style={{"position":"relative"}}>
                             {
@@ -37,9 +39,9 @@ const Routine = ({classNameContainer,classNameHeader,header,style,children,popOv
                         </Container>
                     </Container>
                 }
-                {children}
+                { children
+                }
             </Container>
-
         }
         </>
     )
