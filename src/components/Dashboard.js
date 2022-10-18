@@ -341,6 +341,7 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                             routine={routine}
                             key={routine.id}
                             popOver={true}
+                            darkMode={darkMode}
                             classNameContainer={`routine-container
                             ${darkMode && "darkMode"}`}
                             classNameHeader={"routine-container-header"}
@@ -422,10 +423,12 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                         }
                         render={ folder => (
                            <Folder
+                           widthScreen={widthScreen}
                            routines={routines}
                            key={folder.id}
                            folder={folder}
                            classNameFolder={"folder-container"}
+                           darkMode={darkMode}
                            viewMode={viewMode}
                            >
                                 <ListApi

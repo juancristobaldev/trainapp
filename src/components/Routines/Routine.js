@@ -29,6 +29,7 @@ const Routine = ({classNameContainer,classNameHeader,header,style,children,popOv
                                     />
                                     {popover  &&
                                     <Popover
+                                    darkMode={darkMode}
                                     unPopover={() => updatePopover(false)}
                                     >
                                         {childrenPopover}

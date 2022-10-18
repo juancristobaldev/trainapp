@@ -60,14 +60,14 @@
 .routine-container {
   width: calc(100% - 2rem);
   height: 25vh;
-  min-height: 25vh;
+  min-height: 30vh;
   align-self: center;
   background-color: white;
   box-shadow: 1px 1px 8px rgba($color: #000000, $alpha: 0.15);
   border-radius: 0.5rem;
   margin: 1rem;
   display: grid;
-  grid-template-rows: 30% 40% 30%;
+  grid-template-rows: 7.5vh 15vh 7.5vh;
   .routine-container-header {
     width: 100%;
     padding: 0 1rem;
@@ -84,11 +84,11 @@
     @include mixins.dflex(space-around, stretch, column);
   }
   .routine-container-button {
-    width: 100%;
+    width: calc(100% - 2rem);
     align-self: center;
-    margin-left: 1rem;
+    margin: 0 1rem;
     button {
-      width: calc(100% - 2rem);
+      width: 100%;
       padding: 0.5rem 2rem;
       @include mixins.button-primary(
         $color-primary,
@@ -98,20 +98,6 @@
         0,
         0
       );
-    }
-  }
-}
-.routine-container.darkMode {
-  .routine-container-header {
-    .delete-button {
-      background-color: rgba($color: white, $alpha: 0.1);
-      button {
-        background-color: transparent;
-        color: white;
-      }
-      svg {
-        fill: white;
-      }
     }
   }
 }
@@ -303,6 +289,7 @@
       width: calc(100% - 2rem);
       margin: 1rem;
       box-shadow: 1px 1px 6px rgba($color: #000000, $alpha: 0.1);
+      border-radius: 0.5rem;
       .header-folder,
       .folder-list-routines {
         min-height: 7.5vh;
@@ -330,7 +317,7 @@
           min-height: 7.5vh;
           font-weight: 500;
           background-color: white;
-          border: 0.5px solid rgb(230, 230, 230);
+          border: 0.25px solid rgb(230, 230, 230);
           display: flex;
           justify-content: flex-start;
           align-items: center;
@@ -385,6 +372,32 @@
   .section-list-routines {
     background: linear-gradient(180deg, #1a1a2e, #082032 100%) !important;
   }
+
+  .routine-container.darkMode {
+    .routine-container-header {
+      .delete-button {
+        background-color: rgba($color: white, $alpha: 0.1);
+        button {
+          background-color: transparent;
+          color: white;
+        }
+        svg {
+          fill: white;
+        }
+      }
+    }
+  }
+
+  .section-list-folders.darkMode {
+    .folder-container,
+    .container-routine-on-folder {
+      background-color: #10344e !important;
+    }
+    .container-routine-on-folder {
+      border: 0.25px solid rgb(8, 32, 50) !important;
+    }
+  }
+
   .routine-container,
   .menu {
     .header-menu {
@@ -401,6 +414,14 @@
         fill: white;
       }
       button {
+        color: white;
+      }
+    }
+  }
+  .routines,
+  .folders {
+    .design-search {
+      input {
         color: white;
       }
     }
@@ -452,14 +473,14 @@
     .routine-container,
     .folder-container {
       width: calc(100% - 2rem);
-      height: 90%;
+      height: 30vh;
       margin: 0.25rem;
       place-self: center;
     }
   }
 
   .section-list-routines {
-    @include mixins.dgrid(repeat(2, 50%), repeat(2, 50%), normal, normal);
+    @include mixins.dgrid(repeat(2, 45%), repeat(2, 50%), normal, normal);
     .routine-container {
       min-width: 40%;
     }
@@ -492,6 +513,25 @@
       .routine-container {
         width: calc(100% / 3);
         height: calc(60vw / 3);
+      }
+    }
+  }
+
+  .folders {
+    .section-list-folders {
+      display: grid;
+      grid-template-columns: repeat(2, 50%);
+      grid-template-rows: repeat(2, 45%);
+      place-items: normal;
+      place-content: normal;
+      .folder-container {
+        min-width: 50%;
+        height: 32.5vh;
+        margin: 0;
+        .folder-list-routines {
+          max-height: calc(32.5vh - 7.5vh);
+          overflow: auto;
+        }
       }
     }
   }

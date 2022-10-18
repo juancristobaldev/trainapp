@@ -22,7 +22,9 @@ import { Modal } from "../Modal/Modal";
 import { ModalDelete } from "../Modal/ModalDelete";
 import { FormControl } from "../Form/FormControl";
 import { useMutation, useQuery } from "@apollo/client";
-import { UPDATE_ROUTINE } from "../../data/mutations";
+import { UPDATE_FOLDER, UPDATE_ROUTINE, UPDATE_USER } from "../../data/mutations";
+import { useContext } from "react";
+import { DataContext } from "../../context/DataProvider";
 const token = new Cookies().get('session-token')
 
 const ModifyRoutine = ({routine}) => {
@@ -46,7 +48,9 @@ const ModifyRoutine = ({routine}) => {
         }
     })
 
-    const [updateRoutine] = useMutation(UPDATE_ROUTINE)
+    const [updateRoutine] = useMutation(UPDATE_ROUTINE),
+    [updateFolder] = useMutation(UPDATE_FOLDER),
+    [updateUser] = useMutation(UPDATE_USER)
 
     const redirect = useNavigate()
 
@@ -55,6 +59,8 @@ const ModifyRoutine = ({routine}) => {
             id:routine.id
         }
     })
+
+    const { folders, me } = useContext(DataContext)
 
     const {
         deleteItem,
@@ -89,6 +95,7 @@ const ModifyRoutine = ({routine}) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const objError = {}
+        const dataRoutine = {...state.dataFormCreate}
 
         const {exercises,name} = state.dataFormCreate
 
@@ -98,25 +105,71 @@ const ModifyRoutine = ({routine}) => {
         const errorsForm = Object.values(objError)
 
         if(errorsForm.length === 0){
-
-            const inputVariables = {...state.dataFormCreate, exercises:JSON.stringify(state.dataFormCreate.exercises)}
             
+            let lastWorkOuts = []
+            if(me.last_workouts !== undefined){
+                lastWorkOuts = JSON.parse(me.last_workouts);
+                const index = lastWorkOuts.findIndex(item => item.id === dataRoutine.id);
+                let someRoutine;
+                if(index >= 0) {
+                    someRoutine = lastWorkOuts[index]
+                    lastWorkOuts.splice(index,1)
+                }else if(lastWorkOuts.length >= 3){
+                    lastWorkOuts.pop()
+                }
+                lastWorkOuts.unshift({...dataRoutine})
+            }
+
+            folders.forEach( async folder => {
+                const content = JSON.parse(folder.content)
+                for(var i = 0; i < content.length; i++){
+                    if(content[i].id === dataRoutine.id)   {
+                        let newContent = [...content]
+                        newContent[i] = {...dataRoutine, exercises: JSON.stringify(dataRoutine.exercises)}
+                        const variables = {
+                            input:{
+                                id:folder.id,
+                                name:folder.name,
+                                content:JSON.stringify(newContent)
+                            }
+                        }
+
+                        await updateFolder({
+                            variables:{...variables}
+                        }).then(({data}) => {
+                            const {errors,success} = data.updateFolder
+                            if(errors.length) console.log(error)
+                            else console.log('exito')
+                        })
+                    } 
+                }
+            })
+
+            await updateUser({
+                variables:{
+                    input:{
+                        id:me.id,
+                        last_workouts:JSON.stringify([...lastWorkOuts])
+                    }
+                }
+            })
+
             await updateRoutine({
                 variables:{
                     input:{
-                        ...inputVariables
+                        ...dataRoutine,
+                        exercises:JSON.stringify(dataRoutine.exercises)
                     }
-                },
-                refetchQueries:[{query:GET_ROUTINES_FOLDERS_USER_BY_TOKEN,variables:{
-                    token:token
-                }}]
+                }
             }).then( ({data}) => {
-                const { errors, success } = data.updateRoutine
-                if(errors) console.log(errors)
-                if(success) console.log('Rutina creada con exito')
+                const {error,success} = data.updateRoutine
+                if(error) console.log(error)
+                if(success){
+                    redirect('/')
+                    window.location.reload()
+                }
             })
 
-            redirect('/')
         }else{ 
             setState({...state, modalErrors:{error:true,errors:errorsForm}, errors:objError})
         }

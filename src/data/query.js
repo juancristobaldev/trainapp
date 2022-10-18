@@ -108,3 +108,13 @@ export const GET_USER = gql`
         }
     }
 `
+export const GET_FOLDER = gql`
+    query getFolderById {
+        getFolderById(id:Int){
+        id
+        token
+        name
+        content
+        }
+    }
+`

@@ -1,7 +1,4 @@
-import React, { useState } from "react";
-import { RiDeleteBin2Fill } from "react-icons/ri";
-import { ButtonIcon } from "../ButtonIcon";
-import { Button } from "../generals/Button";
+import React, { useEffect, useState } from "react";
 import { Container } from "../generals/Container";
 import { Text } from "../generals/Text";
 import { ModalAreUSure } from "../Modal/ModalAreUSure";
@@ -13,17 +10,18 @@ import { GET_ROUTINES_FOLDERS_USER_BY_TOKEN } from "../../data/query";
 import { Loading } from "../Loading";
 import { BsThreeDots } from "react-icons/bs";
 import { Popover } from "../Popover";
+import { ModifyFolder } from "./ModifyFolder";
 
 const token = new Cookies().get('session-token')
-const Folder = ({children,classNameFolder,folder,viewMode}) => {
+const Folder = ({children,classNameFolder,folder,viewMode,widthScreen,darkMode}) => {
     const [deleteFolder] = useMutation(DELETE_FOLDER)
 
     const [showRoutines,updateShowRoutines] = useState(false),
     [popover,updatePopover] = useState(false),
     [loading,updateLoading] = useState(false),
     [deleteFolderModal,updateDeleteFolder] = useState({boolean:false,id:null}),
-    [modalAddRoutine,updateModalAddRoutine] = useState(false);
-    const [ list, updateList] = useState([])
+    [modalModifyFolder,updateModalModifyFolder] = useState(false);
+
 
     const deleteFolderDB = async () => {
         updateLoading(true)
@@ -43,6 +41,12 @@ const Folder = ({children,classNameFolder,folder,viewMode}) => {
             },500)
         })
     }
+
+    useEffect(() => {
+        if(widthScreen > 650){
+            updateShowRoutines(true)
+        }
+    },[widthScreen])
     
     return (
         <>
@@ -59,16 +63,23 @@ const Folder = ({children,classNameFolder,folder,viewMode}) => {
                 <>
                     <BsThreeDots
                     cursor={"pointer"}
-                    onClick={ async () => updatePopover(true)}
+                    onClick={ async () => {
+                        if(widthScreen > 650){
+                            updateShowRoutines(true)
+                        }
+                        updatePopover(true)
+                    }}
                     />
                     {popover  &&
                         <Popover
+                        darkMode={darkMode}
                         unPopover={() => updatePopover(false)}
                         >
                             <>
                                 <Text
                                 className={'optionMenu'}
                                 text={'Editar'}
+                                onClick={() => updateModalModifyFolder(true)}
                                 />
                                 <Text
                                 style={{color:"red"}}
@@ -81,14 +92,8 @@ const Folder = ({children,classNameFolder,folder,viewMode}) => {
                     }
                 </>
                 </Container>
-                {/*<ButtonIcon
-                classNameContainer={`delete-button-dashboard ${ viewMode === true && "darkmode"}`}
-                textButton={'Eliminar'}
-                onClick={() => updateDeleteFolder({boolean:true,id:folder.id})}
-                icon={<RiDeleteBin2Fill/>}
-                /> */}
             </Container>
-            {(showRoutines === true && deleteFolderModal.boolean === false && popover === false) && 
+            {((showRoutines === true && deleteFolderModal.boolean === false && popover === false) || (widthScreen > 650)) && 
             <>
             {
                 children
@@ -109,8 +114,15 @@ const Folder = ({children,classNameFolder,folder,viewMode}) => {
             }}
             />
         }
-        {modalAddRoutine && 
-        <p></p>
+        {modalModifyFolder && 
+            <ModifyFolder
+            token={token}
+            closeFunction={() => {
+                updatePopover(false)
+                updateModalModifyFolder(false)
+            }}
+            folder={folder}
+            />
         }
         </>
     )
