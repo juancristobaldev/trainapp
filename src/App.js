@@ -9,13 +9,14 @@ import { GoRoutine } from "./components/Routines/GoRoutine";
 
 import {GET_USER} from "./data/query"
 import { ModifyRoutine } from "./components/Routines/ModifyRoutine";
+import { useDarkMode } from "./hooks/useDarkMode";
 
 
 const App = () => {
   
   const cookies = new Cookies();
-  const [darkMode,updateDarkMode] = useState(false),
-  [routineOnPlay,updateRoutineOnPlay] = useState({active:false,id:null});
+
+  const [routineOnPlay,updateRoutineOnPlay] = useState({active:false,id:null});
   const token = cookies.get('session-token');
 
   return (
@@ -24,7 +25,7 @@ const App = () => {
         token ?
         (
           <>
-            <Route path="/" element={<Dashboard updateRoutineOnPlay={updateRoutineOnPlay} viewMode={{darkMode:darkMode,updateDarkMode:updateDarkMode}}/>}/>
+            <Route path="/" element={<Dashboard updateRoutineOnPlay={updateRoutineOnPlay}/>}/>
             <Route path="/create-routine" element={ <CreateRoutine/> }/>
             <Route path="/go-routine" element={ <GoRoutine routine={routineOnPlay}/> }/>
             <Route path="/modify-routine" element={ <ModifyRoutine routine={routineOnPlay}/> }/>

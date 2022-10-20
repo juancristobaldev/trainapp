@@ -5,11 +5,13 @@ import { Text } from "../generals/Text";
 import Cookies from "universal-cookie/es6";
 const token = new Cookies().get('session-token')
 
-const ModalSelect = ({title,classNameText,functionClose,classNameButtonClose,classNameHeader,list,classNameModal,childrenTop,childrenBottom}) => {
+const ModalSelect = ({backOff,title,classNameText,functionClose,classNameButtonClose,classNameHeader,list,classNameModal,childrenTop,childrenBottom}) => {
 
     return (
         <>
-            <Container className={'back'}/>
+            {backOff === false &&
+                <Container className={'back'}/>
+            }
             <Container className={classNameModal}>
                 <Container
                 className={classNameHeader}

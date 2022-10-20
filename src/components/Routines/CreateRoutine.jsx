@@ -26,10 +26,12 @@ import { ListExercises } from "../Exercises/ListExercises";
 import { CreateExercise } from "../Exercises/CreateExercise";
 import { ModalDelete } from "../Modal/ModalDelete";
 import { useList } from "../../hooks/useList";
+import { useWidthScreen } from "../../hooks/useWidthScreen";
+import { Section } from "../generals/Section";
 
 const token = new Cookies().get('session-token')
 
-const CreateRoutine =  ({routine}) => {
+const CreateRoutine =  ({darkMode}) => {
 
     const [createRoutine] = useMutation(CREATE_ROUTINE)
 
@@ -52,6 +54,8 @@ const CreateRoutine =  ({routine}) => {
     })
 
     const redirect = useNavigate()
+
+    const { widthScreen } = useWidthScreen()
 
     const {
         deleteItem,
@@ -123,16 +127,16 @@ const CreateRoutine =  ({routine}) => {
     },[state.dataFormCreate,state.listOnCreate,state.modal,state.modalCreate])
 
     return(
-        <>
-        <Container className={'header-create-routine'}>
-            <Text text={'Estas creando una rutina:'}/>
-            <Container className={'close-button'}>
-                <IoMdClose
-                onClick={() => redirect('/')}
-                />
+        <Section className={`grid ${widthScreen > 650 && "web"}`}>
+        <Section className={`section-create-routine ${widthScreen > 650 && "web"} ${darkMode && "darkMode"}`}>
+            <Container className={'header-create-routine'}>
+                <Text text={'Estas creando una rutina:'}/>
+                <Container className={'close-button'}>
+                    <IoMdClose
+                    onClick={() => redirect('/')}
+                    />
+                </Container>
             </Container>
-        </Container>
-        <Main className={'main-create-routine'}>
             <Form
             className={'form-create-routine'}
             onSubmit={handleSubmit}
@@ -183,21 +187,21 @@ const CreateRoutine =  ({routine}) => {
                                         {exercise.typeEx === 'Peso adicional' || exercise.typeEx === 'Peso asistido' ?
                                         <React.Fragment>
                                             <InputSerie
-                                                className={'input-type'}
-                                                style={{width:"35%"}}
-                                                name={exercise.name}
-                                                idList={exercise.idList}
-                                                type="number"
-                                                objEx={{nameInput:'other',idList:exercise.idList,serie:serie.idSerie}}
-                                                onChange={getDataRoutine}                                        
+                                            className={'input-type'}
+                                            style={{width:"35%"}}
+                                            name={exercise.name}
+                                            idList={exercise.idList}
+                                            type="number"
+                                            objEx={{nameInput:'other',idList:exercise.idList,serie:serie.idSerie}}
+                                            onChange={getDataRoutine}                                        
                                             />
                                             <InputSerie
-                                                className={'input-reps'}
-                                                style={{width:"35%"}}
-                                                name={exercise.name}
-                                                objEx={{nameInput:'reps',idList:exercise.idList,serie:serie.idSerie}}
-                                                onChange={getDataRoutine}
-                                                type="number"
+                                            className={'input-reps'}
+                                            style={{width:"35%"}}
+                                            name={exercise.name}
+                                            objEx={{nameInput:'reps',idList:exercise.idList,serie:serie.idSerie}}
+                                            onChange={getDataRoutine}
+                                            type="number"
                                             />
                                         </React.Fragment>
                                         :
@@ -245,19 +249,24 @@ const CreateRoutine =  ({routine}) => {
                 />
                 </Form>
                 <Container className={'container-add-new-exercise'}>
+                {widthScreen < 650 &&
                     <Button
                     onClick={() => setState({...state, modal:!state.modal})}
                     textButton='Agregar un ejercicio'
                     />
+                }
                 </Container>
-                <footer>
-                    <p className="p-doit">
-                        <span>Do</span>It
-                    </p>
-                </footer>
-        </Main>
+        </Section>
+        {
+                    widthScreen > 650 &&
+                    <ListExercises
+                    backOff={true}
+                    token={token}
+                    objectState={{state:state,setState:setState}}
+                />
+                }
         <Modal>
-            {state.modal && 
+            {(state.modal && widthScreen < 650) && 
             <>
                 <ListExercises
                     token={token}
@@ -292,7 +301,7 @@ const CreateRoutine =  ({routine}) => {
             }
             
         </Modal>
-    </>
+    </Section>
     )
 }
 

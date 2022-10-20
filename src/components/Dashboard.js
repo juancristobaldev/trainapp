@@ -32,9 +32,11 @@ import { ContainerSearch } from "./ContainerSearch";
 import { Folder } from "./Folders/Folder";
 import { ModalAreUSure } from "./Modal/ModalAreUSure";
 import { CreateFolder } from "./Folders/CreateFolder";
+import { useWidthScreen } from "../hooks/useWidthScreen";
+import { useDarkMode } from "../hooks/useDarkMode";
 
 
-const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
+const Dashboard = ({updateRoutineOnPlay}) => {
     const navigate = useNavigate()
 
     const cookies = new Cookies();
@@ -47,14 +49,15 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
         routines:'',
         folders:''
     }),
-    [ widthScreen,updateWidthScreen ] = useState(window.innerWidth),
-    [ modalCreateFolder,updateModalCreateFolder] = useState(false),
+    [modalCreateFolder,updateModalCreateFolder] = useState(false),
     [back,updateBack] = useState({active:false,id:null,folder:null}),
     [deleteRoutine] = useMutation(DELETE_ROUTINE),
     [updateUser] = useMutation(UPDATE_USER)
 
+    const { widthScreen } = useWidthScreen(),
+    {darkMode, updateDarkMode,changeDarkMode} = useDarkMode()
 
-    console.log(back)
+    console.log(darkMode)
 
     const {
         routines,
@@ -62,8 +65,6 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
         folders,
         loadingData
     } = useContext(DataContext)
-
-    const {darkMode,updateDarkMode} = viewMode
 
     const searchSomething = (e) => {
         updateSearchValues({ ...searchValues, [e.target.name]:e.target.value })
@@ -74,13 +75,6 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
         window.location.reload()
     }
 
-    const windowWidthChange = () => {
-        updateWidthScreen(window.innerWidth);
-    };
-    
-      window.addEventListener('resize', () => {
-        windowWidthChange();
-      });
 
     const deleteRoutineDB = async (id) => {
         const inputVariables = {
@@ -429,7 +423,6 @@ const Dashboard = ({viewMode,updateRoutineOnPlay}) => {
                            folder={folder}
                            classNameFolder={"folder-container"}
                            darkMode={darkMode}
-                           viewMode={viewMode}
                            >
                                 <ListApi
                                 data={JSON.parse(folder.content)}

@@ -1,20 +1,19 @@
 @use "src/styles/shared/mixins.scss";
 @import "src/styles/shared/variables.scss";
 
-.header-create-routine {
-  padding: 0rem 1rem;
-  height: 7.5vh;
-  font-weight: 600;
-  @include mixins.dflex(space-between, center, row);
-  .close-button {
-    @include mixins.x-button();
-  }
-}
-
-.main-create-routine {
+.section-create-routine {
   border-top-left-radius: 0.25rem;
   border-top-right-radius: 0.25rem;
-  @include mixins.dgrid(75vh 7.5vh 10vh, none, normal, normal);
+  @include mixins.dgrid(7.5vh 75vh 7.5vh 10vh, none, normal, normal);
+  .header-create-routine {
+    padding: 0rem 1rem;
+    height: 7.5vh;
+    font-weight: 600;
+    @include mixins.dflex(space-between, center, row);
+    .close-button {
+      @include mixins.x-button();
+    }
+  }
   .form-create-routine {
     @include mixins.dgrid(12.5vh 1fr 7.5vh, none, normal, normal);
     .exercises-list-routine.error {
@@ -92,4 +91,23 @@
       }
     }
   }
+}
+
+section.grid.web {
+  height: 100vh;
+  @include mixins.dgrid(100%, 15% 35% 35% 15%, normal, normal);
+  max-width: 1366px;
+  .section-create-routine {
+    grid-area: 1/ 2 / 2 / 3;
+  }
+  .section-create-routine.web {
+    max-width: 1366px;
+    @include mixins.dgrid(7.5vh 1fr, none, normal, normal);
+  }
+}
+
+.modal-exercises.web {
+  position: relative !important;
+  grid-area: 1/ 3 / 2 / 4;
+  top: auto;
 }

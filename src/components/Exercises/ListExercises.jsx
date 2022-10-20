@@ -9,11 +9,12 @@ import { Button } from "../generals/Button";
 import { Container } from "../generals/Container";
 import { Text } from "../generals/Text";
 import { ModalSelect } from "../Modal/ModalSelect";
+import {useWidthScreen} from "../../hooks/useWidthScreen"
 
 
 
 
-const ListExercises = ({token,objectState}) => {
+const ListExercises = ({token,objectState,backOff}) => {
 
     const {state,setState} = objectState
 
@@ -28,7 +29,7 @@ const ListExercises = ({token,objectState}) => {
         addItem,
     } = useList ("exercises",{state:{...state,searchValue:searchValue},updateState:setState},true,{ nameGql:"getExercisesByToken",gql:GET_EXERCISES_BY_TOKEN,variables:{variables:{ token:token }}})
 
-    console.log(listForSelect)
+    const { widthScreen }= useWidthScreen()
 
     const {
         deleteSomeExercise
@@ -38,7 +39,8 @@ const ListExercises = ({token,objectState}) => {
 
     return(
         <ModalSelect
-        classNameModal={'modal-exercises'}
+        backOff={backOff}
+        classNameModal={`modal-exercises ${widthScreen > 650 && "web"}`}
         classNameHeader={'modal-exercises-header'}
         classNameButtonClose={'close-button'}
         functionClose={() => setState({...state, modal:false})}

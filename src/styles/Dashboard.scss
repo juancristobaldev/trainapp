@@ -285,6 +285,7 @@
 .folders {
   @include mixins.dgrid(7.5% 1fr, 100%, normal, normal);
   section.section-list-folders {
+    background: linear-gradient(180deg, #1a1a2e, #082032 100%) !important;
     .folder-container {
       width: calc(100% - 2rem);
       margin: 1rem;
@@ -299,8 +300,6 @@
         @include mixins.dflex(space-between, center, row);
         p {
           font-weight: 700;
-        }
-        .delete-button {
         }
       }
       .folder-list-routines {
@@ -526,10 +525,10 @@
       place-content: normal;
       .folder-container {
         min-width: 50%;
-        height: 32.5vh;
+        height: 30vh;
         margin: 0;
         .folder-list-routines {
-          max-height: calc(32.5vh - 7.5vh);
+          max-height: calc(30vh - 7.5vh);
           overflow: auto;
         }
       }
