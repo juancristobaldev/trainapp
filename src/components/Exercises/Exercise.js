@@ -1,12 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Container } from "../generals/Container";
 import { Text } from "../generals/Text";
 import { IoMdClose } from "react-icons/io";
 
 import "../../styles/Exercises.scss"
+import { useWidthScreen } from "../../hooks/useWidthScreen";
+import { useDarkMode } from "../../hooks/useDarkMode";
 
 const Exercise = ({children,item,deleteExerciseOfList}) => {
+    
     const [openSeries,setOpenSeries] = useState(false)
+
+    const {widthScreen} = useWidthScreen(),
+    {darkMode} = useDarkMode()
+
+    useEffect(() => {
+        if(widthScreen > 650) setOpenSeries(true)
+    },[])
 
     return(
         <Container
@@ -14,9 +24,7 @@ const Exercise = ({children,item,deleteExerciseOfList}) => {
         key={item.name}>
             <Container 
             className={'exercise-header'}
-            onClick={() => {
-                setOpenSeries(!openSeries)
-            }}
+            onClick={widthScreen > 650 ? () => setOpenSeries(!openSeries) : null }
             style={{
                 display:"flex",
                 justifyContent:'space-between',
@@ -30,7 +38,7 @@ const Exercise = ({children,item,deleteExerciseOfList}) => {
                 <Text 
                 className={'exercise-type'}
                 text={item.typeEx}/>
-                <Container className={'delete-button'}>
+                <Container className={`delete-button ${darkMode && "darkMode"}`}>
                     <IoMdClose onClick={() => deleteExerciseOfList(item,'exercise')}/>
                 </Container>
             </Container>

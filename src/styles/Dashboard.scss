@@ -285,7 +285,6 @@
 .folders {
   @include mixins.dgrid(7.5% 1fr, 100%, normal, normal);
   section.section-list-folders {
-    background: linear-gradient(180deg, #1a1a2e, #082032 100%) !important;
     .folder-container {
       width: calc(100% - 2rem);
       margin: 1rem;
@@ -368,10 +367,6 @@
 }
 
 .main-dashboard.darkMode {
-  .section-list-routines {
-    background: linear-gradient(180deg, #1a1a2e, #082032 100%) !important;
-  }
-
   .routine-container.darkMode {
     .routine-container-header {
       .delete-button {
@@ -385,6 +380,10 @@
         }
       }
     }
+  }
+  .section-list-folders,
+  .section-list-routines {
+    background: $background-gradient-darkmode;
   }
 
   .section-list-folders.darkMode {

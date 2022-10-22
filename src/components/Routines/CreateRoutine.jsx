@@ -130,12 +130,12 @@ const CreateRoutine =  ({darkMode}) => {
         <Section className={`grid ${widthScreen > 650 && "web"}`}>
         <Section className={`section-create-routine ${widthScreen > 650 && "web"} ${darkMode && "darkMode"}`}>
             <Container className={'header-create-routine'}>
-                <Text text={'Estas creando una rutina:'}/>
-                <Container className={'close-button'}>
-                    <IoMdClose
+                <Text text={'Rutina nueva.'}/>
+                <Button
+                className={'cancel-button'}
+                    textButton={'Cancelar'}
                     onClick={() => redirect('/')}
                     />
-                </Container>
             </Container>
             <Form
             className={'form-create-routine'}
@@ -145,11 +145,19 @@ const CreateRoutine =  ({darkMode}) => {
                 error={[state.errors.name]}
                 typeControl={'input'}
                 className={'input-name-routine'}
+                label={'Ingresa un nombre para tu rutina:'}
                 type="text"
                 name={'name'}
                 placeholder="Nombre de la rutina"
                 onChange={getDataRoutine}
                 />
+                <Container className={'container-add-exercise'}>
+                    <Text text={'Ejercicios:'}/>
+                    <Button
+                    onClick={() => setState({...state, modal:!state.modal})}
+                    textButton='+ Ejercicio'
+                    />
+                </Container>
                 <List
                     errors={[state.errors.exercises]}
                     className={'exercises-list-routine'}
@@ -235,6 +243,8 @@ const CreateRoutine =  ({darkMode}) => {
                                 </Container>
                             )}
                             >
+                                {
+                                widthScreen < 650 &&
                                 <Container
                                 className={'container-add-serie'}
                                 >
@@ -243,30 +253,26 @@ const CreateRoutine =  ({darkMode}) => {
                                     textButton={'+ Serie'}
                                     />
                                 </Container>
+                                }
                             </List>
-                    </Exercise>                 
+                            {
+                                widthScreen > 650 &&
+                                <Container
+                                className={'container-add-serie'}
+                                >
+                                    <Button 
+                                    onClick={(e) => addSerie(e,exercise.idList)}
+                                    textButton={'+ Serie'}
+                                    />
+                                </Container>
+                            }
+                    </Exercise>              
                     )}
                 />
                 </Form>
-                <Container className={'container-add-new-exercise'}>
-                {widthScreen < 650 &&
-                    <Button
-                    onClick={() => setState({...state, modal:!state.modal})}
-                    textButton='Agregar un ejercicio'
-                    />
-                }
-                </Container>
         </Section>
-        {
-                    widthScreen > 650 &&
-                    <ListExercises
-                    backOff={true}
-                    token={token}
-                    objectState={{state:state,setState:setState}}
-                />
-                }
         <Modal>
-            {(state.modal && widthScreen < 650) && 
+            {(state.modal) && 
             <>
                 <ListExercises
                     token={token}

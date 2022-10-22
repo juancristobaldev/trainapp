@@ -39,6 +39,7 @@ import { UPDATE_FOLDER, UPDATE_ROUTINE,UPDATE_USER } from "../../data/mutations"
 import { DataContext } from "../../context/DataProvider";
 import { ModalAreUSure } from "../Modal/ModalAreUSure";
 import { useList } from "../../hooks/useList";
+import { useDarkMode } from "../../hooks/useDarkMode";
 
 const token = new Cookies().get('session-token')
 
@@ -96,6 +97,8 @@ const GoRoutine = ({routine}) => {
     const {
         deleteItem,
     } = useList ('exercises',{state:state,updateState:updateState},true,{ nameGql:"getExercisesByToken",gql:GET_EXERCISES_BY_TOKEN,variables:{ variables:{ token:token } } })
+
+    const {darkMode} = useDarkMode()
 
     const {
         addSerie,
@@ -341,7 +344,7 @@ const GoRoutine = ({routine}) => {
                     <Container className={`modal-timer ${state.timer.secondPlane ? "second-plane" : "undefined"}`}>
                         <Container className={'header-timer'}>
                             <Text text="Temporizador"/>
-                            <Container className={'close-button'}>
+                            <Container className={`close-button ${darkMode && "darkMode"}`}>
                                 <IoMdClose
                                 cursor={'pointer'}
                                 onClick={
@@ -539,7 +542,7 @@ const GoRoutine = ({routine}) => {
                                     key={serie.idSerie}
                                     className={classControl(exercise.typeEx) + ` serie ${serie.need ? "need" : "false"} ${serie.checked ? "checked" : "unchecked"}`}
                                     >
-                                        <Container className={'delete-button'}>
+                                        <Container className={`delete-button ${darkMode && "darkMode"}`}>
                                             <IoMdClose
                                             onClick={() => deleteSeries(serie,exercise)}
                                             />

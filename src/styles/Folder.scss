@@ -113,3 +113,32 @@
     }
   }
 }
+
+.modal-add-routines.web {
+  max-width: 35vw;
+  margin: 10vh calc((100vw - 35vw) / 2);
+}
+.modal-add-routines.darkMode {
+  background-color: $color-2-darkmode;
+  .modal-add-routines-header span {
+    background-color: $color-3-darkmode;
+    svg {
+      fill: white;
+    }
+  }
+  .name-folder {
+    input {
+      background-color: $color-1-darkmode !important;
+      border: 1px solid $color-0-darkmode;
+      color: white;
+      &::placeholder {
+        color: rgba($color: #ffffff, $alpha: 0.75);
+      }
+    }
+  }
+  .list-routines-folder {
+    .container-routine-folder {
+      border: 1px solid $color-1-darkmode;
+    }
+  }
+}

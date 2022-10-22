@@ -10,6 +10,7 @@ import { Button } from "../generals/Button";
 import { Container } from "../generals/Container";
 import { Text } from "../generals/Text";
 import { Create } from "../Create/Create";
+import { useDarkMode } from "../../hooks/useDarkMode";
 
 
 
@@ -17,6 +18,8 @@ const CreateExercise = ({token,objectState}) => {
     
     const {state,setState} = objectState
 
+
+    const {darkMode} = useDarkMode()
 
     const {
         listForSelect,
@@ -38,7 +41,7 @@ const CreateExercise = ({token,objectState}) => {
                 >
                     <Container className={'header-create'}>
                         <Text text='Estas creando un ejercicio:'/>
-                        <Container className={'close-button'}>
+                        <Container className={`close-button ${darkMode && "darkMode"}`}>
                             <IoMdClose
                             onClick={() => setState({ ...state, modalCreate:false, modal:true})}
                             />

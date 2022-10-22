@@ -9,6 +9,7 @@ import { Routine } from "../Routines/Routine";
 import { Button } from "../generals/Button";
 import { ContainerSearch } from "../ContainerSearch";
 import { useNavigate } from "react-router-dom";
+import { useWidthScreen } from "../../hooks/useWidthScreen";
 
 const objectState = {
     modal:null,
@@ -21,6 +22,8 @@ const ListRoutines = ({titleList,type,placeHolderSearch,objHookList}) => {
     const [searchValue,updateSearchValue] = useState({routines:''})
 
     const { content, stateObj, repeat, apollo } = objHookList
+
+    const {widthScreen} = useWidthScreen()
 
     const {
         dataDone,
@@ -37,7 +40,7 @@ const ListRoutines = ({titleList,type,placeHolderSearch,objHookList}) => {
     console.log(totalSelect)
     return (
         <ModalSelect
-        classNameModal={'modal-select'}
+        classNameModal={`modal-select ${widthScreen > 650 && 'web'}`}
         classNameHeader={'modal-select-header'}
         classNameButtonClose={'close-button'}
         functionClose={() => updateState({...state, modal:false})}

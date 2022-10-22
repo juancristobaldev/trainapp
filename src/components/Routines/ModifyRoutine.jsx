@@ -25,6 +25,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import { UPDATE_FOLDER, UPDATE_ROUTINE, UPDATE_USER } from "../../data/mutations";
 import { useContext } from "react";
 import { DataContext } from "../../context/DataProvider";
+import { useDarkMode } from "../../hooks/useDarkMode";
 const token = new Cookies().get('session-token')
 
 const ModifyRoutine = ({routine}) => {
@@ -59,6 +60,8 @@ const ModifyRoutine = ({routine}) => {
             id:routine.id
         }
     })
+
+    const {darkMode} = useDarkMode()
 
     const { folders, me } = useContext(DataContext)
 
@@ -200,7 +203,7 @@ const ModifyRoutine = ({routine}) => {
     return( <>
         <Container className={'header-create-routine'}>
             <Text text={'Estas modificando una rutina:'}/>
-            <Container className={'close-button'}>
+            <Container className={`close-button ${darkMode && "darkMode"}`}>
                 <IoMdClose
                 onClick={() => redirect('/')}
                 />

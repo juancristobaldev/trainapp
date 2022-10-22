@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { IoMdClose } from "react-icons/io";
 import { UPDATE_FOLDER } from "../../data/mutations";
 import { GET_ROUTINES_BY_TOKEN, GET_ROUTINES_FOLDERS_USER_BY_TOKEN } from "../../data/query";
+import { useDarkMode } from "../../hooks/useDarkMode";
 import { useList } from "../../hooks/useList";
 import { FormControl } from "../Form/FormControl";
 
@@ -39,6 +40,8 @@ const ModifyFolder = ({token,closeFunction,folder}) => {
     const handleChange = (e) => {
         updateState({...state, dataFormCreate:{...dataFormCreate, [e.target.name]:e.target.value}})
     }
+
+    const {darkMode} = useDarkMode()
 
     const {deleteItem} = 
     useList(
@@ -106,7 +109,7 @@ const ModifyFolder = ({token,closeFunction,folder}) => {
                             header={
                                 <Container className={'routine-header'}>
                                     <Text text={routine.name}/>
-                                    <Container onClick={() => deleteItem(routine)} className={'close-button'}>
+                                    <Container onClick={() => deleteItem(routine)} className={`close-button ${darkMode && "darkMode"}`}>
                                         <IoMdClose/>
                                     </Container>
                                 </Container>  

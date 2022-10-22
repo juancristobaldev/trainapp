@@ -85,4 +85,23 @@
       }
     }
   }
+
+  &.darkMode {
+    background-color: $color-2-darkmode;
+    .modal-select-list {
+      .container-routine-folder {
+        border: 1px solid $color-1-darkmode;
+        .routine-header .checkBoxItem .checkBoxOff {
+          border: 1px solid $color-0-darkmode;
+          background-color: $color-1-darkmode;
+        }
+        .routine-header .checkBoxItem .checkBoxOn {
+        }
+      }
+    }
+  }
+  &.web {
+    margin: 10vh calc((100vw - 35vw) / 2);
+    max-width: 35vw;
+  }
 }

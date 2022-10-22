@@ -4,7 +4,9 @@ import { useEffect } from "react";
 import { IoMdClose } from "react-icons/io";
 import { CREATE_FOLDER } from "../../data/mutations";
 import { GET_ROUTINES_BY_TOKEN, GET_ROUTINES_FOLDERS_USER_BY_TOKEN } from "../../data/query";
+import { useDarkMode } from "../../hooks/useDarkMode";
 import { useList } from "../../hooks/useList";
+import { useWidthScreen } from "../../hooks/useWidthScreen";
 import { FormControl } from "../Form/FormControl";
 
 import { Button } from "../generals/Button";
@@ -39,6 +41,10 @@ const CreateFolder = ({token,closeFunction}) => {
     const handleChange = (e) => {
         updateState({...state, dataFormCreate:{...dataFormCreate, [e.target.name]:e.target.value}})
     }
+
+    const {widthScreen} = useWidthScreen(),
+    {darkMode} = useDarkMode()
+
     const {deleteItem} = 
     useList(
         "content",
@@ -85,7 +91,7 @@ const CreateFolder = ({token,closeFunction}) => {
                     title={'Carpeta nueva'}
                     functionClose={closeFunction}
                     classNameHeader={'modal-add-routines-header'}
-                    classNameModal={'modal-add-routines'}
+                    classNameModal={`modal-add-routines ${widthScreen > 650 && "web"} ${darkMode && "darkMode"}`}
                     textSelect
                     list={
                         <>
@@ -103,7 +109,7 @@ const CreateFolder = ({token,closeFunction}) => {
                             header={
                                 <Container className={'routine-header'}>
                                     <Text text={routine.name}/>
-                                    <Container onClick={() => deleteItem(routine)} className={'close-button'}>
+                                    <Container onClick={() => deleteItem(routine)} className={`close-button ${darkMode && "darkMode"}`}>
                                         <IoMdClose/>
                                     </Container>
                                 </Container>  
