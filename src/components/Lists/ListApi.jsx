@@ -2,7 +2,7 @@ import React from "react";
 
 function ListApi(props) {
     return (
-      <section className={props.className}>
+      <section className={`${props.className} ${props.data.length === 0 && "empty"}`}>
         {props.error && props.onError()}
         {props.loading && props.onLoading()}
         {(!props.loading && !props.data.length ) && props.onEmpty()}

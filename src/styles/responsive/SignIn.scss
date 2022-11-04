@@ -1,12 +1,13 @@
 @use "src/styles/shared/mixins.scss";
 @import "src/styles/shared/variables.scss";
 
-@include mixins.media-up(md-md) {
+@include mixins.media-up(md, lg-lg-lg) {
   .main-signin {
-    width: 100%;
+    width: 100% !important;
+    margin: 0 !important;
     @include mixins.dgrid(12.5% 77.5% 10%, 49% 2% 49%, normal, normal);
-    .form-signin {
-      width: 60%;
+    form.form-signin {
+      width: 60% !important;
       height: 75%;
       place-self: center;
     }
@@ -22,5 +23,25 @@
   .container-doit {
     grid-area: 2/ 3/ 3 / 4 !important;
     font-size: 2rem;
+  }
+}
+
+@include mixins.media-up(md, md-md) {
+  .main-signin {
+    width: 95vw;
+    margin: 0 2.5vw;
+    form.form-signin {
+      width: 90% !important;
+    }
+  }
+}
+
+@include mixins.media-up(sm, md) {
+  .main-signin {
+    width: 95vw;
+    margin: 0 2.5vw;
+    form.form-signin {
+      width: 90% !important;
+    }
   }
 }

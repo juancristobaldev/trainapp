@@ -5,6 +5,7 @@
   border-radius: 0.25rem;
   position: absolute;
   top: 0;
+  left: 0;
   width: 100%;
   z-index: 1001;
   width: calc(100% - 2rem);
@@ -33,6 +34,8 @@
     @include mixins.input-search();
     display: flex;
     span {
+      height: 40px;
+      border: 1px solid silver;
       width: 100%;
       align-self: center;
     }
@@ -88,7 +91,28 @@
 
   &.darkMode {
     background-color: $color-2-darkmode;
+    .modal-select-search {
+      span {
+        background-color: $color-1-darkmode !important;
+        border: 1px solid white;
+        input {
+          color: white;
+          &::placeholder {
+            color: white;
+          }
+        }
+      }
+    }
     .modal-select-list {
+      &::-webkit-scrollbar-track {
+        background: $color-1-darkmode;
+        width: 8px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: $color-2-darkmode;
+        border-radius: 1rem;
+      }
       .container-routine-folder {
         border: 1px solid $color-1-darkmode;
         .routine-header .checkBoxItem .checkBoxOff {

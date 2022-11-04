@@ -43,9 +43,8 @@ const Folder = ({children,classNameFolder,folder,viewMode,widthScreen,darkMode})
     }
 
     useEffect(() => {
-        if(widthScreen > 650){
-            updateShowRoutines(true)
-        }
+        if(widthScreen > 650) updateShowRoutines(true)
+        else updateShowRoutines(false)
     },[widthScreen])
     
     return (
@@ -115,14 +114,17 @@ const Folder = ({children,classNameFolder,folder,viewMode,widthScreen,darkMode})
             />
         }
         {modalModifyFolder && 
-            <ModifyFolder
-            token={token}
-            closeFunction={() => {
-                updatePopover(false)
-                updateModalModifyFolder(false)
-            }}
-            folder={folder}
-            />
+            <>
+                <Container className={`back ${darkMode && 'darkMode'}`}/> 
+                <ModifyFolder
+                token={token}
+                closeFunction={() => {
+                    updatePopover(false)
+                    updateModalModifyFolder(false)
+                }}
+                folder={folder}
+                />
+            </>
         }
         </>
     )

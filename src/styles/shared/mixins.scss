@@ -1,15 +1,4 @@
 @import "src/styles/shared/variables.scss";
-$breakpoints: (
-  sm: 300px,
-  sm-md: 400px,
-  md-sm: 500px,
-  md: 768px,
-  md-md-lg: 824px,
-  md-md: 900px,
-  sm-lg: 1100px,
-  lg: 1224px,
-  lg-lg: 1424px,
-);
 
 @mixin button-primary(
   $primary-color,
@@ -35,8 +24,8 @@ $breakpoints: (
   }
 }
 
-@mixin media-up($breakpoint) {
-  @media screen and (min-width: map-get($breakpoints,$breakpoint)) {
+@mixin media-up($breakpoint-min, $breakpoint-max) {
+  @media (min-width: map-get($breakpoints,$breakpoint-min)) and (max-width: map-get($breakpoints,$breakpoint-max)) {
     @content;
   }
 }
@@ -73,7 +62,7 @@ $breakpoints: (
 @mixin input-search() {
   span {
     border-radius: 0.25rem;
-    padding: 0.5rem;
+    padding: 0.5rem 1rem;
     border: 1px solid rgb(192, 192, 192);
     display: grid;
     grid-template: 100% / 90% 10%;

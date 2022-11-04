@@ -4,14 +4,22 @@ $breakpoints: (
   sm: 300px,
   sm-md: 400px,
   md-sm: 500px,
-  md: 768px,
+  md: 650px,
   md-md-lg: 824px,
   md-md: 965px,
   sm-lg: 1100px,
   lg: 1224px,
   lg-lg: 1424px,
+  lg-lg-lg: 1920px,
 );
 
+$color-0-lightmode: white;
+$color-1-lightmode: rgb(250, 250, 250);
+$color-2-lightmode: rgb(235, 233, 233);
+$color-3-lightmode: rgb(220, 220, 220);
+$background-gradient-lightmode: linear-gradient(180deg, #f4f4f4, #ffffff 100%);
+
+$color--1-darkmode: rgb(4, 23, 38);
 $color-0-darkmode: rgb(8, 32, 50);
 $color-1-darkmode: #0b2a41;
 $color-2-darkmode: #10344e;

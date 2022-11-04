@@ -6,14 +6,15 @@ import { Main } from "./generals/Main";
 import { Section } from "./generals/Section";
 import { Routine } from "./Routines/Routine";
 
-import { ImHome,ImProfile } from "react-icons/im"
+import { ImHome } from "react-icons/im"
 import {IoDocumentTextSharp} from "react-icons/io5"
 import {GiHamburgerMenu} from "react-icons/gi"
-import {RiDeleteBin2Fill,RiFoldersFill} from "react-icons/ri"
+import {RiFoldersFill} from "react-icons/ri"
 import {MdDarkMode,MdLightMode,MdClose} from "react-icons/md"
-import {BsFillDoorOpenFill, BsThreeDots} from "react-icons/bs"
+import {BsFillDoorOpenFill} from "react-icons/bs"
 
 import '../styles/Dashboard.scss'
+import '../styles/responsive/Dashboard.scss'
 
 import { Button } from "./generals/Button";
 import { Text } from "./generals/Text";
@@ -26,7 +27,7 @@ import { Modal } from "./Modal/Modal";
 
 import { useMutation } from "@apollo/client";
 import { DELETE_ROUTINE, UPDATE_USER } from "../data/mutations";
-import { GET_ROUTINES_AND_USER_BY_TOKEN, GET_USER } from "../data/query";
+import { GET_ROUTINES_AND_USER_BY_TOKEN, GET_ROUTINES_FOLDERS_USER_BY_TOKEN, GET_USER } from "../data/query";
 import { ButtonIcon } from "./ButtonIcon";
 import { ContainerSearch } from "./ContainerSearch";
 import { Folder } from "./Folders/Folder";
@@ -56,8 +57,6 @@ const Dashboard = ({updateRoutineOnPlay}) => {
 
     const { widthScreen } = useWidthScreen(),
     {darkMode, updateDarkMode,changeDarkMode} = useDarkMode()
-
-    console.log(darkMode)
 
     const {
         routines,
@@ -107,7 +106,7 @@ const Dashboard = ({updateRoutineOnPlay}) => {
                     ...inputVariables
                 }
             },
-            refetchQueries:[{query:GET_ROUTINES_AND_USER_BY_TOKEN,variables:{
+            refetchQueries:[{query:GET_ROUTINES_FOLDERS_USER_BY_TOKEN,variables:{
                 token:token
             }}]
         }).then( ({data}) => {
@@ -136,10 +135,9 @@ const Dashboard = ({updateRoutineOnPlay}) => {
             {!loadingData  && 
             <>
                 <nav className={`section-nav-dashboard ${widthScreen > 650 && "nav-big-screen"}`}>
-                    <Container className={'pic-nav'}>  
-                    </Container>
-                    <h3 className={`view ${widthScreen > 650 && "web"}`}>{view === "home" ? 'Inicio' : view === "routines" ? 'Tus rutinas' 
-                        : view === "folders" ? "Tus carpetas" : "Mi perfil"}</h3>
+                    <h3 className="app">WorkOut App</h3>
+                    <h3 className={`view ${widthScreen > 650 && "web"}`}>{view === "home" ? 'Inicio' : view === "routines" ? 'Rutinas' 
+                        : view === "folders" ? "Carpetas" : "Mi perfil" }</h3>
                     {
                         widthScreen < 650 && 
                         <GiHamburgerMenu
@@ -155,9 +153,7 @@ const Dashboard = ({updateRoutineOnPlay}) => {
                             {
                                 widthScreen < 650 &&
                                 <Container className={'header-menu'}>
-                                <Text
-                                text={'Menu'}
-                                />
+                                <h3>Menu</h3>
                                 <MdClose
                                 fill={darkMode ? 'white' : 'black'}
                                 cursor={'pointer'}
@@ -191,14 +187,6 @@ const Dashboard = ({updateRoutineOnPlay}) => {
                             }}
                             classNameContainer={`button-menu ${view === "folders" && true}`}
                             textButton={'Carpetas'}
-                            />
-                            <ButtonIcon
-                            icon={<ImProfile/>}
-                            onClick={() => {
-                                updateStateNav('unactived')
-                            }}
-                            classNameContainer={`button-menu ${view === "profile" && true}`}
-                            textButton={'Mi perfil'}
                             />
                             <ButtonIcon
                             icon={<BsFillDoorOpenFill/>}
@@ -275,6 +263,7 @@ const Dashboard = ({updateRoutineOnPlay}) => {
                                     <Container className={'routine-container-stats'}>
                                         <Text text={`Record 🎉: ${routine.timeRecord}`}/>
                                         <Text text={`Veces realizadas: ${routine.dones}`} />
+                                        <Text text={`Ejercicios: ${routine.exercises.length}`} />
                                     </Container>
                                     <Container className={'routine-container-button'}>
                                         <Button
@@ -360,6 +349,7 @@ const Dashboard = ({updateRoutineOnPlay}) => {
                                 <Container className={'routine-container-stats'}>
                                     <Text text={`Tiempo record 🎉: ${routine.timeRecord}`}/>
                                     <Text text={`Veces realizadas: ${routine.dones}`} />
+                                    <Text text={`Ejercicios: ${JSON.parse(routine.exercises).length}`}/>
                                 </Container>
                                 <Container className={'routine-container-button'}>
                                     <Button
@@ -478,12 +468,14 @@ const Dashboard = ({updateRoutineOnPlay}) => {
                     />
                 }
                 {modalCreateFolder && 
-
-                    <CreateFolder
-                    token={token}
-                    routines={routines}
-                    closeFunction={() => updateModalCreateFolder(false)}
-                    />
+                    <>
+                        <Container className={`back ${darkMode && 'darkMode'}`}/>
+                        <CreateFolder
+                        token={token}
+                        routines={routines}
+                        closeFunction={() => updateModalCreateFolder(false)}
+                        />
+                    </>
                 } 
                 </>
 

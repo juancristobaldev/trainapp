@@ -97,6 +97,7 @@ const SingIn = () => {
                 className={'header-signin'}
                 >
                     <h1>Iniciar sesion</h1>
+                    <h3>Ingresa tus credenciales...</h3>
                 </Container>
                 <FormControl
                     autoComplete={'new-user'}
@@ -119,7 +120,7 @@ const SingIn = () => {
                 />
             </Form>
             <Container className="container-doit">
-                <p className="p-doit"><span>Do</span>It</p>
+            <h4>WorkOut App</h4>
             </Container>
         </Main>
         </>
@@ -127,25 +128,3 @@ const SingIn = () => {
 }
 
 export { SingIn }
-
-
-
-
-
-
-/*  const handleSubmit = async (e) => {
-        e.preventDefault()
-
-        const requestOptions = {
-            method:'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(dataFormLogin)
-        }
-
-        const response = await fetch('http://localhost:3001/api/auth', requestOptions);
-
-        response.json()
-        .then(data => data[0].hasOwnProperty('error') ? 
-            setError([data[0].message]) :  setIdAndShow(data)
-        )
-    } */

@@ -20,7 +20,7 @@ import { useSeries } from "../../hooks/useSeries";
 import { Form } from "../Form/Form";
 import { Serie } from "../Exercises/Serie";
 import { Modal } from "../Modal/Modal";
-import {MdOutlineKeyboardReturn} from "react-icons/md"
+import {MdCancel, MdOutlineKeyboardReturn} from "react-icons/md"
 
 import '../../styles/Exercises.scss'
 import '../../styles/Timer.scss'
@@ -34,7 +34,7 @@ import { Create } from "../Create/Create";
 import { FaCheck } from "react-icons/fa";
 import { ProgressiveCount } from "../ProgressiveCount";
 
-import { GET_EXERCISES_BY_TOKEN, GET_ROUTINES_AND_USER_BY_TOKEN, GET_ROUTINE_BY_ID, GET_USER } from "../../data/query";
+import { GET_EXERCISES_BY_TOKEN, GET_ROUTINE_BY_ID } from "../../data/query";
 import { UPDATE_FOLDER, UPDATE_ROUTINE,UPDATE_USER } from "../../data/mutations";
 import { DataContext } from "../../context/DataProvider";
 import { ModalAreUSure } from "../Modal/ModalAreUSure";
@@ -73,11 +73,11 @@ const GoRoutine = ({routine}) => {
             listTimers:[]
         },
         dataFormCreate:{
-            id:routine.routine.id,
-            name:routine.routine.name,
+            id:false,
+            name: false,
             exercises:[],
-            timeRecord:routine.routine.timeRecord,
-            dones:routine.routine.dones + 1
+            timeRecord: false,
+            dones:false
         }
     })
 
@@ -120,7 +120,13 @@ const GoRoutine = ({routine}) => {
 
         e.preventDefault()
         let newList = [...listOnCreate]
-        const dataRoutine = {...dataFormCreate};
+        const dataRoutine = {
+            ...dataFormCreate, 
+            id:routine.routine.id,
+            name:routine.routine.name,
+            timeRecord:routine.routine.timeRecord,
+            dones:routine.routine.dones + 1
+        };
         let error = false
 
         await newList.forEach(item => {
@@ -323,365 +329,369 @@ const GoRoutine = ({routine}) => {
         }
     },[data,state.timer.clock])
 
-    if(routine.active){
+    if(routine.active || routine.id ){
         return(
-        <>
-        { state.timer.modalTimer &&
             <>
-            <Container className={'back'} 
-            onClick={
-            state.timer.time === false ? 
-            () => updateState({...state, timer:{...state.timer,modalTimer:false,type:'select',time:''}}) 
-            : 
-            () => updateState({...state, timer:{...state.timer, secondPlane: !state.timer.secondPlane}})}
-            style={state.timer.secondPlane ? {display:"none"} : {display:"block"}} 
-            />
-            {
-                !state.timer.time ?
+            { state.timer.modalTimer &&
                 <>
+                <Container className={'back'} 
+                onClick={
+                state.timer.time === false ? 
+                () => updateState({...state, timer:{...state.timer,modalTimer:false,type:'select',time:''}}) 
+                : 
+                () => updateState({...state, timer:{...state.timer, secondPlane: !state.timer.secondPlane}})}
+                style={state.timer.secondPlane ? {display:"none"} : {display:"block"}} 
+                />
                 {
-                    state.timer.type === 'select' ?
-                    <Container className={`modal-timer ${state.timer.secondPlane ? "second-plane" : "undefined"}`}>
-                        <Container className={'header-timer'}>
-                            <Text text="Temporizador"/>
-                            <Container className={`close-button ${darkMode && "darkMode"}`}>
-                                <IoMdClose
-                                cursor={'pointer'}
-                                onClick={
-                                    state.timer.time === false ? 
-                                    () => updateState({...state, timer:{...state.timer,modalTimer:false,time:''}}) 
-                                    : 
-                                    () => updateState({...state, timer:{...state.timer, secondPlane: !state.timer.secondPlane}})}
-                                    style={state.timer.secondPlane ? {display:"none"} : {display:"block"}} 
-                                    />
+                    !state.timer.time ?
+                    <>
+                    {
+                        state.timer.type === 'select' ?
+                        <Container className={`modal-timer ${state.timer.secondPlane ? "second-plane" : "undefined"}`}>
+                            <Container className={'header-timer'}>
+                                <Text text="Temporizador"/>
+                                <Container className={`close-button ${darkMode && "darkMode"}`}>
+                                    <IoMdClose
+                                    cursor={'pointer'}
+                                    onClick={
+                                        state.timer.time === false ? 
+                                        () => updateState({...state, timer:{...state.timer,modalTimer:false,time:''}}) 
+                                        : 
+                                        () => updateState({...state, timer:{...state.timer, secondPlane: !state.timer.secondPlane}})}
+                                        style={state.timer.secondPlane ? {display:"none"} : {display:"block"}} 
+                                        />
+                                </Container>
                             </Container>
-                        </Container>
-                        <List
-                        className={'list-timer-select'}
-                        item={timer}
-                        onEmpty={() => <Text text={'No has creado ningun temporizador'}/>}
-                        render={timer => 
-                            <Container className={'container-timer'}>
-                                <Text
-                                style={{cursor:"pointer"}}
-                                key={timer}
-                                text={timer}
-                                onClick={() => updateState({...state, timer:{...state.timer, time:timer}})}
+                            <List
+                            className={'list-timer-select'}
+                            item={timer}
+                            onEmpty={() => <Text text={'No has creado ningun temporizador'}/>}
+                            render={timer => 
+                                <Container className={'container-timer'}>
+                                    <Text
+                                    style={{cursor:"pointer"}}
+                                    key={timer}
+                                    text={timer}
+                                    onClick={() => updateState({...state, timer:{...state.timer, time:timer}})}
+                                    />
+                                </Container>
+                            }
+                            />
+                            <Container
+                            className={'buttons-timer-select'}
+                            >
+                                <Button
+                                textButton={'Crear temporizador'}
+                                onClick={() => updateState({...state,timer:{...state.timer, type:'create' }}) }
                                 />
                             </Container>
-                        }
-                        />
-                        <Container
-                        className={'buttons-timer-select'}
-                        >
-                            <Button
-                            textButton={'Crear temporizador'}
-                            onClick={() => updateState({...state,timer:{...state.timer, type:'create' }}) }
-                            />
-                        </Container>
-                    </Container> 
+                        </Container> 
+                        :
+                        <Create className={`modal-timer ${state.timer.secondPlane ? "second-plane" : "undefined"}`}>
+                            <Container className={'header-timer'}>
+                                <Text text="Temporizador"/>
+                                <Container className={'close-button'}>
+                                    <MdOutlineKeyboardReturn
+                                    onClick={() => updateState({...state,timer:{...state.timer, type:'select', clock:{minutes:'',seconds:''},errors:{error:false,errors:[]}}})}
+                                    />
+                                </Container>
+                            </Container>
+                            <Container className={'create-timer'}>
+                                {state.timer.errors.error && 
+                                    <Container className={'errors'}>
+                                        {
+                                        state.timer.errors.errors.map(error => 
+                                        <Text text={error}/>
+                                        )
+                                        }
+                                    </Container>
+                                    
+                                }
+                                <Container className={'minutes'}>
+                                    <Text text={'Minutos'}/>
+                                    <input
+                                    onChange={event => getDataTimer(event)}
+                                    name={'minutes'}
+                                    type={'number'}
+                                    min={0}
+                                    max={60}
+                                    />
+                                </Container>
+                                <Container className={'separator'}>
+                                    <Text text={':'}/>
+                                </Container>
+                                <Container className={'seconds'}>
+                                    <Text text={'Segundos'}/>
+                                    <input
+                                    onChange={event => getDataTimer(event)}
+                                    name={'seconds'}
+                                    type={'number'}
+                                    min={0}
+                                    max={60}
+                                    />
+                                </Container>
+                            </Container>
+                            <Container
+                            className={'buttons-timer-select'}
+                            >
+                                <Button
+                                onClick={() => setTimer()}
+                                textButton={'Crear temporizador'}
+                                />
+                            </Container>
+                        </Create>
+                    }
+                    </>
                     :
-                    <Create className={`modal-timer ${state.timer.secondPlane ? "second-plane" : "undefined"}`}>
-                        <Container className={'header-timer'}>
-                            <Text text="Temporizador"/>
+                    <>
+                    <Container className={`modal-timer ${state.timer.secondPlane ? "second-plane" : "undefined"}`}>
+                        <Container
+                        className={'header-timer'}
+                        >
+                            <Text text={'Temporizador'}/>
                             <Container className={'close-button'}>
                                 <MdOutlineKeyboardReturn
-                                onClick={() => updateState({...state,timer:{...state.timer, type:'select', clock:{minutes:'',seconds:''},errors:{error:false,errors:[]}}})}
+                                    cursor={'pointer'}
+                                    onClick={() => updateState({...state,timer:{...state.timer, type:'select', time:''}})}
                                 />
                             </Container>
                         </Container>
-                        <Container className={'create-timer'}>
-                            {state.timer.errors.error && 
-                                <Container className={'errors'}>
-                                    {
-                                    state.timer.errors.errors.map(error => 
-                                    <Text text={error}/>
-                                    )
-                                    }
-                                </Container>
-                                
-                            }
-                            <Container className={'minutes'}>
-                                <Text text={'Minutos'}/>
-                                <input
-                                onChange={event => getDataTimer(event)}
-                                name={'minutes'}
-                                type={'number'}
-                                min={0}
-                                max={60}
-                                />
-                            </Container>
-                            <Container className={'separator'}>
-                                <Text text={':'}/>
-                            </Container>
-                            <Container className={'seconds'}>
-                                <Text text={'Segundos'}/>
-                                <input
-                                onChange={event => getDataTimer(event)}
-                                name={'seconds'}
-                                type={'number'}
-                                min={0}
-                                max={60}
-                                />
-                            </Container>
-                        </Container>
-                        <Container
-                        className={'buttons-timer-select'}
-                        >
-                            <Button
-                            onClick={() => setTimer()}
-                            textButton={'Crear temporizador'}
-                            />
-                        </Container>
-                    </Create>
-                }
-                </>
-                :
-                <>
-                <Container className={`modal-timer ${state.timer.secondPlane ? "second-plane" : "undefined"}`}>
-                    <Container
-                    className={'header-timer'}
-                    >
-                        <Text text={'Temporizador'}/>
-                        <Container className={'close-button'}>
-                            <MdOutlineKeyboardReturn
-                                cursor={'pointer'}
-                                onClick={() => updateState({...state,timer:{...state.timer, type:'select', time:''}})}
-                            />
-                        </Container>
-                    </Container>
-                    <Timer
-                        time={state.timer.time}
-                    />
-                    <Container
-                    style={{
-                        width:"90%",
-                        height:"70%",
-                        placeSelf:'center'
-                    }}
-                    className={'buttons-timer-select'}>
-                        <Button
-                        onClick={
-                            state.timer.time === false ? 
-                            () => updateState({...state, timer:{...state.timer,modalTimer:false,type:'select',time:''}}) 
-                            : 
-                            () => updateState({...state, timer:{...state.timer, secondPlane: !state.timer.secondPlane}})
-                        }
-                        textButton={'Aceptar'}
+                        <Timer
+                            time={state.timer.time}
                         />
+                        <Container
+                        style={{
+                            width:"90%",
+                            height:"70%",
+                            placeSelf:'center'
+                        }}
+                        className={'buttons-timer-select'}>
+                            <Button
+                            onClick={
+                                state.timer.time === false ? 
+                                () => updateState({...state, timer:{...state.timer,modalTimer:false,type:'select',time:''}}) 
+                                : 
+                                () => updateState({...state, timer:{...state.timer, secondPlane: !state.timer.secondPlane}})
+                            }
+                            textButton={'Aceptar'}
+                            />
+                        </Container>
                     </Container>
-                </Container>
+                    </>
+                }
                 </>
             }
-            </>
-        }
-        <Container className={'header-goroutine'}>
-            <span onClick={
-                state.timer.time === false ? 
-                () => updateState({...state, timer:{...state.timer,modalTimer:!state.timer.modalTimer,time:''}}) 
-                : 
-                () => updateState({...state, timer:{...state.timer, secondPlane: !state.timer.secondPlane}})}>
-                <Text text={'Temporizador'}/>
-                <BsClockHistory/>
-            </span>
-        </Container>
-        <Main
-        className={'main-goroutine'}
-        >
-            {loading ? <Loading/> : 
-            <>
-            <Form
-            className={'form-goroutine'}
-            textSubmit='Finalizar rutina'
-            onSubmit={(e) => handleSubmit(e)}
+            <Container className={'header-goroutine'}>
+                <span className="cancel" onClick={() => navigate('/')}>
+                    <Text text={'Cancelar'}/>
+                    <MdCancel/>
+                </span>
+                <span className="timer" onClick={
+                    state.timer.time === false ? 
+                    () => updateState({...state, timer:{...state.timer,modalTimer:!state.timer.modalTimer,time:''}}) 
+                    : 
+                    () => updateState({...state, timer:{...state.timer, secondPlane: !state.timer.secondPlane}})}>
+                    <Text text={'Temporizador'}/>
+                    <BsClockHistory/>
+                </span>
+            </Container>
+            <Main
+            className={'main-goroutine'}
             >
-                <Container className={'stats-goroutine'}>
-                    <h2>{state.dataRoutine.name}</h2>
-                    <Text
-                    text={`Mejor tiempo 🎉: ${state.dataRoutine.timeRecord}`}
-                    />
-                    <ProgressiveCount
-                    id={"progressive-count"}
-                    />                    
-                </Container>
-                <ListApi
-                className={'exercises-list-routine'}
-                error={error}
-                loading={loading}
-                data={state.listOnCreate}
-                onError={() => <p>Hay un error</p>}
-                onLoading={() => <p>Cargando...</p>}
-                onEmpty={() => 
-                    <Container className={'exercises-list-routine-empty'}>
-                        <Text text={'Agrega tu primer ejercicio'}/>
+                {loading ? <Loading/> : 
+                <>
+                <Form
+                className={'form-goroutine'}
+                textSubmit='Finalizar rutina'
+                onSubmit={(e) => handleSubmit(e)}
+                >
+                    <Container className={'stats-goroutine'}>
+                        <h2>{state.dataRoutine.name}</h2>
+                        <Text
+                        text={`Mejor tiempo 🎉: ${state.dataRoutine.timeRecord}`}
+                        />
+                        <ProgressiveCount
+                        id={"progressive-count"}
+                        />                    
                     </Container>
-                }
-                render={exercise => 
-
-                    <Exercise 
-                    key={exercise.idList}
-                    item={exercise}
-                    deleteExerciseOfList={deleteItem}
-                    >
-                        <List
-                        className='listSerie'
-                        style={{
-                            display:"flex",
-                            justifyContent:'space-around',
-                            flexDirection:"column",
-                        }}
-                        item={exercise.seriesEx}
-                        onEmpty={() => 
-                            <Text className={'first-serie'} text={'Agrega tu primera serie'}/>
-                        }
-                        render={ serie => 
-                                <Serie
-                                    dataRoutine={state.dataRoutine}
-                                    exercise={exercise}
-                                    serie={serie}
-                                    key={serie.idSerie}
-                                    className={classControl(exercise.typeEx) + ` serie ${serie.need ? "need" : "false"} ${serie.checked ? "checked" : "unchecked"}`}
-                                    >
-                                        <Container className={`delete-button ${darkMode && "darkMode"}`}>
-                                            <IoMdClose
-                                            onClick={() => deleteSeries(serie,exercise)}
-                                            />
-                                        </Container>
-                                        <Text text={serie.lastMoment}/>
-                                        <>
-                                            {exercise.typeEx === 'Peso adicional' || exercise.typeEx === 'Peso asistido' ?
-                                            <>
-                                                <InputSerie
-                                                    className={'input-type'}
-                                                    style={{width:"35%"}}
-                                                    name={exercise.name}
-                                                    type="number"
-                                                    objEx={{nameInput:'other',idList:exercise.idList,serie:serie.idSerie}}
-                                                    onChange={getDataRoutine}                                        
+                    <ListApi
+                    className={'exercises-list-routine'}
+                    error={error}
+                    loading={loading}
+                    data={state.listOnCreate}
+                    onError={() => <p>Hay un error</p>}
+                    onLoading={() => <p>Cargando...</p>}
+                    onEmpty={() => 
+                        <Container className={'exercises-list-routine-empty'}>
+                            <Text text={'Agrega tu primer ejercicio'}/>
+                        </Container>
+                    }
+                    render={exercise => 
+    
+                        <Exercise 
+                        key={exercise.idList}
+                        item={exercise}
+                        deleteExerciseOfList={deleteItem}
+                        >
+                            <List
+                            className='listSerie'
+                            style={{
+                                display:"flex",
+                                justifyContent:'space-around',
+                                flexDirection:"column",
+                            }}
+                            item={exercise.seriesEx}
+                            onEmpty={() => 
+                                <Text className={'first-serie'} text={'Agrega tu primera serie'}/>
+                            }
+                            render={ serie => 
+                                    <Serie
+                                        dataRoutine={state.dataRoutine}
+                                        exercise={exercise}
+                                        serie={serie}
+                                        key={serie.idSerie}
+                                        className={classControl(exercise.typeEx) + ` serie ${serie.need ? "need" : "false"} ${serie.checked ? "checked" : "unchecked"}`}
+                                        >
+                                            <Container className={`delete-button ${darkMode && "darkMode"}`}>
+                                                <IoMdClose
+                                                onClick={() => deleteSeries(serie,exercise)}
                                                 />
-                                                <InputSerie
+                                            </Container>
+                                            <Text text={serie.lastMoment}/>
+                                            <>
+                                                {exercise.typeEx === 'Peso adicional' || exercise.typeEx === 'Peso asistido' ?
+                                                <>
+                                                    <InputSerie
+                                                        className={'input-type'}
+                                                        style={{width:"35%"}}
+                                                        name={exercise.name}
+                                                        type="number"
+                                                        objEx={{nameInput:'other',idList:exercise.idList,serie:serie.idSerie}}
+                                                        onChange={getDataRoutine}                                        
+                                                    />
+                                                    <InputSerie
+                                                        className={'input-reps'}
+                                                        idList={exercise.idList}
+                                                        style={{width:"35%"}}
+                                                        name={exercise.name}
+                                                        objEx={{nameInput:'reps',idList:exercise.idList,serie:serie.idSerie}}
+                                                        onChange={getDataRoutine}
+                                                        type="number"
+                                                    />
+                                                </>
+                                                :
+                                                exercise.typeEx === 'Duracion' ?
+                                                    <InputSerie
+                                                    className='inputSerie'
+                                                    idList={exercise.idList}
+                                                    name={exercise.name}
+                                                    objEx={{nameInput:'time',idList:exercise.idList,serie:serie.idSerie}}
+                                                    onChange={getDataRoutine}
+                                                    style={{width:"50%"}}
+                                                    type="time"
+                                                    />
+                                                :
+                                                    <InputSerie
                                                     className={'input-reps'}
                                                     idList={exercise.idList}
-                                                    style={{width:"35%"}}
+                                                    className='inputSerie'
                                                     name={exercise.name}
                                                     objEx={{nameInput:'reps',idList:exercise.idList,serie:serie.idSerie}}
                                                     onChange={getDataRoutine}
+                                                    style={{width:"35%"}}
                                                     type="number"
-                                                />
-                                            </>
-                                            :
-                                            exercise.typeEx === 'Duracion' ?
-                                                <InputSerie
-                                                className='inputSerie'
-                                                idList={exercise.idList}
-                                                name={exercise.name}
-                                                objEx={{nameInput:'time',idList:exercise.idList,serie:serie.idSerie}}
-                                                onChange={getDataRoutine}
-                                                style={{width:"50%"}}
-                                                type="time"
-                                                />
-                                            :
-                                                <InputSerie
-                                                className={'input-reps'}
-                                                idList={exercise.idList}
-                                                className='inputSerie'
-                                                name={exercise.name}
-                                                objEx={{nameInput:'reps',idList:exercise.idList,serie:serie.idSerie}}
-                                                onChange={getDataRoutine}
-                                                style={{width:"35%"}}
-                                                type="number"
-                                                />
-                                            }
-                                            <Container className={'checkbox'}>
-                                                <Container className="checkBoxItem">
-                                                    <Container
-                                                    style={ !serie.checked && serie.need ? { border:'1px solid red' } : {border:0}}
-                                                    onClick={() => checkSerie(serie,exercise)}
-                                                    className={serie.checked ? "checkBoxOn" : "checkBoxOff"}
-                                                    >
-                                                        {serie.checked && <FaCheck fill="white"/>}
+                                                    />
+                                                }
+                                                <Container className={'checkbox'}>
+                                                    <Container className="checkBoxItem">
+                                                        <Container
+                                                        style={ !serie.checked && serie.need ? { border:'1px solid red' } : {border:0}}
+                                                        onClick={() => checkSerie(serie,exercise)}
+                                                        className={serie.checked ? "checkBoxOn" : "checkBoxOff"}
+                                                        >
+                                                            {serie.checked && <FaCheck fill="white"/>}
+                                                        </Container>
                                                     </Container>
                                                 </Container>
-                                            </Container>
-                                        </>
-                                    </Serie> 
-                        }
-                        >
-                            <Container
-                            className={'container-add-serie'}
+                                            </>
+                                        </Serie> 
+                            }
                             >
-                                <Button 
-                                onClick={(e) => addSerie(e,exercise.idList)}
-                                textButton={'+ Serie'}
-                                />
-                            </Container>
-                        </List>
-                </Exercise>
-                }
-                />
-            </Form>
-            <Container className={'container-add-new-exercise'}>
-                    <Button
-                    onClick={() => updateState({...state, modal:!state.modal})}
-                    textButton='Agregar un ejercicio'
+                                <Container
+                                className={'container-add-serie'}
+                                >
+                                    <Button 
+                                    onClick={(e) => addSerie(e,exercise.idList)}
+                                    textButton={'+ Serie'}
+                                    />
+                                </Container>
+                            </List>
+                    </Exercise>
+                    }
                     />
-            </Container>
-            <footer>
-                <p className="p-doit"><span>Do</span>It</p>
-            </footer>
-            </>
-            }
-            </Main>
-            <Modal>
-                {state.modal && 
-                    <>
-                        <ListExercises
+                </Form>
+                <Container className={'container-add-new-exercise'}>
+                        <Button
+                        onClick={() => updateState({...state, modal:!state.modal})}
+                        textButton='Agregar un ejercicio'
+                        />
+                </Container>
+                <footer>
+                    <p className="p-doit"><span>Do</span>It</p>
+                </footer>
+                </>
+                }
+                </Main>
+                <Modal>
+                    {state.modal && 
+                        <>
+                            <ListExercises
+                                token={token}
+                                objectState={{state:state,setState:updateState}}
+                            />
+                            <Container
+                            onClick={() => updateState({...state, modal:false})}
+                            className={'back'}/>
+                        </>
+                    }
+                    { state.modalCreate &&
+                        <>
+                            <CreateExercise
                             token={token}
                             objectState={{state:state,setState:updateState}}
+                            />
+                            <Container className={'back'}
+                            onClick={() => updateState({...state, modalCreate:false})}
+                            />
+                        </>
+                    }
+                    {
+                    state.modalDelete.boolean === true && 
+                        <>
+                            <ModalDelete
+                            token={token}
+                            exercise={true}
+                            objectState={{state:state,setState:updateState}}
+                            />
+                            <Container className={'back'}
+                            />
+                        </>
+                    }
+                    {
+                        state.modalUncompletedRoutine === true && 
+                        
+                        <ModalAreUSure
+                        text={"Algunos ejercicios estan incompletos..."}
+                        acceptFunction={event => handleSubmit(event,true)}
+                        cancelFunction={() => updateState({...state, modalUncompletedRoutine: false})}
                         />
-                        <Container
-                        onClick={() => updateState({...state, modal:false})}
-                        className={'back'}/>
-                    </>
-                }
-                { state.modalCreate &&
-                    <>
-                        <CreateExercise
-                        token={token}
-                        objectState={{state:state,setState:updateState}}
-                        />
-                        <Container className={'back'}
-                        onClick={() => updateState({...state, modalCreate:false})}
-                        />
-                    </>
-                }
-                {
-                state.modalDelete.boolean === true && 
-                    <>
-                        <ModalDelete
-                        token={token}
-                        exercise={true}
-                        objectState={{state:state,setState:updateState}}
-                        />
-                        <Container className={'back'}
-                        />
-                    </>
-                }
-                {
-                    state.modalUncompletedRoutine === true && 
-                    
-                    <ModalAreUSure
-                    text={"Algunos ejercicios estan incompletos..."}
-                    acceptFunction={event => handleSubmit(event,true)}
-                    cancelFunction={() => updateState({...state, modalUncompletedRoutine: false})}
-                    />
-                }
-            </Modal>
-        </>
+                    }
+                </Modal>
+            </>
         )
-    }else if( !routine.active || !token ) return (
-        <Navigate to={'/'}/>
-    )
+    }else {
+        return( <Navigate to={'/'}/> )
+    }
 }
 
 export { GoRoutine }

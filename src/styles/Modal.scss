@@ -5,7 +5,7 @@
   @include mixins.dgrid(12.5% 12.5% 55% 10% 10%, auto, normal, normal);
   position: absolute;
   top: calc(15% + 1rem);
-  z-index: 999;
+  z-index: 1001;
   align-self: center;
   box-shadow: -0.5px -0.5px 10px rgba($color: #000000, $alpha: 0.15),
     0.5px 0.5px 10px rgba($color: #000000, $alpha: 0.15);
@@ -115,7 +115,7 @@
 }
 .back {
   @include mixins.dflex(flex-start, center, row);
-  z-index: 1;
+  z-index: 1000;
   background-color: rgb(250, 250, 250, 0.6);
   backdrop-filter: blur(5px);
   position: absolute;
@@ -123,6 +123,9 @@
   left: 0;
   width: 100%;
   height: 100%;
+  &.darkMode {
+    background-color: rgba($color: $color-0-darkmode, $alpha: 0.6);
+  }
 }
 .back.create {
   z-index: 1000;

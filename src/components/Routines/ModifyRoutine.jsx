@@ -26,7 +26,15 @@ import { UPDATE_FOLDER, UPDATE_ROUTINE, UPDATE_USER } from "../../data/mutations
 import { useContext } from "react";
 import { DataContext } from "../../context/DataProvider";
 import { useDarkMode } from "../../hooks/useDarkMode";
+
+import '../../styles/ListSeries.scss'
+import '../../styles/CreateRoutine.scss'
+import '../../styles/Modal.scss'
+
 const token = new Cookies().get('session-token')
+
+
+
 
 const ModifyRoutine = ({routine}) => {
     
@@ -108,20 +116,6 @@ const ModifyRoutine = ({routine}) => {
         const errorsForm = Object.values(objError)
 
         if(errorsForm.length === 0){
-            
-            let lastWorkOuts = []
-            if(me.last_workouts !== undefined){
-                lastWorkOuts = JSON.parse(me.last_workouts);
-                const index = lastWorkOuts.findIndex(item => item.id === dataRoutine.id);
-                let someRoutine;
-                if(index >= 0) {
-                    someRoutine = lastWorkOuts[index]
-                    lastWorkOuts.splice(index,1)
-                }else if(lastWorkOuts.length >= 3){
-                    lastWorkOuts.pop()
-                }
-                lastWorkOuts.unshift({...dataRoutine})
-            }
 
             folders.forEach( async folder => {
                 const content = JSON.parse(folder.content)
@@ -148,14 +142,20 @@ const ModifyRoutine = ({routine}) => {
                 }
             })
 
-            await updateUser({
-                variables:{
-                    input:{
-                        id:me.id,
-                        last_workouts:JSON.stringify([...lastWorkOuts])
-                    }
+            let last_workouts = JSON.parse(me.last_workouts)
+            for(var i = 0; i < last_workouts.length; i++){
+                if(last_workouts[i].id === state.dataRoutine.id){ 
+                    last_workouts[i] = {...dataRoutine}
+                    updateUser({
+                        variables:{
+                            input:{
+                                id:me.id,
+                                last_workouts:JSON.stringify(last_workouts)
+                            }
+                        }
+                    })
                 }
-            })
+            }
 
             await updateRoutine({
                 variables:{
@@ -201,15 +201,15 @@ const ModifyRoutine = ({routine}) => {
 
 
     return( <>
-        <Container className={'header-create-routine'}>
-            <Text text={'Estas modificando una rutina:'}/>
-            <Container className={`close-button ${darkMode && "darkMode"}`}>
-                <IoMdClose
-                onClick={() => redirect('/')}
-                />
+        <Main className={'section-create-routine'}>
+            <Container className={'header-create-routine'}>
+                <Text text={'Editar rutina'}/>
+                <Button
+                className={'cancel-button'}
+                    textButton={'Cancelar'}
+                    onClick={() => redirect('/')}
+                    />
             </Container>
-        </Container>
-        <Main className={'main-create-routine'}>
             <Form
             className={'form-create-routine'}
             onSubmit={handleSubmit}
@@ -223,6 +223,13 @@ const ModifyRoutine = ({routine}) => {
                 placeholder={routine.routine.name}
                 onChange={getDataRoutine}
                 />
+                <Container className={'container-add-exercise'}>
+                    <Text text={'Ejercicios:'}/>
+                    <Button
+                    onClick={() => setState({...state, modal:!state.modal})}
+                    textButton='+ Ejercicio'
+                    />
+                </Container>
                 <List
                     errors={[state.errors.exercises]}
                     className={'exercises-list-routine'}
@@ -321,17 +328,6 @@ const ModifyRoutine = ({routine}) => {
                     )}
                 />
                 </Form>
-                <Container className={'container-add-new-exercise'}>
-                    <Button
-                    onClick={() => setState({...state, modal:!state.modal})}
-                    textButton='Agregar un ejercicio'
-                    />
-                </Container>
-                <footer>
-                    <p className="p-doit">
-                        <span>Do</span>It
-                    </p>
-                </footer>
         </Main>
         <Modal>
             {state.modal && 

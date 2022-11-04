@@ -12,9 +12,16 @@
 
     @include mixins.dgrid(repeat(4, 1fr), auto, normal, normal);
     .header-signin {
-      @include mixins.dflex(flex-start, center, row);
+      @include mixins.dflex(center, stretch, column);
       padding-left: 1rem;
       grid-area: 1 / 1 / 2/ 2;
+      h1 {
+        margin-bottom: 0.25rem;
+      }
+      h3 {
+        margin-top: 0.25rem;
+        font-weight: 500;
+      }
     }
     .div-error {
       padding-left: 1rem;

@@ -6,6 +6,7 @@ import { UPDATE_FOLDER } from "../../data/mutations";
 import { GET_ROUTINES_BY_TOKEN, GET_ROUTINES_FOLDERS_USER_BY_TOKEN } from "../../data/query";
 import { useDarkMode } from "../../hooks/useDarkMode";
 import { useList } from "../../hooks/useList";
+import { useWidthScreen } from "../../hooks/useWidthScreen";
 import { FormControl } from "../Form/FormControl";
 
 import { Button } from "../generals/Button";
@@ -41,7 +42,8 @@ const ModifyFolder = ({token,closeFunction,folder}) => {
         updateState({...state, dataFormCreate:{...dataFormCreate, [e.target.name]:e.target.value}})
     }
 
-    const {darkMode} = useDarkMode()
+    const {darkMode} = useDarkMode(),
+    {widthScreen} = useWidthScreen();
 
     const {deleteItem} = 
     useList(
@@ -91,7 +93,7 @@ const ModifyFolder = ({token,closeFunction,folder}) => {
                     title={'Modificando carpeta'}
                     functionClose={closeFunction}
                     classNameHeader={'modal-add-routines-header'}
-                    classNameModal={'modal-add-routines'}
+                    classNameModal={`modal-add-routines ${widthScreen > 650 && "web"} ${darkMode > 650 && "darkMode"}`}
                     textSelect
                     list={
                         <>

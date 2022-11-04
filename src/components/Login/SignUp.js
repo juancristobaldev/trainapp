@@ -55,7 +55,7 @@ const SingUp = () => {
                 objectErrors.email = 'Debes escribir un email valido.';
             }
             if(!pass) objectErrors.pass = 'Debes escribir una contraseña.';
-            if(pass !== passConfirm || !pass) objectErrors.passConfirm = 'Las contraseñas deben ser iguales.';
+            if(pass !== passConfirm || !pass) objectErrors.passConfirm = 'Las contraseñas deben coincidir.';
         }
         if(Object.values(objectErrors).length === 0){
             const dataForm = {...dataFusion}
@@ -97,7 +97,7 @@ const SingUp = () => {
             {typeForm === 'about-u' ?
             <>
             <Form
-            className={`form-singup ${typeForm === 'about-u' ? 'about-u' : 'auth'}`}
+            className={`form-signup ${typeForm === 'about-u' ? 'about-u' : 'auth'}`}
             onSubmit={typeForm === 'about-u' ? e => handleSubmit(e,'first') : e => handleSubmit(e,'two')}
             textSubmit="Registrarse"
             alter={true}
@@ -112,7 +112,7 @@ const SingUp = () => {
             >
                 <Container className={'header-signup'}>
                     <h1>Registrate</h1>
-                    <h2>Sobre tí</h2>
+                    <h3>Sobre tí</h3>
                 </Container>
                 <FormControl
                     error={[errors.first_name]}
@@ -162,7 +162,7 @@ const SingUp = () => {
             >
                 <Container className={'header-signup'}>
                     <h1>Registrate</h1>
-                    <h2>Sobre tí</h2>
+                    <h3>Autenticacíon</h3>
                 </Container>
                 <FormControl
                     error={[errors.user,errors.user_exist]}
@@ -203,7 +203,7 @@ const SingUp = () => {
             </Form>
             }
             <Container className="container-doit">
-                <p className="p-doit"><span>Do</span>It</p>
+                <h4>WorkOut App</h4>
             </Container>
         </Main>
         </>

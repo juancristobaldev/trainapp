@@ -24,7 +24,7 @@ const Exercise = ({children,item,deleteExerciseOfList}) => {
         key={item.name}>
             <Container 
             className={'exercise-header'}
-            onClick={widthScreen > 650 ? () => setOpenSeries(!openSeries) : null }
+            onClick={widthScreen < 650 ? () => setOpenSeries(!openSeries) : null }
             style={{
                 display:"flex",
                 justifyContent:'space-between',

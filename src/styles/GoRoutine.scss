@@ -6,9 +6,34 @@
 
 .header-goroutine {
   height: 7.5vh;
-  @include mixins.dflex(end, center, row);
+  @include mixins.dflex(space-between, center, row);
   span {
     @include mixins.dflex(center, center, row);
+    padding: 0.5rem;
+    p {
+      margin-right: 5px;
+    }
+    svg {
+      fill: white;
+      margin-left: 5px;
+    }
+  }
+  span.cancel {
+    margin-left: 1rem;
+    @include mixins.button-primary(
+      $color-2-lightmode,
+      $color-3-lightmode,
+      black,
+      black,
+      0,
+      0
+    );
+    svg {
+      fill: black;
+    }
+  }
+  span.timer {
+    margin-right: 1rem;
     @include mixins.button-primary(
       $color-primary,
       $color-primary-hover-button,
@@ -17,15 +42,6 @@
       0,
       0
     );
-    padding: 0.5rem;
-    margin-right: 2.5vw;
-    p {
-      margin-right: 5px;
-    }
-    svg {
-      fill: white;
-      margin-left: 5px;
-    }
   }
 }
 .main-goroutine {

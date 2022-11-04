@@ -19,6 +19,7 @@ import { Loading } from "../Loading";
 import { ModalSelect } from "../Modal/ModalSelect";
 import { Routine } from "../Routines/Routine";
 
+import "../../styles/responsive/Folder.scss"
 
 const CreateFolder = ({token,closeFunction}) => {
 
