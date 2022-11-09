@@ -37,7 +37,7 @@ const CreateExercise = ({token,objectState}) => {
 
     return (
         <Create
-                className={'modal-create-exercise'}
+                className={`modal-create-exercise ${darkMode && 'darkMode'}`}
                 >
                     <Container className={'header-create'}>
                         <Text text='Estas creando un ejercicio:'/>

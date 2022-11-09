@@ -8,7 +8,7 @@ const List = (props) => {
     return(
         <Container
         style={props.style}
-        className={`${props.className} ${arrErrors && 'error'}`}
+        className={`${props.className} ${!props.item.length && 'empty'} ${arrErrors && 'error'}`}
         >
             {!props.item.length && props.onEmpty()}
             {props.item.map(props.render)}

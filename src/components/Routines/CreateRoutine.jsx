@@ -15,6 +15,7 @@ import {HiLockClosed} from "react-icons/hi"
 
 import '../../styles/ListSeries.scss'
 import '../../styles/CreateRoutine.scss'
+import "../../styles/responsive/CreateRoutine.scss"
 import '../../styles/Modal.scss'
 
 import Cookies from "universal-cookie/es6";
@@ -28,10 +29,13 @@ import { ModalDelete } from "../Modal/ModalDelete";
 import { useList } from "../../hooks/useList";
 import { useWidthScreen } from "../../hooks/useWidthScreen";
 import { Section } from "../generals/Section";
+import { useDarkMode } from "../../hooks/useDarkMode";
+import { ModalAreUSure } from "../Modal/ModalAreUSure";
+import { useExercises } from "../../hooks/useExercises";
 
 const token = new Cookies().get('session-token')
 
-const CreateRoutine =  ({darkMode}) => {
+const CreateRoutine =  () => {
 
     const [createRoutine] = useMutation(CREATE_ROUTINE)
 
@@ -58,8 +62,19 @@ const CreateRoutine =  ({darkMode}) => {
     const { widthScreen } = useWidthScreen()
 
     const {
+        listForSelect,
+        updateListForSelect,
         deleteItem,
     } = useList ("exercises",{state:state,updateState:setState},true,{ nameGql:"getExercisesByToken",gql:GET_EXERCISES_BY_TOKEN,variables:{ variables:{ token:token } } })
+
+    const {
+        darkMode
+    } = useDarkMode()
+
+    const {
+        deleteSomeExercise
+    } = useExercises(token,{list:listForSelect,updateList:updateListForSelect},{stateValue:state,setState:setState})
+
 
     const {
         addSerie,
@@ -127,8 +142,8 @@ const CreateRoutine =  ({darkMode}) => {
     },[state.dataFormCreate,state.listOnCreate,state.modal,state.modalCreate])
 
     return(
-        <Section className={`grid ${widthScreen > 650 && "web"}`}>
-        <Section className={`section-create-routine ${widthScreen > 650 && "web"} ${darkMode && "darkMode"}`}>
+        <Section className={`grid ${widthScreen > 650 && "web"} ${darkMode && "darkMode"}`}>
+        <Section className={`section-create-routine ${widthScreen > 650 && "web"}`}>
             <Container className={'header-create-routine'}>
                 <Text text={'Rutina nueva.'}/>
                 <Button
@@ -160,7 +175,7 @@ const CreateRoutine =  ({darkMode}) => {
                 </Container>
                 <List
                     errors={[state.errors.exercises]}
-                    className={'exercises-list-routine'}
+                    className={`exercises-list-routine ${darkMode && 'darkMode'}`}
                     item={state.listOnCreate}
                     onEmpty={() => 
                         <Container className={'empty-list-routine'}>
@@ -187,9 +202,11 @@ const CreateRoutine =  ({darkMode}) => {
                                 key={serie.idSerie}
                                 className={classControl(exercise.typeEx) + ' serie'}
                                 >
-                                    <IoMdClose
-                                    onClick={() => deleteSeries(serie,exercise)}
-                                    />
+                                    <Container className={'delete-serie'}>
+                                        <IoMdClose
+                                        onClick={() => deleteSeries(serie,exercise)}
+                                        />
+                                    </Container>
                                     <Text text='-' />
                                     <>
                                         {exercise.typeEx === 'Peso adicional' || exercise.typeEx === 'Peso asistido' ?
@@ -280,7 +297,7 @@ const CreateRoutine =  ({darkMode}) => {
                 />
                 <Container
                 onClick={() => setState({...state, modal:false})}
-                className={'back'}/>
+                className={`back ${darkMode && 'darkMode'}`}/>
             </>
             }
             {state.modalCreate &&
@@ -289,19 +306,23 @@ const CreateRoutine =  ({darkMode}) => {
                 token={token}
                 objectState={{state:state,setState:setState}}
                 />
-                <Container className={'back'}
+                <Container className={`back ${darkMode && 'darkMode'}`}
                 onClick={() => setState({...state, modalCreate:false})}
                 />
             </>
             }
             {state.modalDelete.boolean &&
                 <Modal>
-                    <ModalDelete
-                    exercise={true}
-                    token={token}
-                    objectState={{state:state,setState:setState}}
+                    <ModalAreUSure
+                    text={'¿Estas seguro que deseas eliminar estos ejercicios?'}
+                    acceptFunction={() => deleteSomeExercise(true,state.modalDelete.items)}
+                    cancelFunction={() => setState({...state, modal: true, modalDelete:{
+                        boolean:false,
+                        items:true
+                    }})}
                     />
-                    <Container className={'back'}
+                    <Container className={`back ${darkMode && 'darkMode'}`}
+                    onClick={() => setState({...state, modalDelete:{boolean:false}})}
                     />
              </Modal>
             }

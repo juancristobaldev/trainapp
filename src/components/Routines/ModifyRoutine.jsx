@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { HiLockClosed } from "react-icons/hi";
 import { IoMdClose } from "react-icons/io";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie/es6";
 import { GET_EXERCISES_BY_TOKEN, GET_ROUTINES_FOLDERS_USER_BY_TOKEN, GET_ROUTINE_BY_ID } from "../../data/query";
 import { useList } from "../../hooks/useList";
@@ -30,6 +30,10 @@ import { useDarkMode } from "../../hooks/useDarkMode";
 import '../../styles/ListSeries.scss'
 import '../../styles/CreateRoutine.scss'
 import '../../styles/Modal.scss'
+import { Section } from "../generals/Section";
+import { useWidthScreen } from "../../hooks/useWidthScreen";
+import { ModalAreUSure } from "../Modal/ModalAreUSure";
+import { useExercises } from "../../hooks/useExercises";
 
 const token = new Cookies().get('session-token')
 
@@ -49,11 +53,11 @@ const ModifyRoutine = ({routine}) => {
         totalData:0,
         errors:{},
         dataFormCreate:{
-            id:routine.routine.id,
-            name:routine.routine.name,
+            id:false,
+            name: false,
             exercises:[],
-            timeRecord:routine.routine.timeRecord,
-            dones:routine.routine.dones
+            timeRecord: false,
+            dones:false
         }
     })
 
@@ -70,12 +74,19 @@ const ModifyRoutine = ({routine}) => {
     })
 
     const {darkMode} = useDarkMode()
+    const {widthScreen} = useWidthScreen()
 
     const { folders, me } = useContext(DataContext)
 
     const {
+        listForSelect,
+        updateListForSelect,
         deleteItem,
     } = useList ("exercises",{state:state,updateState:setState},true,{ nameGql:"getExercisesByToken",gql:GET_EXERCISES_BY_TOKEN,variables:{ variables:{ token:token } } })
+
+    const {
+        deleteSomeExercise
+    } = useExercises(token,{list:listForSelect,updateList:updateListForSelect},{stateValue:state,setState:setState})
 
     const {
         addSerie,
@@ -106,76 +117,73 @@ const ModifyRoutine = ({routine}) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const objError = {}
-        const dataRoutine = {...state.dataFormCreate}
 
-        const {exercises,name} = state.dataFormCreate
+        let dataRoutine = {
+            ...state.dataFormCreate, 
+            id:routine.routine.id,
+            name:state.dataFormCreate.name,
+            timeRecord:routine.routine.timeRecord,
+            dones:routine.routine.dones
+        };
 
-        if(exercises.length === 0) objError.exercises = 'Debes agregar al menos un ejercicio.'
-        if(name.length === 0) objError.name = 'Debes escribir un nombre para tu rutina.'
-
-        const errorsForm = Object.values(objError)
-
-        if(errorsForm.length === 0){
-
-            folders.forEach( async folder => {
-                const content = JSON.parse(folder.content)
-                for(var i = 0; i < content.length; i++){
-                    if(content[i].id === dataRoutine.id)   {
-                        let newContent = [...content]
-                        newContent[i] = {...dataRoutine, exercises: JSON.stringify(dataRoutine.exercises)}
-                        const variables = {
-                            input:{
-                                id:folder.id,
-                                name:folder.name,
-                                content:JSON.stringify(newContent)
-                            }
+        
+        folders.forEach( async folder => {
+            const content = JSON.parse(folder.content)
+            for(var i = 0; i < content.length; i++){
+                if(content[i].id === dataRoutine.id)   {
+                    let newContent = [...content]
+                    newContent[i] = {...dataRoutine, exercises: JSON.stringify(dataRoutine.exercises)}
+                    const variables = {
+                        input:{
+                            id:folder.id,
+                            name:folder.name,
+                            content:JSON.stringify(newContent)
                         }
+                    }
 
-                        await updateFolder({
-                            variables:{...variables}
-                        }).then(({data}) => {
-                            const {errors,success} = data.updateFolder
-                            if(errors.length) console.log(error)
-                            else console.log('exito')
-                        })
-                    } 
-                }
-            })
-
-            let last_workouts = JSON.parse(me.last_workouts)
-            for(var i = 0; i < last_workouts.length; i++){
-                if(last_workouts[i].id === state.dataRoutine.id){ 
-                    last_workouts[i] = {...dataRoutine}
-                    updateUser({
-                        variables:{
-                            input:{
-                                id:me.id,
-                                last_workouts:JSON.stringify(last_workouts)
-                            }
-                        }
+                    await updateFolder({
+                        variables:{...variables}
+                    }).then(({data}) => {
+                        const {errors,success} = data.updateFolder
+                        if(errors.length) console.log(error)
+                        else console.log('exito')
                     })
+                } 
+            }
+        })
+
+        let last_workouts = JSON.parse(me.last_workouts)
+        for(var i = 0; i < last_workouts.length; i++){
+            if(last_workouts[i].id === state.dataRoutine.id){ 
+                last_workouts[i] = {...dataRoutine}
+                updateUser({
+                    variables:{
+                        input:{
+                            id:me.id,
+                            last_workouts:JSON.stringify(last_workouts)
+                        }
+                    }
+                })
+            }
+        }
+
+        if(!dataRoutine.name) dataRoutine.name = routine.routine.name
+
+        await updateRoutine({
+            variables:{
+                input:{
+                    ...dataRoutine,
+                    exercises:JSON.stringify(dataRoutine.exercises)
                 }
             }
-
-            await updateRoutine({
-                variables:{
-                    input:{
-                        ...dataRoutine,
-                        exercises:JSON.stringify(dataRoutine.exercises)
-                    }
-                }
-            }).then( ({data}) => {
-                const {error,success} = data.updateRoutine
-                if(error) console.log(error)
-                if(success){
-                    redirect('/')
-                    window.location.reload()
-                }
-            })
-
-        }else{ 
-            setState({...state, modalErrors:{error:true,errors:errorsForm}, errors:objError})
-        }
+        }).then( ({data}) => {
+            const {error,success} = data.updateRoutine
+            if(error) console.log(error)
+            if(success){
+                redirect('/')
+                window.location.reload()
+            }
+        })
     }
     useEffect(() => {
         if(error) console.log(error)
@@ -200,7 +208,8 @@ const ModifyRoutine = ({routine}) => {
     },[data])
 
 
-    return( <>
+    if(routine.active || routine.id ){
+        return( <Section className={`grid ${widthScreen > 650 && "web"} ${darkMode && 'darkMode'}`}>
         <Main className={'section-create-routine'}>
             <Container className={'header-create-routine'}>
                 <Text text={'Editar rutina'}/>
@@ -217,6 +226,7 @@ const ModifyRoutine = ({routine}) => {
                 <FormControl
                 error={[state.errors.name]}
                 typeControl={'input'}
+                label={'Edita el nombre de tu rutina:'}
                 className={'input-name-routine'}
                 type="text"
                 name={'name'}
@@ -225,14 +235,11 @@ const ModifyRoutine = ({routine}) => {
                 />
                 <Container className={'container-add-exercise'}>
                     <Text text={'Ejercicios:'}/>
-                    <Button
-                    onClick={() => setState({...state, modal:!state.modal})}
-                    textButton='+ Ejercicio'
-                    />
+                    <input onClick={() => setState({...state, modal:true})} type={'button'} value={'+ Ejercicio'}/>
                 </Container>
                 <List
                     errors={[state.errors.exercises]}
-                    className={'exercises-list-routine'}
+                    className={`exercises-list-routine ${darkMode && 'darkMode'}`}
                     item={state.listOnCreate}
                     onEmpty={() => 
                         <Container className={'empty-list-routine'}>
@@ -315,6 +322,8 @@ const ModifyRoutine = ({routine}) => {
                                 </Container>
                             )}
                             >
+                                {
+                                widthScreen < 650 &&
                                 <Container
                                 className={'container-add-serie'}
                                 >
@@ -323,7 +332,19 @@ const ModifyRoutine = ({routine}) => {
                                     textButton={'+ Serie'}
                                     />
                                 </Container>
+                                }
                             </List>
+                            {
+                                widthScreen > 650 &&
+                                <Container
+                                className={'container-add-serie'}
+                                >
+                                    <Button 
+                                    onClick={(e) => addSerie(e,exercise.idList)}
+                                    textButton={'+ Serie'}
+                                    />
+                                </Container>
+                            }
                     </Exercise>                 
                     )}
                 />
@@ -338,7 +359,7 @@ const ModifyRoutine = ({routine}) => {
                 />
                 <Container
                 onClick={() => setState({...state, modal:false})}
-                className={'back'}/>
+                className={`back ${darkMode && 'darkMode'}`}/>
             </>
             }
             {state.modalCreate &&
@@ -347,26 +368,33 @@ const ModifyRoutine = ({routine}) => {
                 token={token}
                 objectState={{state:state,setState:setState}}
                 />
-                <Container className={'back'}
+                <Container
                 onClick={() => setState({...state, modalCreate:false})}
-                />
+                className={`back ${darkMode && 'darkMode'}`}/>
             </>
             }
             {state.modalDelete.boolean &&
                 <Modal>
-                    <ModalDelete
-                    exercise={true}
-                    token={token}
-                    objectState={{state:state,setState:setState}}
+                    <ModalAreUSure
+                    text={'¿Estas seguro que deseas eliminar estos ejercicios?'}
+                    acceptFunction={() => deleteSomeExercise(true,state.modalDelete.items)}
+                    cancelFunction={() => setState({...state, modal: true, modalDelete:{
+                        boolean:false,
+                        items:true
+                    }})}
                     />
-                    <Container className={'back'}
+                    <Container className={`back ${darkMode && 'darkMode'}`}
+                    onClick={() => setState({...state, modalDelete:{boolean:false}})}
                     />
-             </Modal>
+                </Modal>
             }
             
         </Modal>
-    </>
+    </Section>
     )
+}else {
+    return( <Navigate to={'/'}/> )
+}
 }
 
 export {ModifyRoutine}

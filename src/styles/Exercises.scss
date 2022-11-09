@@ -4,7 +4,7 @@
 .exercises-list-routine {
   display: flex;
   flex-direction: column;
-  max-height: 75vh;
+  max-height: 65vh;
   overflow: auto;
   background: linear-gradient(180deg, #ffffff, #fafafa 100%) !important;
   .empty-list-routine {
@@ -53,7 +53,6 @@
         grid-template: 100%/10% 45% 30% 15% !important;
       }
       .listSerie {
-        border-radius: 0.25rem;
         .first-serie {
           text-align: center;
           font-size: 0.75rem;
@@ -63,6 +62,9 @@
         .serie {
           padding: 0.75rem 0;
           background-color: transparent;
+          .delete-serie {
+            @include mixins.x-button();
+          }
           .lock {
             background-color: rgb(240, 240, 240);
             @include mixins.dflex(center, center, row);
@@ -114,6 +116,67 @@
             margin: 0 0.5rem;
           }
         }
+      }
+    }
+    &.darkMode {
+      background-color: $color-2-darkmode;
+      color: $color-0-lightmode;
+      .exercise-info {
+        background: none !important;
+        .stats-second-floor {
+          background-color: $color-1-darkmode;
+        }
+        .listSerie {
+          background: $color-0-darkmode;
+          .serie {
+            .delete-serie,
+            .lock {
+              background-color: $color-2-darkmode;
+              svg {
+                fill: white;
+              }
+            }
+            input.inputSerie,
+            input.input-type,
+            input.input-reps {
+              background-color: $color--1-darkmode;
+              border: 1px solid $color-3-darkmode;
+              color: white;
+            }
+            &.checked {
+              opacity: 25%;
+              background-color: $color-2-darkmode !important;
+            }
+            &.unchecked {
+              background: rgba($color: $color-primary, $alpha: 0.25);
+            }
+          }
+          .container-add-serie {
+            background-color: $color-2-darkmode !important;
+          }
+        }
+      }
+    }
+  }
+  &.darkMode {
+    &::-webkit-scrollbar-track {
+      background: $color--1-darkmode !important;
+      width: 8px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: $color-2-darkmode !important;
+      border-radius: 1rem;
+    }
+    .exercise .exercise-info .listSerie {
+      &::-webkit-scrollbar-track {
+        background: $color--1-darkmode !important;
+        width: 8px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: $color-2-darkmode !important;
+        border-radius: 1rem;
       }
     }
   }

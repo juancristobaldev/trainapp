@@ -7,7 +7,7 @@ const Button = ({disable,textButton,onClick,className}) => {
         disabled={disable && true}
         style={{cursor:"pointer"}}
         className={className}
-        onClick={onClick}
+        onClick={onClick ? onClick : null}
         >{textButton}</button>
     )
 }

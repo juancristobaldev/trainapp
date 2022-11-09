@@ -40,6 +40,10 @@ import { DataContext } from "../../context/DataProvider";
 import { ModalAreUSure } from "../Modal/ModalAreUSure";
 import { useList } from "../../hooks/useList";
 import { useDarkMode } from "../../hooks/useDarkMode";
+import { Section } from "../generals/Section";
+import { useWidthScreen } from "../../hooks/useWidthScreen";
+import CheckBox from "../Checkbox";
+import { useExercises } from "../../hooks/useExercises";
 
 const token = new Cookies().get('session-token')
 
@@ -95,8 +99,16 @@ const GoRoutine = ({routine}) => {
     }
 
     const {
+        listForSelect,
+        updateListForSelect,
         deleteItem,
     } = useList ('exercises',{state:state,updateState:updateState},true,{ nameGql:"getExercisesByToken",gql:GET_EXERCISES_BY_TOKEN,variables:{ variables:{ token:token } } })
+
+    const {
+        deleteSomeExercise
+    } = useExercises(token,{list:listForSelect,updateList:updateListForSelect},{stateValue:state,setState:updateState})
+
+    const { widthScreen } = useWidthScreen()
 
     const {darkMode} = useDarkMode()
 
@@ -331,8 +343,9 @@ const GoRoutine = ({routine}) => {
 
     if(routine.active || routine.id ){
         return(
-            <>
-            { state.timer.modalTimer &&
+            <Section className={`grid ${widthScreen > 650 && 'web'} ${darkMode && 'darkMode'}`}>
+                <Container className={'section-go-routine'}>
+                { state.timer.modalTimer &&
                 <>
                 <Container className={'back'} 
                 onClick={
@@ -514,6 +527,14 @@ const GoRoutine = ({routine}) => {
                         id={"progressive-count"}
                         />                    
                     </Container>
+                    <Container className={'container-add-new-exercise'}>
+                        <Text text={'Ejercicios:'}/>
+                        <input
+                        type={'button'}
+                        onClick={() => updateState({...state, modal:!state.modal})}
+                        value='+ Ejercicio'
+                        />
+                </Container>
                     <ListApi
                     className={'exercises-list-routine'}
                     error={error}
@@ -602,17 +623,13 @@ const GoRoutine = ({routine}) => {
                                                     type="number"
                                                     />
                                                 }
-                                                <Container className={'checkbox'}>
-                                                    <Container className="checkBoxItem">
-                                                        <Container
-                                                        style={ !serie.checked && serie.need ? { border:'1px solid red' } : {border:0}}
-                                                        onClick={() => checkSerie(serie,exercise)}
-                                                        className={serie.checked ? "checkBoxOn" : "checkBoxOff"}
-                                                        >
-                                                            {serie.checked && <FaCheck fill="white"/>}
-                                                        </Container>
-                                                    </Container>
-                                                </Container>
+                                                <CheckBox
+                                                style={ !serie.checked && serie.need ? { border:'1px solid red' } : {border:0}}
+                                                onClick={() => checkSerie(serie,exercise)}
+                                                className={serie.checked ? "checkBoxOn" : "checkBoxOff"}
+                                                select={serie.checked}
+                                                />
+
                                             </>
                                         </Serie> 
                             }
@@ -630,15 +647,6 @@ const GoRoutine = ({routine}) => {
                     }
                     />
                 </Form>
-                <Container className={'container-add-new-exercise'}>
-                        <Button
-                        onClick={() => updateState({...state, modal:!state.modal})}
-                        textButton='Agregar un ejercicio'
-                        />
-                </Container>
-                <footer>
-                    <p className="p-doit"><span>Do</span>It</p>
-                </footer>
                 </>
                 }
                 </Main>
@@ -651,7 +659,7 @@ const GoRoutine = ({routine}) => {
                             />
                             <Container
                             onClick={() => updateState({...state, modal:false})}
-                            className={'back'}/>
+                            className={`back ${darkMode && 'darkMode'}`}/>
                         </>
                     }
                     { state.modalCreate &&
@@ -660,7 +668,7 @@ const GoRoutine = ({routine}) => {
                             token={token}
                             objectState={{state:state,setState:updateState}}
                             />
-                            <Container className={'back'}
+                            <Container className={`back ${darkMode && 'darkMode'}`}
                             onClick={() => updateState({...state, modalCreate:false})}
                             />
                         </>
@@ -668,12 +676,16 @@ const GoRoutine = ({routine}) => {
                     {
                     state.modalDelete.boolean === true && 
                         <>
-                            <ModalDelete
-                            token={token}
-                            exercise={true}
-                            objectState={{state:state,setState:updateState}}
+                            <ModalAreUSure
+                            text={'¿Estas seguro que deseas eliminar estos ejercicios?'}
+                            acceptFunction={() => deleteSomeExercise(true,state.modalDelete.items)}
+                            cancelFunction={() => updateState({...state, modal: true, modalDelete:{
+                                boolean:false,
+                                items:true
+                            }})}
                             />
-                            <Container className={'back'}
+                            <Container className={`back ${darkMode && 'darkMode'}`}
+                            onClick={() => updateState({...state, modalDelete:{boolean:false}})}
                             />
                         </>
                     }
@@ -687,7 +699,8 @@ const GoRoutine = ({routine}) => {
                         />
                     }
                 </Modal>
-            </>
+                </Container>
+            </Section>
         )
     }else {
         return( <Navigate to={'/'}/> )

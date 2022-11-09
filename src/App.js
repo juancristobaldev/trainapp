@@ -7,9 +7,10 @@ import { Dashboard } from "./components/Dashboard";
 import { CreateRoutine } from "./components/Routines/CreateRoutine";
 import { GoRoutine } from "./components/Routines/GoRoutine";
 
-import {GET_USER} from "./data/query"
+
 import { ModifyRoutine } from "./components/Routines/ModifyRoutine";
-import { useDarkMode } from "./hooks/useDarkMode";
+
+import { RoutineCrud } from "./components/Routines/RoutineCrud";
 
 
 const App = () => {
@@ -26,6 +27,7 @@ const App = () => {
         (
           <>
             <Route path="/" element={<Dashboard updateRoutineOnPlay={updateRoutineOnPlay}/>}/>
+            <Route path="/routine" element={ <RoutineCrud routineObj={routineOnPlay}/>}/>
             <Route path="/create-routine" element={ <CreateRoutine/> }/>
             <Route path="/go-routine" element={ <GoRoutine routine={routineOnPlay}/> }/>
             <Route path="/modify-routine" element={ <ModifyRoutine routine={routineOnPlay}/> }/>

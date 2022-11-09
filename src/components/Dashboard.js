@@ -35,6 +35,7 @@ import { ModalAreUSure } from "./Modal/ModalAreUSure";
 import { CreateFolder } from "./Folders/CreateFolder";
 import { useWidthScreen } from "../hooks/useWidthScreen";
 import { useDarkMode } from "../hooks/useDarkMode";
+import { RoutineCrud } from "./Routines/RoutineCrud";
 
 
 const Dashboard = ({updateRoutineOnPlay}) => {
@@ -267,9 +268,9 @@ const Dashboard = ({updateRoutineOnPlay}) => {
                                     </Container>
                                     <Container className={'routine-container-button'}>
                                         <Button
-                                        onClick={() => {
-                                            navigate('/go-routine')
-                                            updateRoutineOnPlay({active:true, id:routine.id, routine:routine})
+                                        onClick={ async () => {
+                                            await updateRoutineOnPlay({active:true, id:routine.id, routine:routine})
+                                            navigate('/routine')
                                         }}
                                         textButton={'Empezar rutina'}
                                         />
@@ -291,7 +292,8 @@ const Dashboard = ({updateRoutineOnPlay}) => {
                         data={routines}
                         name={'routines'}
                         button={{function: async () => {
-                            navigate('/create-routine')
+                            await updateRoutineOnPlay({active:false, id:false, routine:false})
+                            navigate('/routine')
                         }, text: '+ Crear', className: 'create-routine'}}
                         classContainer={'container-search'}
                         classDiv={'div-search'}
@@ -334,8 +336,8 @@ const Dashboard = ({updateRoutineOnPlay}) => {
                                     className={'optionMenu'}
                                     text={'Editar'}
                                     onClick={ async () => {
-                                        updateRoutineOnPlay({active:true, id:routine.id, routine:routine})
-                                        navigate('/modify-routine')
+                                        await updateRoutineOnPlay({active:true, id:routine.id, routine:routine})
+                                        navigate('/routine')
                                     }}
                                     />
                                     <Text 
@@ -353,9 +355,9 @@ const Dashboard = ({updateRoutineOnPlay}) => {
                                 </Container>
                                 <Container className={'routine-container-button'}>
                                     <Button
-                                    onClick={() => {
-                                        navigate('/go-routine')
-                                        updateRoutineOnPlay({active:true, id:routine.id, routine:routine})
+                                    onClick={async () => {
+                                        await updateRoutineOnPlay({active:true, id:routine.id, routine:routine})
+                                        navigate('/routine')
                                     }}
                                     textButton={'Empezar rutina'}
                                     />
@@ -439,9 +441,9 @@ const Dashboard = ({updateRoutineOnPlay}) => {
                                                 </Container>
                                                 <Container className={'routine-container-button'}>
                                                     <Button
-                                                    onClick={() => {
-                                                        navigate('/go-routine')
-                                                        updateRoutineOnPlay({active:true, id:routine.id, routine:routine})
+                                                    onClick={ async () => {
+                                                        await updateRoutineOnPlay({active:true, id:routine.id, routine:routine})
+                                                        navigate('/routine')
                                                     }}
                                                     textButton={'Empezar rutina'}
                                                     />

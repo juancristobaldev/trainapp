@@ -1,0 +1,55 @@
+@use "src/styles/shared/mixins.scss";
+@import "src/styles/shared/variables.scss";
+
+@include mixins.media-up(sm-md, md-sm) {
+  .modal-are-u-sure {
+    width: 60%;
+    left: 20%;
+  }
+  .modal-exercises,
+  .modal-create-exercise {
+    width: 80%;
+    left: 10%;
+  }
+}
+@include mixins.media-up(md-sm, md) {
+  .modal-are-u-sure {
+    width: 50%;
+    left: 25%;
+  }
+  .modal-exercises,
+  .modal-create-exercise {
+    width: 60%;
+    left: 20%;
+  }
+}
+@include mixins.media-up(md, md-md-lg) {
+  .modal-are-u-sure {
+    width: 40%;
+    left: 30%;
+  }
+  .modal-exercises,
+  .modal-create-exercise {
+    width: 50%;
+    left: 25%;
+  }
+}
+@include mixins.media-up(md-md-lg, sm-lg) {
+  .modal-are-u-sure {
+    width: 35%;
+    left: calc((100% - 35%) / 2);
+  }
+  .modal-exercises,
+  .modal-create-exercise {
+    width: 40%;
+    left: 30%;
+  }
+}
+@include mixins.media-up(sm-lg, lg-lg-lg) {
+  .modal-are-u-sure,
+  .modal-exercises,
+  .modal-create-exercise {
+    width: 30%;
+    left: calc((100% - 30%) / 2);
+  }
+}

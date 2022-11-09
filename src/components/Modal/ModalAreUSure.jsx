@@ -4,10 +4,17 @@ import { Container } from "../generals/Container";
 import { Text } from "../generals/Text";
 import { Modal } from "./Modal";
 
+import "../../styles/Modal.scss"
+import "../../styles/responsive/Modal.scss"
+import { useDarkMode } from "../../hooks/useDarkMode";
+
 const ModalAreUSure = ({text,acceptFunction,cancelFunction}) => {
+
+    const { darkMode } = useDarkMode()
+
     return (
         <Modal>
-        <Container className={'modal-are-u-sure'}>
+        <Container className={`modal-are-u-sure ${darkMode && 'darkMode'}`}>
             <Container className={'modal-emoji'}>
                 <Text text={'🤔'}/>
             </Container>
@@ -28,7 +35,7 @@ const ModalAreUSure = ({text,acceptFunction,cancelFunction}) => {
                 textButton={'Cancelar'}/>
                 </Container>
             </Container>
-        <Container className={'back uncompleted'}/>
+        <Container className={`back uncompleted ${darkMode && 'darkMode'}`}/>
         </Modal>
     )
 }

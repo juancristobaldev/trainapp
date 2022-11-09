@@ -330,18 +330,6 @@
         button {
           color: white;
         }
-        &:hover {
-          background-color: rgba(
-            $color: $color-3-darkmode,
-            $alpha: 0.25
-          ) !important;
-        }
-        &.true {
-          background-color: rgba(
-            $color: $color-3-darkmode,
-            $alpha: 0.25
-          ) !important;
-        }
       }
     }
     .routines,
@@ -470,6 +458,22 @@
             max-height: calc(30vh - 7.5vh);
             overflow: auto;
           }
+        }
+      }
+    }
+    &.darkMode {
+      .menu .button-menu {
+        &:hover {
+          background-color: rgba(
+            $color: $color-3-darkmode,
+            $alpha: 0.25
+          ) !important;
+        }
+        &.true {
+          background-color: rgba(
+            $color: $color-3-darkmode,
+            $alpha: 0.25
+          ) !important;
         }
       }
     }

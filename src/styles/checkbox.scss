@@ -12,6 +12,10 @@
 
 .checkBoxOff {
   @include checkbox();
+  &.darkMode {
+    border: 1px solid $color--1-darkmode;
+    background-color: $color-0-darkmode;
+  }
 }
 .checkBoxOn {
   @include checkbox();

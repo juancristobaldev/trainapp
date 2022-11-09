@@ -4,15 +4,15 @@
 .modal-exercises {
   @include mixins.dgrid(12.5% 12.5% 55% 10% 10%, auto, normal, normal);
   position: absolute;
-  top: calc(15% + 1rem);
+  top: calc(10% + 1rem);
+  left: 5%;
   z-index: 1001;
   align-self: center;
   box-shadow: -0.5px -0.5px 10px rgba($color: #000000, $alpha: 0.15),
     0.5px 0.5px 10px rgba($color: #000000, $alpha: 0.15);
   border-radius: 0.25rem;
-  width: calc(100% - 2rem);
-  height: calc(70% - 2rem);
-  margin: 0 1rem;
+  width: 90%;
+  height: calc(80% - 2rem);
   background-color: white;
   .modal-exercises-header {
     @include mixins.dflex(space-between, center, row);
@@ -112,6 +112,32 @@
       font-weight: 600;
     }
   }
+  &.darkMode {
+    background-color: $color-2-darkmode;
+    color: white;
+    .modal-exercises-search {
+      span {
+        background-color: $color-1-darkmode;
+        input {
+          color: white;
+          &::placeholder {
+            color: white;
+          }
+        }
+      }
+    }
+    .modal-exercises-list {
+      background: $color-0-darkmode !important;
+      .empty-container {
+        color: $color-3-darkmode;
+      }
+      .exercise-container {
+        border-top: 0.5px solid $color-0-darkmode;
+        border-bottom: 0.5px solid $color-0-darkmode;
+        background-color: $color-1-darkmode;
+      }
+    }
+  }
 }
 .back {
   @include mixins.dflex(flex-start, center, row);
@@ -126,32 +152,32 @@
   &.darkMode {
     background-color: rgba($color: $color-0-darkmode, $alpha: 0.6);
   }
-}
-.back.create {
-  z-index: 1000;
-}
-.back.delete {
-  z-index: 1003;
-}
-.back.delete,
-.back.uncompleted {
-  z-index: 1003;
-}
-.back.unblur {
-  background-color: transparent;
-  backdrop-filter: none;
+  &.create {
+    z-index: 1000;
+  }
+  &.delete {
+    z-index: 1003;
+  }
+  &.delete,
+  &.uncompleted {
+    z-index: 1003;
+  }
+  &.unblur {
+    background-color: transparent;
+    backdrop-filter: none;
+  }
 }
 
 .modal-create-exercise {
   @include mixins.dgrid(0.75fr 4fr, auto, normal, normal);
   border-radius: 0.25rem;
   position: absolute;
-  top: 0;
+  top: 25vh;
   height: 50vh;
-  width: calc(100% - 2rem);
+  width: 90%;
+  left: 5%;
   box-shadow: -0.5px -0.5px 10px rgba($color: #000000, $alpha: 0.15),
     0.5px 0.5px 10px rgba($color: #000000, $alpha: 0.15);
-  margin: 25vh 1rem;
   z-index: 1001;
   background-color: white;
   .header-create {
@@ -189,6 +215,7 @@
       }
       input,
       select {
+        padding: 0 0.5rem;
         width: calc(100% - 2rem);
         height: 40%;
         margin-left: 1rem;
@@ -210,6 +237,25 @@
         &:hover {
           background-color: #ca3049;
         }
+      }
+    }
+  }
+  &.darkMode {
+    background-color: $color-1-darkmode;
+    color: white;
+    .form-create {
+      .name-input-create {
+        input {
+          border: 1px solid $color-3-darkmode;
+          background-color: $color-0-darkmode;
+          color: $color-0-lightmode;
+        }
+      }
+      .muscle-input-create select,
+      .type-input-create select {
+        border: 1px solid $color-3-darkmode;
+        background-color: $color-0-darkmode;
+        color: $color-0-lightmode;
       }
     }
   }
@@ -341,6 +387,16 @@
         0,
         0
       );
+    }
+  }
+  &.darkMode {
+    background-color: $color-2-darkmode;
+    color: white;
+    .modal-buttons {
+      .button-cancel {
+        background-color: $color-3-darkmode;
+        color: white;
+      }
     }
   }
 }

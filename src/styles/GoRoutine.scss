@@ -4,76 +4,39 @@
   @include mixins.x-button();
 }
 
-.header-goroutine {
-  height: 7.5vh;
-  @include mixins.dflex(space-between, center, row);
-  span {
-    @include mixins.dflex(center, center, row);
-    padding: 0.5rem;
-    p {
-      margin-right: 5px;
-    }
-    svg {
-      fill: white;
-      margin-left: 5px;
-    }
-  }
-  span.cancel {
-    margin-left: 1rem;
-    @include mixins.button-primary(
-      $color-2-lightmode,
-      $color-3-lightmode,
-      black,
-      black,
-      0,
-      0
-    );
-    svg {
-      fill: black;
-    }
-  }
-  span.timer {
-    margin-right: 1rem;
-    @include mixins.button-primary(
-      $color-primary,
-      $color-primary-hover-button,
-      white,
-      white,
-      0,
-      0
-    );
-  }
-}
-.main-goroutine {
-  @include mixins.dgrid(75vh 7.5vh 10vh, none, normal, normal);
-  border-top-left-radius: 0.25rem;
-  border-top-right-radius: 0.25rem;
-  .form-goroutine {
-    @include mixins.dgrid(15vh 1fr 7.5vh, none, normal, normal);
-    .stats-goroutine {
-      @include mixins.dflex(center, start, column);
-      padding-left: 1rem;
-      h2 {
-        padding: 1rem 0;
-      }
-      p {
-        font-size: 0.9rem;
-        padding-bottom: 0.25rem;
-      }
-    }
-
-    .exercises-list-routine {
-      height: 100%;
-      .exercises-list-routine-empty {
+section.grid {
+  .section-go-routine {
+    grid-area: 1 / 2 / 2 / 3;
+    .header-goroutine {
+      height: 7.5vh;
+      @include mixins.dflex(space-between, center, row);
+      span {
         @include mixins.dflex(center, center, row);
-        height: 100%;
-        font-style: italic;
-        color: silver;
+        padding: 0.5rem;
+        p {
+          margin-right: 5px;
+        }
+        svg {
+          fill: white;
+          margin-left: 5px;
+        }
       }
-    }
-    .container-submit {
-      @include mixins.dflex(center, center, row);
-      input {
+      span.cancel {
+        margin-left: 1rem;
+        @include mixins.button-primary(
+          $color-2-lightmode,
+          $color-3-lightmode,
+          black,
+          black,
+          0,
+          0
+        );
+        svg {
+          fill: black;
+        }
+      }
+      span.timer {
+        margin-right: 1rem;
         @include mixins.button-primary(
           $color-primary,
           $color-primary-hover-button,
@@ -82,33 +45,105 @@
           0,
           0
         );
-        width: calc(100% - 2rem);
-        height: 65%;
+      }
+    }
+    .main-goroutine {
+      @include mixins.dgrid(92.5vh, none, normal, normal);
+      border-top-left-radius: 0.25rem;
+      border-top-right-radius: 0.25rem;
+      .form-goroutine {
+        @include mixins.dgrid(15vh 7.5vh 1fr 7.5vh, none, normal, normal);
+        .stats-goroutine {
+          @include mixins.dflex(center, start, column);
+          padding-left: 1rem;
+          h2 {
+            padding: 1rem 0;
+          }
+          p {
+            font-size: 0.9rem;
+            padding-bottom: 0.25rem;
+          }
+        }
+        .container-add-new-exercise {
+          width: calc(100% - 2rem);
+          margin: 0 1rem;
+          @include mixins.dflex(space-between, center, row);
+          p {
+            font-weight: 550;
+          }
+          button,
+          input {
+            width: 25%;
+            height: 50%;
+            @include mixins.button-primary(
+              transparent,
+              $color-primary,
+              $color-primary,
+              $color-0-lightmode,
+              1px solid $color-primary,
+              1px solid $color-primary
+            );
+          }
+        }
+
+        .exercises-list-routine {
+          height: 100%;
+          .exercises-list-routine-empty {
+            @include mixins.dflex(center, center, row);
+            height: 100%;
+            font-style: italic;
+            color: silver;
+          }
+        }
+        .container-submit {
+          @include mixins.dflex(center, center, row);
+          input {
+            @include mixins.button-primary(
+              $color-primary,
+              $color-primary-hover-button,
+              white,
+              white,
+              0,
+              0
+            );
+            width: calc(100% - 2rem);
+            height: 65%;
+          }
+        }
+      }
+
+      footer {
+        @include mixins.dflex(center, center, row);
+        font-size: 1.25rem;
+        .p-doit {
+          span {
+            font-weight: 700;
+          }
+        }
       }
     }
   }
-  .container-add-new-exercise {
-    @include mixins.dflex(center, center, row);
-    button {
-      @include mixins.button-primary(
-        rgb(235, 233, 233),
-        rgb(224, 224, 224),
-        black,
-        black,
-        0,
-        0
-      );
-      width: calc(100% - 2rem);
-      height: 65%;
-    }
-  }
-}
-footer {
-  @include mixins.dflex(center, center, row);
-  font-size: 1.25rem;
-  .p-doit {
-    span {
-      font-weight: 700;
+  &.darkMode {
+    background-color: $color--1-darkmode;
+    .section-go-routine {
+      background-color: $color-0-darkmode;
+      .header-goroutine {
+        .cancel {
+          color: white;
+          background-color: $color-2-darkmode;
+          svg {
+            fill: white;
+          }
+        }
+      }
+      main.main-goroutine {
+        color: white;
+        form.form-goroutine {
+          section.exercises-list-routine {
+            background: $background-gradient-darkmode !important;
+          }
+        }
+      }
     }
   }
 }

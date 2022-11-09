@@ -11,9 +11,10 @@ const ButtonIcon = ({icon,classNameContainer,onClick,textButton}) => {
         className={classNameContainer}
         >
             {icon}
-            <Button
+            <input
             onClick={() => onClick()}
-            textButton={textButton}
+            value={textButton}
+            type={'button'}
             />
         </Container>
     )

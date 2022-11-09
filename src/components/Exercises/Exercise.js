@@ -20,7 +20,7 @@ const Exercise = ({children,item,deleteExerciseOfList}) => {
 
     return(
         <Container
-        className={'exercise'}
+        className={`exercise ${darkMode && 'darkMode'}`}
         key={item.name}>
             <Container 
             className={'exercise-header'}
