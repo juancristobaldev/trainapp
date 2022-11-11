@@ -4,11 +4,6 @@ import { SingIn } from "./components/Login/SignIn";
 import { SingUp } from "./components/Login/SignUp";
 import Cookies from "universal-cookie/es6";
 import { Dashboard } from "./components/Dashboard";
-import { CreateRoutine } from "./components/Routines/CreateRoutine";
-import { GoRoutine } from "./components/Routines/GoRoutine";
-
-
-import { ModifyRoutine } from "./components/Routines/ModifyRoutine";
 
 import { RoutineCrud } from "./components/Routines/RoutineCrud";
 
@@ -20,6 +15,10 @@ const App = () => {
   const [routineOnPlay,updateRoutineOnPlay] = useState({active:false,id:null});
   const token = cookies.get('session-token');
 
+  useEffect(() => {
+    
+  })
+
   return (
     <Router>
       <Routes>{
@@ -28,9 +27,6 @@ const App = () => {
           <>
             <Route path="/" element={<Dashboard updateRoutineOnPlay={updateRoutineOnPlay}/>}/>
             <Route path="/routine" element={ <RoutineCrud routineObj={routineOnPlay}/>}/>
-            <Route path="/create-routine" element={ <CreateRoutine/> }/>
-            <Route path="/go-routine" element={ <GoRoutine routine={routineOnPlay}/> }/>
-            <Route path="/modify-routine" element={ <ModifyRoutine routine={routineOnPlay}/> }/>
             <Route path="/signup" element={ <Navigate to={"/"}/> }/>
             <Route path="/signin" element={ <Navigate to={"/"}/> }/>
           </>

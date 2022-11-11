@@ -101,7 +101,7 @@ const SingIn = () => {
                 </Container>
                 <FormControl
                     autoComplete={'new-user'}
-                    error={[error.user_auth]}
+                    error={[error.user_auth,error.user]}
                     className={'div-input user'}
                     typeControl='input'
                     type="text"
@@ -110,7 +110,7 @@ const SingIn = () => {
                     onChange={handleChange}
                 />
                 <FormControl
-                    error={[error.user_pass]}
+                    error={[error.user_pass,error.pass]}
                     className={'div-input pass'}
                     typeControl='input'
                     type="password"

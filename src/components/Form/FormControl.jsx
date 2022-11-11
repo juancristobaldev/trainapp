@@ -3,12 +3,20 @@ import { useEffect } from "react";
 import { Text } from "../generals/Text";
 
 const  FormControl = (
-    {autoComplete,value,type,name,children,placeholder,typeControl,label,onChange,className,error}
+    {objState,autoComplete,value,type,name,children,placeholder,typeControl,label,onChange,className,error}
     ) => {
+        const [valueInput, setValue] = useState('')
+        console.log(error)
         let errorsItem;
         if(error !== undefined){
-         errorsItem = Object.values(error).filter(item => item !== undefined)
+         errorsItem = error.filter(item => item !== undefined)
         }
+
+        useEffect(() => {
+            if(error && objState) objState.setState({...objState.state, modalErrors:{error:false,errors:{}},errors:{}})
+        },[valueInput])
+
+        console.log(errorsItem)
         
             return(
                 <React.Fragment>
@@ -20,7 +28,10 @@ const  FormControl = (
                     }
                             <select 
                             name={name}
-                            onChange={(event) => onChange(event,name)}>
+                            onChange={(event) => {
+                                onChange(event,name)
+                                setValue(event.target.value)
+                                }}>
                                 {children}
                             </select>
                         </div>
@@ -37,7 +48,10 @@ const  FormControl = (
                         className={`${errorsItem.length > 0 && 'error'}`}
                         name={name}
                         type={type}
-                        onChange={(event) => onChange(event,name)}/>
+                        onChange={(event) => {
+                            onChange(event,name)
+                            setValue(event.target.value)
+                            }}/>
                         {errorsItem.length > 0 &&
                             errorsItem.map(item => 
                                 item !== undefined &&

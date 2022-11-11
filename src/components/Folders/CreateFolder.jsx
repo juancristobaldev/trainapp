@@ -61,9 +61,13 @@ const CreateFolder = ({token,closeFunction}) => {
         if(!dataFormCreate.content.length) errors.content = 'Debes seleccionar al menos una rutina...'
         const arrErrors = Object.values(errors)
 
+    
+
         if(arrErrors.length === 0){
             setLoading(true)
             const variables = {...dataFormCreate,content:JSON.stringify(dataFormCreate.content)}
+
+            console.log(variables)
             await createFolder({
                 variables:{
                     input:variables

@@ -76,35 +76,11 @@ const Dashboard = ({updateRoutineOnPlay}) => {
     }
 
 
-    const deleteRoutineDB = async (id) => {
-        const inputVariables = {
-            token:token,
-            id:id
-        }
-
-        let lastWorkOuts = [];
-        if(me.last_workouts !== undefined){
-            lastWorkOuts = JSON.parse(me.last_workouts)
-            const index = lastWorkOuts.findIndex(item => item.id === inputVariables.id)
-            if(index >= 0) lastWorkOuts.splice(index,1) 
-        }
-
-        await updateUser({
+    const deleteRoutineDB = async (id) => await deleteRoutine({
             variables:{
                 input:{
-                    id:me.id,
-                    last_workouts:JSON.stringify([...lastWorkOuts])
-                }
-            },
-            refetchQueries:[{GET_USER, variables:{
-                token:token
-            }}]
-        })
-
-        await deleteRoutine({
-            variables:{
-                input:{
-                    ...inputVariables
+                    token:token,
+                    id:id
                 }
             },
             refetchQueries:[{query:GET_ROUTINES_FOLDERS_USER_BY_TOKEN,variables:{
@@ -115,8 +91,6 @@ const Dashboard = ({updateRoutineOnPlay}) => {
             if(errors) console.log(errors)
             if(success) updateModalDelete({boolean:false,item:{name:null,id:null}})
         })
-
-    }
 
     if(token){
         return(
@@ -264,7 +238,7 @@ const Dashboard = ({updateRoutineOnPlay}) => {
                                     <Container className={'routine-container-stats'}>
                                         <Text text={`Record 🎉: ${routine.timeRecord}`}/>
                                         <Text text={`Veces realizadas: ${routine.dones}`} />
-                                        <Text text={`Ejercicios: ${routine.exercises.length}`} />
+                                        <Text text={`Ejercicios: ${JSON.parse(routine.exercises).length}`} />
                                     </Container>
                                     <Container className={'routine-container-button'}>
                                         <Button
@@ -336,7 +310,7 @@ const Dashboard = ({updateRoutineOnPlay}) => {
                                     className={'optionMenu'}
                                     text={'Editar'}
                                     onClick={ async () => {
-                                        await updateRoutineOnPlay({active:true, id:routine.id, routine:routine})
+                                        await updateRoutineOnPlay({active:false, id:routine.id, routine:routine})
                                         navigate('/routine')
                                     }}
                                     />
@@ -437,7 +411,8 @@ const Dashboard = ({updateRoutineOnPlay}) => {
                                             <>
                                                 <Container className={'routine-container-stats'}>
                                                     <Text text={`Tiempo record 🎉: ${routine.timeRecord}`}/>
-                                                    <Text text={`Veces realizadas: ${routine.dones}`} />
+                                                    <Text text={`Veces realizadas: ${routine.dones}`}/>
+                                                    <Text text={`Ejercicios: ${JSON.parse(routine.exercises).length}`} />
                                                 </Container>
                                                 <Container className={'routine-container-button'}>
                                                     <Button

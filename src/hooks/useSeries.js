@@ -26,7 +26,6 @@ const useSeries = (objectList) => {
         if(series.length === 0){
             series.push(serie)
         }else{
-            serie.reps = series[series.length - 1].reps
             series.push(serie)
         }
         updateState({...state, listOnCreate:exercises})

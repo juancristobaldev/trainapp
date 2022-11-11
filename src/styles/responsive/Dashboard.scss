@@ -25,7 +25,9 @@
       .list-last-routines {
         .routine-container {
           width: calc(100vw - 6rem);
-          margin: 1rem 3rem;
+          margin: 1rem 0;
+          position:relative;
+          left:3rem;
         }
       }
     }
@@ -46,8 +48,12 @@
     .folders section.section-list-folders {
       padding: 0;
     }
+    .home .list-last-routines{
+      padding-top:10%;
+    }
   }
 }
+
 
 @include mixins.media-up(md, md-md-lg) {
   .main-dashboard.grid-web {
@@ -63,9 +69,33 @@
     }
   }
 }
+@include mixins.media-up(md-md-lg, lg-lg-lg) {
+  .main-dashboard.grid-web{
+    grid-template-columns:20% 80%;
+  }
+}
 
 @include mixins.media-up(md-md-lg, sm-lg) {
-  .main-dashboard.grid-web {
-    grid-template-columns: 30% 70%;
+  .main-dashboard.grid-web .home {
+    .list-last-routines {
+      flex-direction: column;
+      .routine-container {
+        width: 80%;
+        margin: 0.5rem;
+      }
+    }
+  }
+}
+@include mixins.media-up(sm-lg, lg-lg-lg) {
+  .main-dashboard.grid-web .home {
+    .list-last-routines {
+      flex-direction: row;
+      .routine-container {
+        grid-template-rows: 7.5vh 1fr 7.5vh;
+        width: 45%;
+        height:35vh;
+        margin: 0.5rem;
+      }
+    }
   }
 }

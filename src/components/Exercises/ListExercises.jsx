@@ -126,7 +126,8 @@ const ListExercises = ({token,objectState,backOff}) => {
                             {
                                 ...state,
                                 modalCreate:!state.modalCreate,
-                                modal:false
+                                modal:false,
+                                modalErrors:{error:false,errors:{}},errors:{}
                             }
                         )
                     }}

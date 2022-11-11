@@ -53,6 +53,7 @@ const CreateExercise = ({token,objectState}) => {
                     textSubmit="Crear"
                     >
                         <FormControl
+                        objState={objectState}
                         error={[errors.name,errors.alreadyExist]}
                         className={'name-input-create'}
                         label="Nombre ejercicio:"

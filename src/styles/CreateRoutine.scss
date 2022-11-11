@@ -15,8 +15,9 @@ section.grid {
       height: 7.5vh;
       font-weight: 600;
       @include mixins.dflex(space-between, center, row);
-      .cancel-button {
-        width: 25%;
+      .button-cancel {
+        @include mixins.dflex(center,center,row);
+        width: 30%;
         height: 50%;
         @include mixins.button-primary(
           rgb(235, 235, 235),
@@ -26,6 +27,10 @@ section.grid {
           0,
           0
         );
+        input{
+          border: 0;
+          background:transparent;
+        }
       }
     }
     .form-create-routine {
@@ -72,7 +77,7 @@ section.grid {
         }
         button,
         input {
-          width: 25%;
+          width: 30%;
           height: 50%;
           @include mixins.button-primary(
             transparent,
@@ -126,9 +131,11 @@ section.grid {
       background-color: $color-0-darkmode !important;
       .header-create-routine {
         color: white;
-        button {
+        .button-cancel {
           background-color: $color-2-darkmode;
-          color: $color-0-lightmode;
+          input,svg{
+            color: $color-0-lightmode;
+          }
         }
       }
       .form-create-routine {

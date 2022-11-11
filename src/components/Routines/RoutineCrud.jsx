@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Container } from "../generals/Container";
 import { useNavigate } from "react-router-dom";
-import { Main } from "../generals/Main";
 import { Form } from "../Form/Form";
 import { Text } from "../generals/Text";
 import { Modal } from "../Modal/Modal";
@@ -21,12 +20,11 @@ import '../../styles/Modal.scss'
 
 import Cookies from "universal-cookie/es6";
 import { InputSerie } from "../InputSerie";
-import { useMutation, useQuery } from "@apollo/client";
-import { CREATE_ROUTINE, UPDATE_ROUTINE } from "../../data/mutations";
-import { GET_EXERCISES_BY_TOKEN, GET_ROUTINES_AND_USER_BY_TOKEN, GET_ROUTINE_BY_ID } from "../../data/query";
+import { useMutation } from "@apollo/client";
+import { CREATE_ROUTINE, UPDATE_FOLDER, UPDATE_ROUTINE, UPDATE_USER } from "../../data/mutations";
+import { GET_EXERCISES_BY_TOKEN, GET_ROUTINES_AND_USER_BY_TOKEN } from "../../data/query";
 import { ListExercises } from "../Exercises/ListExercises";
 import { CreateExercise } from "../Exercises/CreateExercise";
-import { ModalDelete } from "../Modal/ModalDelete";
 import { useList } from "../../hooks/useList";
 import { useWidthScreen } from "../../hooks/useWidthScreen";
 import { Section } from "../generals/Section";
@@ -36,10 +34,8 @@ import { useExercises } from "../../hooks/useExercises";
 import { BsClockHistory } from "react-icons/bs";
 import { MdCancel } from "react-icons/md";
 import { ProgressiveCount } from "../ProgressiveCount";
-import { Create } from "../Create/Create";
-import { MdOutlineKeyboardReturn } from "react-icons/md";
-import { Timer } from "../MenuTimer/Timer";
-
+import CheckBox from "../Checkbox";
+import { TimerMenu } from "../MenuTimer";
 
 const token = new Cookies().get('session-token')
 const timer = JSON.parse(localStorage.getItem('timer'))
@@ -97,14 +93,14 @@ const RoutineCrud = ({routineObj}) => {
     } = useExercises(token,{list:listForSelect,updateList:updateListForSelect},{stateValue:state,setState:setState})
 
     const {
+        checkSerie,
         addSerie,
         deleteSeries,
         classControl
     } = useSeries({state:state,updateState:setState})
 
-
     const [createRoutine] = useMutation(CREATE_ROUTINE),
-    [updateRoutine] = useMutation(UPDATE_ROUTINE) 
+    [updateRoutine] = useMutation(UPDATE_ROUTINE)
 
     const getDataRoutine = async (e,name,objEx) => {
         const newData = {...dataFormCreate};
@@ -113,6 +109,11 @@ const RoutineCrud = ({routineObj}) => {
         if(name !== 'name'){
             const {nameInput,idList,serie} = objEx
             await newList.forEach(item => {
+
+                if(active && id) item.seriesEx.forEach(serie => {
+                    serie.need = false
+                })
+
                 if(item.idList === idList){
                     const indexSerie = item.seriesEx.findIndex(item => item.idSerie === serie)
                     item.seriesEx[indexSerie][nameInput] = e.target.value;
@@ -123,42 +124,110 @@ const RoutineCrud = ({routineObj}) => {
         
         setState({...state, dataFormCreate:newData})
     }
-    const getDataTimer = (event) => {
-        const timer = {...state.timer.clock}
-        timer[event.target.name] = event.target.value
-        setState({...state, timer:{...state.timer, clock:timer}})
-     }
- 
-     const setTimer = () => {
-         const clock = state.timer.clock,
-         errors = [];
-         let time = '';
-         if(parseInt(clock.minutes) > 59 || parseInt(clock.seconds) > 59) errors.push('El tiempo maximo es: 59:59min')
-         if(!clock.minutes || !clock.seconds) errors.push('Minutos y segundos obligatorios') 
-         if(errors.length === 0) {
-             const newList = [...JSON.parse(localStorage.getItem('timer'))]
-             time = `${clock.minutes <= 9  ? `0${clock.minutes}` : `${clock.minutes}`}:${clock.seconds <= 9 && clock.seconds >= 1  ? `0${clock.seconds}` : `${clock.seconds}`}`
-             if(newList.length < 3){
-                 newList.unshift(time)
-             }else{
-                 newList.pop()
-                 newList.unshift(time)
-             }
-             localStorage.setItem('timer',JSON.stringify([...newList]))
-             setState({...state, timer:{...state.timer, clock:{}, type:'select'}})
-         }else{
-            setState({...state, timer:{...state.timer, errors:{error:true, errors:[...errors]}}})
-         }
-         
-     }
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e,confirmation) => {
         e.preventDefault()
 
         const {token,name,exercises,timeRecord,dones} = dataFormCreate,
         errorObj = {};
 
         if(active && id || !active && id){
+
+            let newList = [...listOnCreate],
+            dataRoutine = {
+                ...dataFormCreate,
+                id:routine.id,
+                timeRecord:routine.timeRecord,
+            },
+            error = false
+        
+            delete dataRoutine.token
+
+            if(!dataRoutine.name) dataRoutine.name = routine.name
+
+            await newList.forEach(item => {
+                item.seriesEx.forEach(serie => {
+                    if(serie.checked === false){
+                        serie["need"] = true
+                        error = true
+                    }
+                })
+            })
+
+            if(confirmation) error = false
+            if(error) await setState({...state, dataFormCreate:dataRoutine,modalUncompletedRoutine:true})
+            else{
+                dataRoutine.exercises = newList
+
+                if(!active && id) dataRoutine.dones = routine.dones
+                if(active && id){
+                    dataRoutine.dones = routine.dones + 1
+
+                    const timeNow = document.getElementById('progressive-count').innerHTML.substring(18,26)
+
+                    if(dataRoutine.timeRecord !== "indefinido"){
+                        console.log(timeNow)
+                        const timeRoutine = {
+                            hour:parseInt(`${timeNow[0]}${timeNow[1]}`),
+                            min:parseInt(`${timeNow[3]}${timeNow[4]}`),
+                            seg:parseInt(`${timeNow[6]}${timeNow[7]}`)
+                        }
+
+                        const objectRecord = {
+                            hourRecord:parseInt(`${dataRoutine.timeRecord[0]}${dataRoutine.timeRecord[1]}`),
+                            minRecord:parseInt(`${dataRoutine.timeRecord[3]}${dataRoutine.timeRecord[4]}`),
+                            segRecord:parseInt(`${dataRoutine.timeRecord[6]}${dataRoutine.timeRecord[7]}`)
+                        }
+
+                        const {hourRecord,minRecord,segRecord} = objectRecord,
+                        {hour,min,seg} = timeRoutine,
+                        timeRecordString = `${timeRoutine.hour <= 9 ? `0${timeRoutine.hour}`:`${timeRoutine.hour}`}:${timeRoutine.min <= 9 ? `0${timeRoutine.min}` : timeRoutine.min }:${timeRoutine.seg <= 9 ? `0${timeRoutine.seg}` : timeRoutine.seg}`  
+                        
+                        if(hourRecord == hour){
+                            if(minRecord == min){
+                                if(segRecord == seg) dataRoutine.timeRecord = timeRecord
+                                else{
+                                    if(segRecord > seg) dataRoutine.timeRecord = timeRecordString
+                                    else dataRoutine.timeRecord = timeRecord;
+                                }
+                            }else{
+                                if(minRecord > min) dataRoutine.timeRecord = timeRecordString
+                                else dataRoutine.timeRecord = timeRecord;
+                            }
+                        }else if(hour < hour) dataRoutine.timeRecord = timeRecordString
+                        else dataRoutine.timeRecord = timeRecord;
+                    }
+                    else {
+
+                        dataRoutine.timeRecord = timeNow 
+                        console.log(timeRecord)
+                    }
+                }
+
+                await dataRoutine.exercises.forEach(exercise => {
+                    exercise.seriesEx.forEach(serie => {
+                        serie.checked = false
+                        serie.need = false
+                    })
+                })
+
+                console.log(dataRoutine)
+                 updateRoutine({
+                    variables:{
+                        input:{
+                            ...dataRoutine,
+                            exercises:JSON.stringify(dataRoutine.exercises)
+                        }
+                    }
+                }).then( ({data}) => {
+                    const {error,success} = data.updateRoutine
+                    if(error) console.log(error)
+                    if(success){
+                        redirect('/')
+                        window.location.reload()
+                    }
+                }) 
+            }
 
         }else{
     
@@ -169,8 +238,6 @@ const RoutineCrud = ({routineObj}) => {
             const errorArray = Object.values(errorObj)
 
             if(!errorArray.length){
-
-                console.log('here')
 
                 const inputVariables = {...dataFormCreate, exercises:JSON.stringify(dataFormCreate.exercises)}
 
@@ -195,178 +262,39 @@ const RoutineCrud = ({routineObj}) => {
         }
     }
     useEffect(() => {
+        
+            if(routine){
 
-            let newListOnCreate = [...JSON.parse(routine.exercises)]
-            newListOnCreate.forEach(item => {
-                item.seriesEx.forEach(serie => {
-                    const lastSerie = serie.other ? `${serie.other} Kg / ${serie.reps} Reps` : serie.time ? `${serie.time} Min` : `${serie.reps} Reps`
-                    serie["lastMoment"] = lastSerie
+                let newListOnCreate = [...JSON.parse(routine.exercises)]
+                console.log(newListOnCreate)
+                newListOnCreate.forEach(item => {
+                    
+                    item.seriesEx.forEach(serie => {
+                        const lastSerie = serie.other ? `${serie.other} Kg / ${serie.reps} Reps` : serie.time ? `${serie.time} Min` : `${serie.reps} Reps`
+                        serie["lastMoment"] = lastSerie
+                    })
                 })
-            })
 
-            setState(
-                {...state, 
-                dataRoutine:routine, 
-                timer:{...state.timer, errors:{error:false,errors:[]}},
-                dataFormCreate:{...state.dataFormCreate, exercises:JSON.parse(routine.exercises)},
-                listOnCreate:newListOnCreate
-                }
-            )
+                setState(
+                    {...state, 
+                    dataRoutine:routine, 
+                    timer:{...state.timer, errors:{error:false,errors:[]}},
+                    dataFormCreate:{...state.dataFormCreate, exercises:JSON.parse(routine.exercises)},
+                    listOnCreate:newListOnCreate
+                    }
+                )
+            }
 
         
     },[routine])
     return (
         <Section className={`grid ${widthScreen > 650 && "web"} ${darkMode && "darkMode"}`}>
         <Section className={`section-create-routine ${widthScreen > 650 && "web"}`}>
-        { state.timer.modalTimer &&
-                <>
-                <Container className={'back'} 
-                onClick={
-                state.timer.time === false ? 
-                () => setState({...state, timer:{...state.timer,modalTimer:false,type:'select',time:''}}) 
-                : 
-                () => setState({...state, timer:{...state.timer, secondPlane: !state.timer.secondPlane}})}
-                style={state.timer.secondPlane ? {display:"none"} : {display:"block"}} 
-                />
-                {
-                    !state.timer.time ?
-                    <>
-                    {
-                        state.timer.type === 'select' ?
-                        <Container className={`modal-timer ${state.timer.secondPlane ? "second-plane" : "undefined"}`}>
-                            <Container className={'header-timer'}>
-                                <Text text="Temporizador"/>
-                                <Container className={`close-button ${darkMode && "darkMode"}`}>
-                                    <IoMdClose
-                                    cursor={'pointer'}
-                                    onClick={
-                                        state.timer.time === false ? 
-                                        () => setState({...state, timer:{...state.timer,modalTimer:false,time:''}}) 
-                                        : 
-                                        () => setState({...state, timer:{...state.timer, secondPlane: !state.timer.secondPlane}})}
-                                        style={state.timer.secondPlane ? {display:"none"} : {display:"block"}} 
-                                        />
-                                </Container>
-                            </Container>
-                            <List
-                            className={'list-timer-select'}
-                            item={timer}
-                            onEmpty={() => <Text text={'No has creado ningun temporizador'}/>}
-                            render={timer => 
-                                <Container className={'container-timer'}>
-                                    <Text
-                                    style={{cursor:"pointer"}}
-                                    key={timer}
-                                    text={timer}
-                                    onClick={() => setState({...state, timer:{...state.timer, time:timer}})}
-                                    />
-                                </Container>
-                            }
-                            />
-                            <Container
-                            className={'buttons-timer-select'}
-                            >
-                                <Button
-                                textButton={'Crear temporizador'}
-                                onClick={() => setState({...state,timer:{...state.timer, type:'create' }}) }
-                                />
-                            </Container>
-                        </Container> 
-                        :
-                        <Create className={`modal-timer ${state.timer.secondPlane ? "second-plane" : "undefined"}`}>
-                            <Container className={'header-timer'}>
-                                <Text text="Temporizador"/>
-                                <Container className={'close-button'}>
-                                    <MdOutlineKeyboardReturn
-                                    onClick={() => setState({...state,timer:{...state.timer, type:'select', clock:{minutes:'',seconds:''},errors:{error:false,errors:[]}}})}
-                                    />
-                                </Container>
-                            </Container>
-                            <Container className={'create-timer'}>
-                                {state.timer.errors.error && 
-                                    <Container className={'errors'}>
-                                        {
-                                        state.timer.errors.errors.map(error => 
-                                        <Text text={error}/>
-                                        )
-                                        }
-                                    </Container>
-                                    
-                                }
-                                <Container className={'minutes'}>
-                                    <Text text={'Minutos'}/>
-                                    <input
-                                    onChange={event => getDataTimer(event)}
-                                    name={'minutes'}
-                                    type={'number'}
-                                    min={0}
-                                    max={60}
-                                    />
-                                </Container>
-                                <Container className={'separator'}>
-                                    <Text text={':'}/>
-                                </Container>
-                                <Container className={'seconds'}>
-                                    <Text text={'Segundos'}/>
-                                    <input
-                                    onChange={event => getDataTimer(event)}
-                                    name={'seconds'}
-                                    type={'number'}
-                                    min={0}
-                                    max={60}
-                                    />
-                                </Container>
-                            </Container>
-                            <Container
-                            className={'buttons-timer-select'}
-                            >
-                                <Button
-                                onClick={() => setTimer()}
-                                textButton={'Crear temporizador'}
-                                />
-                            </Container>
-                        </Create>
-                    }
-                    </>
-                    :
-                    <>
-                    <Container className={`modal-timer ${state.timer.secondPlane ? "second-plane" : "undefined"}`}>
-                        <Container
-                        className={'header-timer'}
-                        >
-                            <Text text={'Temporizador'}/>
-                            <Container className={'close-button'}>
-                                <MdOutlineKeyboardReturn
-                                    cursor={'pointer'}
-                                    onClick={() => setState({...state,timer:{...state.timer, type:'select', time:''}})}
-                                />
-                            </Container>
-                        </Container>
-                        <Timer
-                            time={state.timer.time}
-                        />
-                        <Container
-                        style={{
-                            width:"90%",
-                            height:"70%",
-                            placeSelf:'center'
-                        }}
-                        className={'buttons-timer-select'}>
-                            <Button
-                            onClick={
-                                state.timer.time === false ? 
-                                () => setState({...state, timer:{...state.timer,modalTimer:false,type:'select',time:''}}) 
-                                : 
-                                () => setState({...state, timer:{...state.timer, secondPlane: !state.timer.secondPlane}})
-                            }
-                            textButton={'Aceptar'}
-                            />
-                        </Container>
-                    </Container>
-                    </>
-                }
-                </>
-            }
+        { state.timer.modalTimer && 
+
+            <TimerMenu useState={{state:state,setState:setState}}/>
+
+        }
             <Container className={'header-create-routine'}>
                 {   
                     (active && id) ?
@@ -393,12 +321,12 @@ const RoutineCrud = ({routineObj}) => {
             <Form
             className={'form-create-routine'}
             onSubmit={handleSubmit}
-            textSubmit='Crear rutina'>
+            textSubmit={`${(!active && !id) ? 'Crear rutina' : (!active && id) ? 'Editar rutina' : 'Finalizar rutina'}`}>
                 {(active && id) ?
                 <Container className={'stats-goroutine'}>
                 <h2>{routine.name}</h2>
                 <Text
-                text={`Mejor tiempo 🎉: ${state.dataRoutine.timeRecord}`}
+                text={`Mejor tiempo 🎉: ${routine.timeRecord}`}
                 />
                 <ProgressiveCount
                 id={"progressive-count"}
@@ -406,6 +334,7 @@ const RoutineCrud = ({routineObj}) => {
                 </Container>
                 :
                 <FormControl
+                objState={{state:state,setState:setState}}
                 error={[state.errors.name]}
                 typeControl={'input'}
                 className={'input-name-routine'}
@@ -420,7 +349,7 @@ const RoutineCrud = ({routineObj}) => {
                     <Text text={'Ejercicios:'}/>
                     <input
                     type={'button'}
-                    onClick={() => setState({...state, modal:!state.modal})}
+                    onClick={() => setState({...state, modal:!state.modal, modalErrors:{error:false,errors:{}},errors:{}})}
                     value='+ Ejercicio'
                     />
                 </Container>
@@ -451,14 +380,14 @@ const RoutineCrud = ({routineObj}) => {
                             render={ serie => (
                                 <Container
                                 key={serie.idSerie}
-                                className={classControl(exercise.typeEx) + ' serie'}
+                                className={classControl(exercise.typeEx) + ` serie ${serie.checked === true ? 'checked' : false}`}
                                 >
                                     <Container className={'delete-serie'}>
                                         <IoMdClose
                                         onClick={() => deleteSeries(serie,exercise)}
                                         />
                                     </Container>
-                                    <Text text='-' />
+                                    <Text text={serie.lastMoment ? serie.lastMoment : '-'} />
                                     <>
                                         {exercise.typeEx === 'Peso adicional' || exercise.typeEx === 'Peso asistido' ?
                                         <React.Fragment>
@@ -504,9 +433,21 @@ const RoutineCrud = ({routineObj}) => {
                                             type="number"
                                             />
                                         }
-                                        <Container className={'lock'}>
-                                            <HiLockClosed/>
-                                        </Container>
+                                        {   (active && id) ?
+
+                                            <CheckBox
+                                            style={ !serie.checked && serie.need ? { border:'1px solid red' } : {border:0}}
+                                            onClick={() => checkSerie(serie,exercise)}
+                                            className={serie.checked ? "checkBoxOn" : "checkBoxOff"}
+                                            select={serie.checked}
+                                            />
+                                        :
+
+                                            <Container className={'lock'}>
+                                                <HiLockClosed/>
+                                            </Container>
+
+                                        }
                                     </>
                                 </Container>
                             )}
@@ -577,7 +518,15 @@ const RoutineCrud = ({routineObj}) => {
                     />
              </Modal>
             }
-            
+            {
+                        state.modalUncompletedRoutine === true && 
+                        
+                        <ModalAreUSure
+                        text={"Algunos ejercicios estan incompletos..."}
+                        acceptFunction={event => handleSubmit(event,true)}
+                        cancelFunction={() => setState({...state, modalUncompletedRoutine: false})}
+                        />
+                    }
         </Modal>
     </Section>
     )

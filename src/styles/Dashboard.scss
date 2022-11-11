@@ -172,7 +172,7 @@
         0
       );
       border-radius: 0 !important;
-      button {
+      input {
         cursor: pointer;
         border: 0;
         background-color: transparent;
@@ -186,8 +186,8 @@
         fill: rgb(105, 105, 105);
       }
       &:active {
-        button {
-          color: $color-primary;
+        input {
+          color: $color-primary !important;
           text-decoration: underline;
         }
         svg {
@@ -196,10 +196,10 @@
       }
       &.true {
         svg {
-          fill: $color-primary;
+          fill: $color-primary !important;
         }
-        button {
-          color: $color-primary;
+        input {
+          color: $color-primary !important;
         }
       }
     }
@@ -277,6 +277,7 @@
         }
       }
     }
+    section.list-last-routines,
     .section-list-folders,
     .section-list-routines {
       background: $background-gradient-darkmode;
@@ -324,11 +325,11 @@
         transition: 0s !important;
         color: white !important;
         background-color: transparent !important;
-        svg {
-          fill: white;
-        }
-        button {
+        input {
           color: white;
+        }
+        svg{
+          fill:white;
         }
       }
     }
@@ -519,7 +520,7 @@
 
 .home {
   max-height: calc(100vh - 7.5vh);
-  @include mixins.dgrid(20% 5% 75%, 100%, normal, normal);
+  @include mixins.dgrid(20% 5% 5% 65%, 100%, normal, normal);
   .container-user-dashboard {
     text-align: center;
     justify-self: center;
@@ -534,7 +535,10 @@
     place-self: center;
   }
   .list-last-routines {
-    overflow: auto;
+    grid-area:4/ 1 / 5 / 2 ;
+    background:$background-gradient-lightmode;
+    overflow-y: auto;
+    max-width:100%;
   }
 }
 
