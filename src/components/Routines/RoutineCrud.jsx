@@ -46,6 +46,8 @@ const RoutineCrud = ({routineObj}) => {
 
     const {active, id, routine} = routineObj
 
+    console.log(active,id,routine)
+
     const {darkMode} = useDarkMode(),
     {widthScreen} = useWidthScreen()
 
@@ -292,7 +294,7 @@ const RoutineCrud = ({routineObj}) => {
         <Section className={`section-create-routine ${widthScreen > 650 && "web"}`}>
         { state.timer.modalTimer && 
 
-            <TimerMenu useState={{state:state,setState:setState}}/>
+            <TimerMenu objState={{state:state,setState:setState}}/>
 
         }
             <Container className={'header-create-routine'}>
@@ -304,7 +306,7 @@ const RoutineCrud = ({routineObj}) => {
                         () => setState({...state, timer:{...state.timer,modalTimer:!state.timer.modalTimer,time:''}}) 
                         : 
                         () => setState({...state, timer:{...state.timer, secondPlane: !state.timer.secondPlane}})}
-                    classNameContainer={'timer'} 
+                    classNameContainer={'button-timer'} 
                     textButton={'Temporizador'} 
                     icon={<BsClockHistory/>} 
                     />
@@ -376,7 +378,11 @@ const RoutineCrud = ({routineObj}) => {
                                 flexDirection:"column",
                             }}
                             item={exercise.seriesEx}
-                            onEmpty={() => <Text className={'first-serie'} text={'Agrega tu primera serie'}/>}
+                            onEmpty={() => 
+                            <Container className={'first-serie'}>
+                                <Text text={'Agrega tu primera serie'}/>
+                            </Container>
+                            }
                             render={ serie => (
                                 <Container
                                 key={serie.idSerie}

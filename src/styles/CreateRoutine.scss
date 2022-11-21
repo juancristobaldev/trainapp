@@ -7,6 +7,18 @@ section.grid {
     border-top-right-radius: 0.25rem;
     @include mixins.dgrid(7.5vh 1fr, none, normal, normal);
     height: 100vh;
+
+    .button-cancel,
+    .button-timer,
+    .container-add-exercise input,
+    .container-submit input {
+      height: 35px;
+    }
+    .button-cancel,
+    .button-timer,
+    .container-add-exercise input {
+      width: 120px !important;
+    }
     .header-create-routine {
       p {
         font-size: 1.5rem;
@@ -15,10 +27,9 @@ section.grid {
       height: 7.5vh;
       font-weight: 600;
       @include mixins.dflex(space-between, center, row);
-      .button-cancel {
-        @include mixins.dflex(center,center,row);
-        width: 30%;
-        height: 50%;
+      .button-cancel,
+      .button-timer {
+        @include mixins.dflex(center, center, row);
         @include mixins.button-primary(
           rgb(235, 235, 235),
           rgb(225, 225, 225),
@@ -27,14 +38,35 @@ section.grid {
           0,
           0
         );
-        input{
+        input {
           border: 0;
-          background:transparent;
+          background: transparent;
+        }
+      }
+      .button-timer {
+        @include mixins.button-primary(
+          $color-primary,
+          $color-primary-hover-button,
+          white,
+          white,
+          0,
+          0
+        );
+        input {
+          color: white;
         }
       }
     }
     .form-create-routine {
       @include mixins.dgrid(12.5vh 7.5vh 1fr 7.5vh, none, normal, normal);
+      .stats-goroutine {
+        @include mixins.dflex(center, stretch, column);
+        padding-left: 2rem;
+        h2,
+        p {
+          margin: 0.25rem 0rem;
+        }
+      }
       .exercises-list-routine.error {
         .empty-list-routine p {
           color: red;
@@ -75,10 +107,7 @@ section.grid {
         p {
           font-weight: 550;
         }
-        button,
         input {
-          width: 30%;
-          height: 50%;
           @include mixins.button-primary(
             transparent,
             $color-primary,
@@ -101,7 +130,6 @@ section.grid {
             0
           );
           width: calc(100% - 2rem);
-          height: 65%;
           font-weight: 800;
         }
       }
@@ -133,12 +161,16 @@ section.grid {
         color: white;
         .button-cancel {
           background-color: $color-2-darkmode;
-          input,svg{
+          input,
+          svg {
             color: $color-0-lightmode;
           }
         }
       }
       .form-create-routine {
+        .stats-goroutine {
+          color: $color-0-lightmode;
+        }
         .input-name-routine {
           label {
             color: $color-0-lightmode;

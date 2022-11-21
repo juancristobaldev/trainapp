@@ -9,14 +9,19 @@ import { Text } from "./generals/Text";
 import { List } from "./Lists/List";
 import { Timer } from "./MenuTimer/Timer";
 
-const timer = JSON.parse(localStorage.getItem('timer'))
 
-const TimerMenu = ({useState}) => {
+import '../styles/Timer.scss'
+import { useEffect } from "react";
+import { useState } from "react";
+
+const timers = JSON.parse(localStorage.getItem('timer'))
+
+const TimerMenu = ({objState}) => {
 
     const { darkMode } = useDarkMode()
+    const [timer,updateTimer] = useState([])
 
-
-    const {state,setState} = useState
+    const {state,setState} = objState
 
     const getDataTimer = (event) => {
         const timer = {...state.timer.clock}
@@ -24,7 +29,7 @@ const TimerMenu = ({useState}) => {
         setState({...state, timer:{...state.timer, clock:timer}})
      }
  
-     const setTimer = () => {
+     const setTimer = async () => {
          const clock = state.timer.clock,
          errors = [];
          let time = '';
@@ -40,6 +45,7 @@ const TimerMenu = ({useState}) => {
                  newList.unshift(time)
              }
              localStorage.setItem('timer',JSON.stringify([...newList]))
+             await updateTimer(newList)
              setState({...state, timer:{...state.timer, clock:{}, type:'select'}})
          }else{
             setState({...state, timer:{...state.timer, errors:{error:true, errors:[...errors]}}})
@@ -47,9 +53,18 @@ const TimerMenu = ({useState}) => {
          
      }
 
+     useEffect(() => {
+        if(!timers) {
+            localStorage.setItem('timer',JSON.stringify([]))
+            updateTimer([])
+        }else{
+            updateTimer(timers)
+        }
+     },[timers])
+
     return (
                 <>
-                <Container className={'back'} 
+                <Container className={`back ${darkMode && 'darkMode'}`} 
                 onClick={
                 state.timer.time === false ? 
                 () => setState({...state, timer:{...state.timer,modalTimer:false,type:'select',time:''}}) 
@@ -62,7 +77,7 @@ const TimerMenu = ({useState}) => {
                     <>
                     {
                         state.timer.type === 'select' ?
-                        <Container className={`modal-timer ${state.timer.secondPlane ? "second-plane" : "undefined"}`}>
+                        <Container className={`modal-timer ${state.timer.secondPlane ? "second-plane" : "undefined"} ${darkMode && 'darkMode'}`}>
                             <Container className={'header-timer'}>
                                 <Text text="Temporizador"/>
                                 <Container className={`close-button ${darkMode && "darkMode"}`}>
@@ -102,7 +117,7 @@ const TimerMenu = ({useState}) => {
                             </Container>
                         </Container> 
                         :
-                        <Create className={`modal-timer ${state.timer.secondPlane ? "second-plane" : "undefined"}`}>
+                        <Create className={`modal-timer ${state.timer.secondPlane ? "second-plane" : "undefined"} ${darkMode && 'darkMode'}`}>
                             <Container className={'header-timer'}>
                                 <Text text="Temporizador"/>
                                 <Container className={'close-button'}>
@@ -122,8 +137,8 @@ const TimerMenu = ({useState}) => {
                                     </Container>
                                     
                                 }
+                                <Text className={'minutes-text'} text={'Minutos'}/>
                                 <Container className={'minutes'}>
-                                    <Text text={'Minutos'}/>
                                     <input
                                     onChange={event => getDataTimer(event)}
                                     name={'minutes'}
@@ -135,8 +150,8 @@ const TimerMenu = ({useState}) => {
                                 <Container className={'separator'}>
                                     <Text text={':'}/>
                                 </Container>
+                                <Text className={'seconds-text'} text={'Segundos'}/>
                                 <Container className={'seconds'}>
-                                    <Text text={'Segundos'}/>
                                     <input
                                     onChange={event => getDataTimer(event)}
                                     name={'seconds'}
@@ -159,7 +174,7 @@ const TimerMenu = ({useState}) => {
                     </>
                     :
                     <>
-                    <Container className={`modal-timer ${state.timer.secondPlane ? "second-plane" : "undefined"}`}>
+                    <Container className={`modal-timer ${state.timer.secondPlane ? "second-plane" : "undefined"} ${darkMode && 'darkMode'}`}>
                         <Container
                         className={'header-timer'}
                         >

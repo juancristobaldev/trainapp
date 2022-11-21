@@ -35,9 +35,14 @@ const Exercise = ({children,item,deleteExerciseOfList}) => {
                 <Text
                 className={'exercise-name'}
                 text={item.name}/>
-                <Text 
-                className={'exercise-type'}
-                text={item.typeEx}/>
+                <Container className={'exercise-info'}>
+                    <Text 
+                    className={'exercise-muscle'}
+                    text={item.muscleEx}/>
+                    <Text 
+                    className={'exercise-type'}
+                    text={item.typeEx}/>
+                </Container>
                 <Container className={`delete-button ${darkMode && "darkMode"}`}>
                     <IoMdClose onClick={() => deleteExerciseOfList(item,'exercise')}/>
                 </Container>

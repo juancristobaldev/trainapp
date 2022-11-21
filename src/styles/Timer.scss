@@ -67,9 +67,10 @@
 
   .create-timer {
     place-self: center;
-    width: 70%;
+    padding: 1.5rem 4rem;
+    width: 100%;
     height: 100%;
-    @include mixins.dgrid(10% 90%, 47.5% 5% 47.5%, center, normal);
+    @include mixins.dgrid(20% 80%, 47.5% 5% 47.5%, center, normal);
     .errors {
       padding-left: 1rem;
       font-style: italic;
@@ -77,16 +78,20 @@
       grid-area: 1 / 1 / 2 / 4;
     }
     .separator {
-      @include mixins.dgrid(30% 70%, none, center, normal);
       grid-area: 2/2/3/3;
       p {
         grid-area: 2/1/3/2;
         font-size: 2rem;
       }
     }
+    .minutes-text {
+      grid-area: 1/1/2/2;
+    }
+    .seconds-text {
+      grid-area: 1/3/2/4;
+    }
     .minutes,
     .seconds {
-      @include mixins.dgrid(30% 70%, none, normal, normal);
       p {
         font-weight: 600;
         font-size: 1rem;
@@ -146,6 +151,37 @@
       );
       height: 70%;
       width: calc(100% - 2rem);
+    }
+  }
+  &.darkMode {
+    background-color: $color-2-darkmode;
+    color: white;
+
+    .timer,
+    .create-timer,
+    .list-timer-select {
+      background: $color-1-darkmode !important;
+    }
+    .timer {
+      .timer-buttons button {
+        background-color: transparent;
+      }
+    }
+    .list-timer-select {
+      .container-timer {
+        border-top: 0.5px solid $color-2-darkmode;
+        border-bottom: 0.5px solid $color-2-darkmode;
+      }
+    }
+    .create-timer {
+      .minutes,
+      .seconds {
+        input {
+          color: $color-0-lightmode;
+          background-color: $color-0-darkmode;
+          border: 2px solid $color-2-darkmode;
+        }
+      }
     }
   }
 }

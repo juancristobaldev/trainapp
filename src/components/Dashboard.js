@@ -242,7 +242,7 @@ const Dashboard = ({updateRoutineOnPlay}) => {
                                     </Container>
                                     <Container className={'routine-container-button'}>
                                         <Button
-                                        onClick={ async () => {
+                                        onClick={async () => {
                                             await updateRoutineOnPlay({active:true, id:routine.id, routine:routine})
                                             navigate('/routine')
                                         }}

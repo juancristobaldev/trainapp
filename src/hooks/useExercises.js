@@ -40,8 +40,7 @@ const useExercises = (token,objectList,state) => {
                     await deleteExercise({
                         variables:{
                             input:{
-                                token:token,
-                                name:item.name
+                                id:item.id
                             }
                         },
                         refetchQueries:[{query:GET_EXERCISES_BY_TOKEN,variables:{

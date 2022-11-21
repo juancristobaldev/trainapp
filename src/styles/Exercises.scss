@@ -23,15 +23,18 @@
     border-radius: 0.25rem;
     .exercise-header {
       cursor: pointer;
-      height: 5vh;
+      height: 7vh;
       .exercise-name {
         font-weight: 700;
-        font-size: 1rem;
+        font-size: 1.2rem;
       }
-      .exercise-type {
-        font-weight: 300;
-        font-size: 0.75rem;
-        font-style: italic;
+      .exercise-info {
+        .exercise-type,
+        .exercise-muscle {
+          font-size: 0.75rem;
+          font-style: italic;
+          margin: 0.25rem 0;
+        }
       }
       .delete-button {
         @include mixins.x-button();
@@ -53,14 +56,18 @@
         grid-template: 100%/10% 45% 30% 15% !important;
       }
       .listSerie {
+        .first-serie,
+        .serie {
+          height: 50px;
+        }
         .first-serie {
-          text-align: center;
+          @include mixins.dflex(center, center, row);
           font-size: 0.75rem;
           color: silver;
           font-style: italic;
         }
         .serie {
-          padding: 0.75rem 0;
+          height: 50px;
           background-color: transparent;
           .delete-serie {
             @include mixins.x-button();

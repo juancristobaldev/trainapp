@@ -147,7 +147,7 @@ const SingUp = () => {
             :
             <Form
             autoComplete="off"
-            className={`form-singup ${typeForm === 'about-u' ? 'about-u' : 'auth'}`}
+            className={`form-signup ${typeForm === 'about-u' ? 'about-u' : 'auth'}`}
             onSubmit={typeForm === 'about-u' ? e => handleSubmit(e,'first') : e => handleSubmit(e,'two')}
             textSubmit="Registrarse"
             alter={true}

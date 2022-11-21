@@ -13,15 +13,14 @@
       .form-create-routine .input-name-routine,
       .form-create-routine .container-add-exercise,
       .container-submit {
-        padding: 0 2rem;
+        padding: 0 1rem;
       }
       .header-create-routine {
         height: 100%;
       }
-      .header-create-routine button,
+      .header-create-routine div.button-cancel,
       .container-submit input,
-      .container-add-exercise button {
-        width: 10vw;
+      .container-add-exercise input {
         height: 35px;
       }
       .form-create-routine {
@@ -107,6 +106,11 @@
       .header-create-routine button,
       .container-add-exercise button {
         width: 30% !important;
+      }
+      .form-create-routine .stats-goroutine {
+        padding: 0;
+        width: calc(100% - 2rem);
+        margin: 0.5rem 1rem;
       }
     }
   }
