@@ -37,6 +37,7 @@ const ListExercises = ({token,objectState,backOff}) => {
 
     const totalSelectItem = listForSelect.filter(item => item.select === true).length
 
+
     return(
         <ModalSelect
         backOff={backOff}

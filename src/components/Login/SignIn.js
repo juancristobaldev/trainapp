@@ -11,18 +11,18 @@ import Cookies from "universal-cookie/es6"
 import "../../styles/SignIn.scss"
 import "../../styles/responsive/SignIn.scss"
 import { Container } from "../generals/Container"
+import { Loading } from "../Loading"
 
 const SingIn = () => {
 
     const cookies = new Cookies()
-    const [userSignIn] = useMutation(USER_SIGN_IN)
+    const [userSignIn,{loading}] = useMutation(USER_SIGN_IN)
 
     const [dataFormLogin, setDataFormLogin] = useState({
         user: '',
         pass: ''
     })
-    const [error, setError] = useState({}),
-    [loading, setLoading] = useState(false)
+    const [error, setError] = useState({})
 
     const handleChange = (e, name) => {
         const newData = { ...dataFormLogin };
@@ -32,8 +32,6 @@ const SingIn = () => {
 
     const handleSubmit = async event => {
         event.preventDefault()
-        setLoading(true)
-
         const {user,pass} = dataFormLogin,
         newErrors = {};
         
@@ -74,6 +72,9 @@ const SingIn = () => {
 
     return (
         <>
+        {
+            loading && <Loading/>
+        }
         <Main
         className={'main-signin'}
         

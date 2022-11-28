@@ -36,6 +36,7 @@ import { MdCancel } from "react-icons/md";
 import { ProgressiveCount } from "../ProgressiveCount";
 import CheckBox from "../Checkbox";
 import { TimerMenu } from "../MenuTimer";
+import { Loading } from "../Loading";
 
 const token = new Cookies().get('session-token')
 const timer = JSON.parse(localStorage.getItem('timer'))
@@ -45,8 +46,6 @@ const RoutineCrud = ({routineObj}) => {
     const redirect = useNavigate()
 
     const {active, id, routine} = routineObj
-
-    console.log(active,id,routine)
 
     const {darkMode} = useDarkMode(),
     {widthScreen} = useWidthScreen()
@@ -82,6 +81,7 @@ const RoutineCrud = ({routineObj}) => {
             dones:0
         }
     }),
+    
     {dataFormCreate,listOnCreate} = state
 
     const {
@@ -91,8 +91,10 @@ const RoutineCrud = ({routineObj}) => {
     } = useList ('exercises',{state:state,updateState:setState},true,{ nameGql:"getExercisesByToken",gql:GET_EXERCISES_BY_TOKEN,variables:{ variables:{ token:token } } })
 
     const {
+        loadingStatus,
         deleteSomeExercise
     } = useExercises(token,{list:listForSelect,updateList:updateListForSelect},{stateValue:state,setState:setState})
+
 
     const {
         checkSerie,
@@ -101,8 +103,8 @@ const RoutineCrud = ({routineObj}) => {
         classControl
     } = useSeries({state:state,updateState:setState})
 
-    const [createRoutine] = useMutation(CREATE_ROUTINE),
-    [updateRoutine] = useMutation(UPDATE_ROUTINE)
+    const [createRoutine, {loading:loadingCreateRoutine}] = useMutation(CREATE_ROUTINE),
+    [updateRoutine, {loading:loadingUpdateRoutine}] = useMutation(UPDATE_ROUTINE)
 
     const getDataRoutine = async (e,name,objEx) => {
         const newData = {...dataFormCreate};
@@ -289,252 +291,263 @@ const RoutineCrud = ({routineObj}) => {
 
         
     },[routine])
+
     return (
-        <Section className={`grid ${widthScreen > 650 && "web"} ${darkMode && "darkMode"}`}>
-        <Section className={`section-create-routine ${widthScreen > 650 && "web"}`}>
-        { state.timer.modalTimer && 
-
-            <TimerMenu objState={{state:state,setState:setState}}/>
-
+        <>
+        {
+        (loadingStatus || loadingUpdateRoutine || loadingCreateRoutine)  && 
+            <Loading/>
         }
-            <Container className={'header-create-routine'}>
-                {   
-                    (active && id) ?
-                    <ButtonIcon 
-                    onClick={
-                        state.timer.time === false ? 
-                        () => setState({...state, timer:{...state.timer,modalTimer:!state.timer.modalTimer,time:''}}) 
-                        : 
-                        () => setState({...state, timer:{...state.timer, secondPlane: !state.timer.secondPlane}})}
-                    classNameContainer={'button-timer'} 
-                    textButton={'Temporizador'} 
-                    icon={<BsClockHistory/>} 
-                    />
-                    :  
-                    <Text text={`${(!active && !id) ? 'Crear rutina' : (!active && id) && 'Editar rutina'}`}/>
-            
-                }
-                <ButtonIcon 
-                classNameContainer={'button-cancel'} 
-                textButton={'Cancelar'} 
-                icon={<MdCancel/>} 
-                />
-            </Container>
-            <Form
-            className={'form-create-routine'}
-            onSubmit={handleSubmit}
-            textSubmit={`${(!active && !id) ? 'Crear rutina' : (!active && id) ? 'Editar rutina' : 'Finalizar rutina'}`}>
-                {(active && id) ?
-                <Container className={'stats-goroutine'}>
-                <h2>{routine.name}</h2>
-                <Text
-                text={`Mejor tiempo 🎉: ${routine.timeRecord}`}
-                />
-                <ProgressiveCount
-                id={"progressive-count"}
-                />                    
-                </Container>
-                :
-                <FormControl
-                objState={{state:state,setState:setState}}
-                error={[state.errors.name]}
-                typeControl={'input'}
-                className={'input-name-routine'}
-                label={'Ingresa un nombre para tu rutina:'}
-                type="text"
-                name={'name'}
-                placeholder="Nombre de la rutina"
-                onChange={getDataRoutine}
-                />
-                }
-                <Container className={'container-add-exercise'}>
-                    <Text text={'Ejercicios:'}/>
-                    <input
-                    type={'button'}
-                    onClick={() => setState({...state, modal:!state.modal, modalErrors:{error:false,errors:{}},errors:{}})}
-                    value='+ Ejercicio'
-                    />
-                </Container>
-                <List
-                    errors={[state.errors.exercises]}
-                    className={`exercises-list-routine ${darkMode && 'darkMode'}`}
-                    item={listOnCreate}
-                    onEmpty={() => 
-                        <Container className={'empty-list-routine'}>
-                            <Text text='No has agregado ningun ejercicio'/>
-                        </Container>
+        <Section className={`grid ${widthScreen > 650 && "web"} ${darkMode && "darkMode"}`}>
+            <Section className={`section-create-routine ${widthScreen > 650 && "web"}`}>
+            { state.timer.modalTimer && 
+
+                <TimerMenu objState={{state:state,setState:setState}}/>
+
+            }
+                <Container className={'header-create-routine'}>
+                    {   
+                        (active && id) ?
+                        <ButtonIcon 
+                        onClick={
+                            state.timer.time === false ? 
+                            () => setState({...state, timer:{...state.timer,modalTimer:!state.timer.modalTimer,time:''}}) 
+                            : 
+                            () => setState({...state, timer:{...state.timer, secondPlane: !state.timer.secondPlane}})}
+                        classNameContainer={'button-timer'} 
+                        textButton={'Temporizador'} 
+                        icon={<BsClockHistory/>} 
+                        />
+                        :  
+                        <Text text={`${(!active && !id) ? 'Crear rutina' : (!active && id) && 'Editar rutina'}`}/>
+                
                     }
-                    render={ exercise => (
-                        <Exercise 
-                        key={exercise.idList}
-                        item={exercise}
-                        deleteExerciseOfList={deleteItem}
-                        >
-                            <List
-                            className='listSerie'
-                            style={{
-                                display:"flex",
-                                justifyContent:'space-around',
-                                flexDirection:"column",
-                            }}
-                            item={exercise.seriesEx}
-                            onEmpty={() => 
-                            <Container className={'first-serie'}>
-                                <Text text={'Agrega tu primera serie'}/>
+                    <ButtonIcon 
+                    onClick={() => redirect('/')}
+                    classNameContainer={'button-cancel'} 
+                    textButton={'Cancelar'} 
+                    icon={<MdCancel/>} 
+                    />
+                </Container>
+                <Form
+                className={'form-create-routine'}
+                onSubmit={handleSubmit}
+                textSubmit={`${(!active && !id) ? 'Crear rutina' : (!active && id) ? 'Editar rutina' : 'Finalizar rutina'}`}>
+                    {(active && id) ?
+                    <Container className={'stats-goroutine'}>
+                    <h2>{routine.name}</h2>
+                    <Text
+                    text={`Mejor tiempo 🎉: ${routine.timeRecord}`}
+                    />
+                    <ProgressiveCount
+                    id={"progressive-count"}
+                    />                    
+                    </Container>
+                    :
+                    <FormControl
+                    objState={{state:state,setState:setState}}
+                    error={[state.errors.name]}
+                    typeControl={'input'}
+                    className={'input-name-routine'}
+                    label={'Ingresa un nombre para tu rutina:'}
+                    type="text"
+                    name={'name'}
+                    placeholder="Nombre de la rutina"
+                    onChange={getDataRoutine}
+                    />
+                    }
+                    <Container className={'container-add-exercise'}>
+                        <Text text={'Ejercicios:'}/>
+                        <input
+                        type={'button'}
+                        onClick={() => setState({...state, modal:!state.modal, modalErrors:{error:false,errors:{}},errors:{}})}
+                        value='+ Ejercicio'
+                        />
+                    </Container>
+                    <List
+                        errors={[state.errors.exercises]}
+                        className={`exercises-list-routine ${darkMode && 'darkMode'}`}
+                        item={listOnCreate}
+                        onEmpty={() => 
+                            <Container className={'empty-list-routine'}>
+                                <Text text='No has agregado ningun ejercicio'/>
                             </Container>
-                            }
-                            render={ serie => (
-                                <Container
-                                key={serie.idSerie}
-                                className={classControl(exercise.typeEx) + ` serie ${serie.checked === true ? 'checked' : false}`}
-                                >
-                                    <Container className={'delete-serie'}>
-                                        <IoMdClose
-                                        onClick={() => deleteSeries(serie,exercise)}
-                                        />
-                                    </Container>
-                                    <Text text={serie.lastMoment ? serie.lastMoment : '-'} />
-                                    <>
-                                        {exercise.typeEx === 'Peso adicional' || exercise.typeEx === 'Peso asistido' ?
-                                        <React.Fragment>
-                                            <InputSerie
-                                            className={'input-type'}
-                                            style={{width:"35%"}}
-                                            name={exercise.name}
-                                            idList={exercise.idList}
-                                            type="number"
-                                            objEx={{nameInput:'other',idList:exercise.idList,serie:serie.idSerie}}
-                                            onChange={getDataRoutine}                                        
-                                            />
-                                            <InputSerie
-                                            className={'input-reps'}
-                                            style={{width:"35%"}}
-                                            name={exercise.name}
-                                            objEx={{nameInput:'reps',idList:exercise.idList,serie:serie.idSerie}}
-                                            onChange={getDataRoutine}
-                                            type="number"
-                                            />
-                                        </React.Fragment>
-                                        :
-                                        exercise.typeEx === 'Duracion' ?
-                                            <InputSerie
-                                            className={'input-duracion'}
-                                            className='inputSerie'
-                                            name={exercise.name}
-                                            idList={exercise.idList}
-                                            objEx={{nameInput:'time',idList:exercise.idList,serie:serie.idSerie}}
-                                            onChange={getDataRoutine}
-                                            style={{width:"50%"}}
-                                            type="time"
-                                            />
-                                        :
-                                            <InputSerie
-                                            className={'input-reps'}
-                                            className='inputSerie'
-                                            name={exercise.name}
-                                            idList={exercise.idList}
-                                            objEx={{nameInput:'reps',idList:exercise.idList,serie:serie.idSerie}}
-                                            onChange={getDataRoutine}
-                                            style={{width:"35%"}}
-                                            type="number"
-                                            />
-                                        }
-                                        {   (active && id) ?
-
-                                            <CheckBox
-                                            style={ !serie.checked && serie.need ? { border:'1px solid red' } : {border:0}}
-                                            onClick={() => checkSerie(serie,exercise)}
-                                            className={serie.checked ? "checkBoxOn" : "checkBoxOff"}
-                                            select={serie.checked}
-                                            />
-                                        :
-
-                                            <Container className={'lock'}>
-                                                <HiLockClosed/>
-                                            </Container>
-
-                                        }
-                                    </>
-                                </Container>
-                            )}
+                        }
+                        render={ exercise => (
+                            <Exercise 
+                            key={exercise.idList}
+                            item={exercise}
+                            deleteExerciseOfList={deleteItem}
                             >
-                                {
-                                widthScreen < 650 &&
-                                <Container
-                                className={'container-add-serie'}
-                                >
-                                    <Button 
-                                    onClick={(e) => addSerie(e,exercise.idList)}
-                                    textButton={'+ Serie'}
-                                    />
+                                <List
+                                className='listSerie'
+                                style={{
+                                    display:"flex",
+                                    justifyContent:'space-around',
+                                    flexDirection:"column",
+                                }}
+                                item={exercise.seriesEx}
+                                onEmpty={() => 
+                                <Container className={'first-serie'}>
+                                    <Text text={'Agrega tu primera serie'}/>
                                 </Container>
                                 }
-                            </List>
-                            {
-                                widthScreen > 650 &&
-                                <Container
-                                className={'container-add-serie'}
+                                render={ serie => (
+                                    <Container
+                                    key={serie.idSerie}
+                                    className={classControl(exercise.typeEx) + ` serie ${serie.checked === true ? 'checked' : false}`}
+                                    >
+                                        <Container className={'delete-serie'}>
+                                            <IoMdClose
+                                            onClick={() => deleteSeries(serie,exercise)}
+                                            />
+                                        </Container>
+                                        <Text text={serie.lastMoment ? serie.lastMoment : '-'} />
+                                        <>
+                                            {exercise.typeEx === 'Peso adicional' || exercise.typeEx === 'Peso asistido' ?
+                                            <React.Fragment>
+                                                <InputSerie
+                                                className={'input-type'}
+                                                style={{width:"35%"}}
+                                                name={exercise.name}
+                                                idList={exercise.idList}
+                                                type="number"
+                                                objEx={{nameInput:'other',idList:exercise.idList,serie:serie.idSerie}}
+                                                onChange={getDataRoutine}                                        
+                                                />
+                                                <InputSerie
+                                                className={'input-reps'}
+                                                style={{width:"35%"}}
+                                                name={exercise.name}
+                                                objEx={{nameInput:'reps',idList:exercise.idList,serie:serie.idSerie}}
+                                                onChange={getDataRoutine}
+                                                type="number"
+                                                />
+                                            </React.Fragment>
+                                            :
+                                            exercise.typeEx === 'Duracion' ?
+                                                <InputSerie
+                                                className={'input-duracion'}
+                                                className='inputSerie'
+                                                name={exercise.name}
+                                                idList={exercise.idList}
+                                                objEx={{nameInput:'time',idList:exercise.idList,serie:serie.idSerie}}
+                                                onChange={getDataRoutine}
+                                                style={{width:"50%"}}
+                                                type="time"
+                                                />
+                                            :
+                                                <InputSerie
+                                                className={'input-reps'}
+                                                className='inputSerie'
+                                                name={exercise.name}
+                                                idList={exercise.idList}
+                                                objEx={{nameInput:'reps',idList:exercise.idList,serie:serie.idSerie}}
+                                                onChange={getDataRoutine}
+                                                style={{width:"35%"}}
+                                                type="number"
+                                                />
+                                            }
+                                            {   (active && id) ?
+
+                                                <CheckBox
+                                                style={ !serie.checked && serie.need ? { border:'1px solid red' } : {border:0}}
+                                                onClick={() => checkSerie(serie,exercise)}
+                                                className={serie.checked ? "checkBoxOn" : "checkBoxOff"}
+                                                select={serie.checked}
+                                                />
+                                            :
+
+                                                <Container className={'lock'}>
+                                                    <HiLockClosed/>
+                                                </Container>
+
+                                            }
+                                        </>
+                                    </Container>
+                                )}
                                 >
-                                    <Button 
-                                    onClick={(e) => addSerie(e,exercise.idList)}
-                                    textButton={'+ Serie'}
-                                    />
-                                </Container>
-                            }
-                    </Exercise>              
-                    )}
-                />
-                </Form>
-        </Section>
-        <Modal>
-            {(state.modal) && 
-            <>
-                <ListExercises
+                                    {
+                                    widthScreen < 650 &&
+                                    <Container
+                                    className={'container-add-serie'}
+                                    >
+                                        <Button 
+                                        onClick={(e) => addSerie(e,exercise.idList)}
+                                        textButton={'+ Serie'}
+                                        />
+                                    </Container>
+                                    }
+                                </List>
+                                {
+                                    widthScreen > 650 &&
+                                    <Container
+                                    className={'container-add-serie'}
+                                    >
+                                        <Button 
+                                        onClick={(e) => addSerie(e,exercise.idList)}
+                                        textButton={'+ Serie'}
+                                        />
+                                    </Container>
+                                }
+                        </Exercise>              
+                        )}
+                    />
+                    </Form>
+            </Section>
+            <Modal>
+                {(state.modal) && 
+                <>
+                    <ListExercises
+                        token={token}
+                        objectState={{state:state,setState:setState}}
+                    />
+                    <Container
+                    onClick={() => setState({...state, modal:false})}
+                    className={`back ${darkMode && 'darkMode'}`}/>
+                </>
+                }
+                {state.modalCreate &&
+                <>
+                    <CreateExercise
                     token={token}
                     objectState={{state:state,setState:setState}}
-                />
-                <Container
-                onClick={() => setState({...state, modal:false})}
-                className={`back ${darkMode && 'darkMode'}`}/>
-            </>
-            }
-            {state.modalCreate &&
-            <>
-                <CreateExercise
-                token={token}
-                objectState={{state:state,setState:setState}}
-                />
-                <Container className={`back ${darkMode && 'darkMode'}`}
-                onClick={() => setState({...state, modalCreate:false})}
-                />
-            </>
-            }
-            {state.modalDelete.boolean &&
-                <Modal>
-                    <ModalAreUSure
-                    text={'¿Estas seguro que deseas eliminar estos ejercicios?'}
-                    acceptFunction={() => deleteSomeExercise(true,state.modalDelete.items)}
-                    cancelFunction={() => setState({...state, modal: true, modalDelete:{
-                        boolean:false,
-                        items:true
-                    }})}
                     />
                     <Container className={`back ${darkMode && 'darkMode'}`}
-                    onClick={() => setState({...state, modalDelete:{boolean:false}})}
+                    onClick={() => setState({...state, modalCreate:false})}
                     />
-             </Modal>
-            }
-            {
-                        state.modalUncompletedRoutine === true && 
-                        
+                </>
+                }
+                {state.modalDelete.boolean &&
+                    <Modal>
                         <ModalAreUSure
-                        text={"Algunos ejercicios estan incompletos..."}
-                        acceptFunction={event => handleSubmit(event,true)}
-                        cancelFunction={() => setState({...state, modalUncompletedRoutine: false})}
+                        text={'¿Estas seguro que deseas eliminar estos ejercicios?'}
+                        acceptFunction={() => {
+                            setState({...state,loading:true})
+                            deleteSomeExercise(true,state.modalDelete.items)
+                        }}
+                        cancelFunction={() => setState({...state, modal: true, modalDelete:{
+                            boolean:false,
+                            items:true
+                        }})}
                         />
-                    }
-        </Modal>
-    </Section>
+                        <Container className={`back ${darkMode && 'darkMode'}`}
+                        onClick={() => setState({...state, modalDelete:{boolean:false}})}
+                        />
+                </Modal>
+                }
+                {
+                            state.modalUncompletedRoutine === true && 
+                            
+                            <ModalAreUSure
+                            text={"Algunos ejercicios estan incompletos..."}
+                            acceptFunction={event => handleSubmit(event,true)}
+                            cancelFunction={() => setState({...state, modalUncompletedRoutine: false})}
+                            />
+                        }
+            </Modal>
+        </Section>
+        </>
     )
 
 }

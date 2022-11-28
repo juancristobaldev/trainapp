@@ -11,6 +11,7 @@ import { Container } from "../generals/Container";
 import { Text } from "../generals/Text";
 import { Create } from "../Create/Create";
 import { useDarkMode } from "../../hooks/useDarkMode";
+import { Loading } from "../Loading";
 
 
 
@@ -28,14 +29,18 @@ const CreateExercise = ({token,objectState}) => {
     } = useList ("exercises",{state:state,updateState:setState},true,{ nameGql:"getExercisesByToken",gql:GET_EXERCISES_BY_TOKEN,variables:{ variables:{ token:token } } })
 
     const {
+        loadingStatus,
         errors,
         handleChange,
         createNewExercise,
     } = useExercises(token,{list:listForSelect,updateList:updateListForSelect},{stateValue:state,setState:setState},{ nameGql:"getExercisesByToken",gql:GET_EXERCISES_BY_TOKEN,variables:{variables:{ token:token }}})
     
-    console.log(listForSelect)
-
     return (
+        <>
+        {
+            loadingStatus && 
+            <Loading/>
+        }
         <Create
                 className={`modal-create-exercise ${darkMode && 'darkMode'}`}
                 >
@@ -90,6 +95,7 @@ const CreateExercise = ({token,objectState}) => {
                         </FormControl>
                     </Form>
                 </Create>
+        </>
     )
 }
 

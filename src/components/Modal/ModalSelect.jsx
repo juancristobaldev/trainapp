@@ -2,14 +2,12 @@ import React from "react";
 import { IoMdClose } from "react-icons/io";
 import { Container } from "../generals/Container";
 import { Text } from "../generals/Text";
-import Cookies from "universal-cookie/es6";
 import { useDarkMode } from "../../hooks/useDarkMode";
-const token = new Cookies().get('session-token')
-
 
 const ModalSelect = ({backOff,title,classNameText,functionClose,classNameButtonClose,classNameHeader,list,classNameModal,childrenTop,childrenBottom}) => {
 
 const { darkMode } = useDarkMode()
+
 
     return (
         <>

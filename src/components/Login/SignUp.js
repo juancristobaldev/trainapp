@@ -11,13 +11,14 @@ import { useNavigate } from "react-router-dom"
 import "../../styles/SignUp.scss"
 import "../../styles/responsive/SignUp.scss"
 import { Text } from "../generals/Text"
+import { Loading } from "../Loading"
 
 
 
 const SingUp = () => {
     const navigate = useNavigate()
 
-    const [createUser] = useMutation(CREATE_USER)
+    const [createUser, {loading}] = useMutation(CREATE_USER)
     const [typeForm,setForm] = useState('about-u')
 
     const [dataFormRegister, setDataFormRegister] = useState({
@@ -93,6 +94,9 @@ const SingUp = () => {
 
     return(
         <>
+        {   (loading) && 
+            <Loading/>
+        }
         <Main className={'main-signup'}>
             {typeForm === 'about-u' ?
             <>

@@ -6,7 +6,6 @@ const  FormControl = (
     {objState,autoComplete,value,type,name,children,placeholder,typeControl,label,onChange,className,error}
     ) => {
         const [valueInput, setValue] = useState('')
-        console.log(error)
         let errorsItem;
         if(error !== undefined){
          errorsItem = error.filter(item => item !== undefined)
@@ -15,8 +14,6 @@ const  FormControl = (
         useEffect(() => {
             if(error && objState) objState.setState({...objState.state, modalErrors:{error:false,errors:{}},errors:{}})
         },[valueInput])
-
-        console.log(errorsItem)
         
             return(
                 <React.Fragment>

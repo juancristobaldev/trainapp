@@ -53,11 +53,10 @@ const Dashboard = ({updateRoutineOnPlay}) => {
     }),
     [modalCreateFolder,updateModalCreateFolder] = useState(false),
     [back,updateBack] = useState({active:false,id:null,folder:null}),
-    [deleteRoutine] = useMutation(DELETE_ROUTINE),
-    [updateUser] = useMutation(UPDATE_USER)
+    [deleteRoutine,{loading:loadingDeleteRoutine}] = useMutation(DELETE_ROUTINE)
 
     const { widthScreen } = useWidthScreen(),
-    {darkMode, updateDarkMode,changeDarkMode} = useDarkMode()
+    {darkMode, updateDarkMode} = useDarkMode()
 
     const {
         routines,
@@ -104,7 +103,7 @@ const Dashboard = ({updateRoutineOnPlay}) => {
             } 
             className={`main-dashboard ${darkMode && "darkMode"} ${widthScreen > 650 && "grid-web"}`}
             >
-            {loadingData && 
+            {(loadingData || loadingDeleteRoutine ) && 
                 <Loading/>
             }
             {!loadingData  && 

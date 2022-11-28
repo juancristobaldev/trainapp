@@ -18,9 +18,10 @@ const useExercises = (token,objectList,state) => {
         }
     )
     const [errors,setErrors] = useState({})
+    const [loadingStatus,updateLoading] = useState(false)
 
-    const [createExercise] = useMutation(CREATE_EXERCISE)
-    const [deleteExercise] = useMutation(DELETE_EXERCISE)
+    const [createExercise,  {loading: loadingCreate} ] = useMutation(CREATE_EXERCISE)
+    const [deleteExercise,  {loading: loadingDelete} ] = useMutation(DELETE_EXERCISE)
 
     const deleteSomeExercise = async (confirmation) => {
         const {list,updateList} = objectList;
@@ -31,10 +32,7 @@ const useExercises = (token,objectList,state) => {
             if(filter.length === 0) filter = [...stateValue.modalDelete.items]
 
             if(confirmation){
-                const deleteOfState = () => {
-                    const unSelect = list.filter(item => item.select !== true)
-                    updateList(unSelect)
-                }
+
                 
                 filter.forEach( async (item) => {
                     await deleteExercise({
@@ -43,20 +41,20 @@ const useExercises = (token,objectList,state) => {
                                 id:item.id
                             }
                         },
-                        refetchQueries:[{query:GET_EXERCISES_BY_TOKEN,variables:{
-                            token:token
-                        }}]
+                        refetchQueries:[{
+                            query:GET_EXERCISES_BY_TOKEN,
+                            variables:{token:token}
+                        }]
                     }).then( async ({data}) => {
 
                         const { errors, success } = data.deleteExercise
     
-                        if(errors) console.log(errors )
+                        if(errors) console.log(errors)
                         if(success) console.log('Ejercicio/s eliminados correctamente')
-    
+                        
+                        setState({...stateValue, modal:true, modalDelete:{boolean:false,items:[]}})  
                     })
                 })
-                setState({...stateValue, modal:true, modalDelete:{boolean:false,items:[]}})
-                deleteOfState()   
             }else{
                 const objDelete = {
                     boolean:true,
@@ -122,10 +120,13 @@ const useExercises = (token,objectList,state) => {
         } 
     }
 
+    if(loadingStatus) console.log(true)
     
     useEffect(() => {
         setErrors({})
-    },[dataFormCreateExercise,stateValue.modal,stateValue.modalCreate])
+        if(loadingCreate == true || loadingDelete == true) updateLoading(true)
+        else if((loadingCreate == false && loadingDelete == false) && loadingStatus == true) updateLoading(false)
+    },[dataFormCreateExercise,stateValue.modal,stateValue.modalCreate,loadingDelete,loadingCreate])
 
 
     return {
@@ -133,7 +134,9 @@ const useExercises = (token,objectList,state) => {
         deleteSomeExercise,
         handleChange,
         errors,
-        setErrors,    }
+        setErrors,
+        loadingStatus
+    }
 }
 
 export {useExercises}
