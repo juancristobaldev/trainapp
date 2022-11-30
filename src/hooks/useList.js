@@ -5,12 +5,14 @@ import { GET_ROUTINES_BY_TOKEN } from "../data/query";
 
 
 const useList = (nameContent,stateComponent,repeat,apollo) => {
-    const {nameGql,gql,variables} = apollo,
+    const {nameGql,gql} = apollo,
     {state,updateState} = stateComponent
 
     const [ listForSelect,updateListForSelect] = useState([])
     const [dataDone, updateDataDone] = useState([])
-    const { data,loading, error } = useQuery(gql, variables)
+    const { data,loading, error } = useQuery(gql)
+
+    console.log(data)
 
     const getItems = async () => {
         if(data){

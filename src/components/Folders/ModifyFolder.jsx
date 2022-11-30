@@ -50,8 +50,8 @@ const ModifyFolder = ({token,closeFunction,folder}) => {
         "content",
         {state:state,updateState:updateState},
         false,
-        { nameGql:"getRoutinesByToken",
-        gql:GET_ROUTINES_BY_TOKEN,variables:{ variables:{ token:token } } }
+        { nameGql:"getRoutines",
+        gql:GET_ROUTINES_BY_TOKEN }
         )
 
     const handleSubmit = async (e) => {
@@ -67,9 +67,7 @@ const ModifyFolder = ({token,closeFunction,folder}) => {
                 variables:{
                     input:variables
                 },
-                refetchQueries:[{query:GET_ROUTINES_FOLDERS_USER_BY_TOKEN,variables:{
-                    token:token
-                }}]
+                refetchQueries:[{query:GET_ROUTINES_FOLDERS_USER_BY_TOKEN}]
             }).then(async () => {
                 await setLoading(false)
                 closeFunction()
@@ -157,7 +155,7 @@ const ModifyFolder = ({token,closeFunction,folder}) => {
                         content:"content",
                         stateObj:{state:state,updateState:updateState},
                         repeat:false,
-                        apollo:{ nameGql:"getRoutinesByToken",gql:GET_ROUTINES_BY_TOKEN,variables:{ variables:{ token:token } } }
+                        apollo:{ nameGql:"getRoutines",gql:GET_ROUTINES_BY_TOKEN,variables:{ variables:{ token:token } } }
                     }}
                     />
                 }

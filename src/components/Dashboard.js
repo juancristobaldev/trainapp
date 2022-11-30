@@ -26,8 +26,8 @@ import { Loading } from "./Loading";
 import { Modal } from "./Modal/Modal";
 
 import { useMutation } from "@apollo/client";
-import { DELETE_ROUTINE, UPDATE_USER } from "../data/mutations";
-import { GET_ROUTINES_AND_USER_BY_TOKEN, GET_ROUTINES_FOLDERS_USER_BY_TOKEN, GET_USER } from "../data/query";
+import { DELETE_ROUTINE } from "../data/mutations";
+import { GET_ROUTINES_FOLDERS_USER_BY_TOKEN } from "../data/query";
 import { ButtonIcon } from "./ButtonIcon";
 import { ContainerSearch } from "./ContainerSearch";
 import { Folder } from "./Folders/Folder";
@@ -41,8 +41,8 @@ import { RoutineCrud } from "./Routines/RoutineCrud";
 const Dashboard = ({updateRoutineOnPlay}) => {
     const navigate = useNavigate()
 
-    const cookies = new Cookies();
-    const token = cookies.get('session-token'),
+    const token = localStorage.getItem('token'),
+
     [error,setError] = useState(null),
     [stateNav,updateStateNav] = useState('none'),
     [modalDelete,updateModalDelete] = useState({ boolean:false, item:{id:null,name:null}}),
@@ -65,12 +65,14 @@ const Dashboard = ({updateRoutineOnPlay}) => {
         loadingData
     } = useContext(DataContext)
 
+    console.log(routines,me,folders)
+
     const searchSomething = (e) => {
         updateSearchValues({ ...searchValues, [e.target.name]:e.target.value })
     }
 
     const closeSesion = async () => {
-        await cookies.remove('session-token')
+        await localStorage.removeItem('token')
         window.location.reload()
     }
 
@@ -78,13 +80,10 @@ const Dashboard = ({updateRoutineOnPlay}) => {
     const deleteRoutineDB = async (id) => await deleteRoutine({
             variables:{
                 input:{
-                    token:token,
                     id:id
                 }
             },
-            refetchQueries:[{query:GET_ROUTINES_FOLDERS_USER_BY_TOKEN,variables:{
-                token:token
-            }}]
+            refetchQueries:[{query:GET_ROUTINES_FOLDERS_USER_BY_TOKEN}]
         }).then( ({data}) => {
             const { errors, success } = data.deleteRoutine
             if(errors) console.log(errors)

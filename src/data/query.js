@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const GET_EXERCISES_BY_TOKEN = gql`
-query getExercisesByToken($token:String!) {
-    getExercisesByToken(token:$token){
+query getExercises{
+    getExercises{
             id
             name
             typeEx
@@ -12,16 +12,15 @@ query getExercisesByToken($token:String!) {
 }`
 
 export const GET_ROUTINES_AND_USER_BY_TOKEN = gql`
-    query($token:String!){
-        getRoutinesByToken(token:$token){
+    query{
+        getRoutines{
             id
             name
-            token
             dones
             timeRecord
             exercises
     }
-        getUser(token:$token){
+        getUser{
             id
             user
             first_name
@@ -35,16 +34,15 @@ export const GET_ROUTINES_AND_USER_BY_TOKEN = gql`
     }
 `
 export const GET_ROUTINES_FOLDERS_USER_BY_TOKEN = gql`
-    query($token:String!){
-        getRoutinesByToken(token:$token){
+    query{
+        getRoutines{
             id
             name
-            token
             dones
             timeRecord
             exercises
     }
-        getUser(token:$token){
+        getUser{
             id
             user
             first_name
@@ -55,9 +53,8 @@ export const GET_ROUTINES_FOLDERS_USER_BY_TOKEN = gql`
             token
             last_workouts
         }
-        getFoldersByToken(token:$token){
+        getFolders{
             id
-            token
             name
             content
           }
@@ -65,10 +62,9 @@ export const GET_ROUTINES_FOLDERS_USER_BY_TOKEN = gql`
 `
 
 export const GET_ROUTINES_BY_TOKEN = gql`
-        query getRoutinesByToken($token:String!){
-            getRoutinesByToken(token:$token){
+        query getRoutines{
+            getRoutines{
             id
-            token
             name
             dones
             timeRecord
@@ -81,7 +77,6 @@ export const GET_ROUTINES_BY_TOKEN = gql`
     query getRoutineById($id:Int!) {
         getRoutineById(id:$id){
                   id
-                  token
                   name
                   dones
                   timeRecord
@@ -103,7 +98,7 @@ export const GET_USERS = gql`
 
 export const GET_USER = gql`
     query getUser {
-        getUser(id:Int){
+        getUser{
         user
         }
     }
@@ -112,7 +107,6 @@ export const GET_FOLDER = gql`
     query getFolderById {
         getFolderById(id:Int){
         id
-        token
         name
         content
         }

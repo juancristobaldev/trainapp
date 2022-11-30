@@ -11,10 +11,6 @@ import { ContainerSearch } from "../ContainerSearch";
 import { useNavigate } from "react-router-dom";
 import { useWidthScreen } from "../../hooks/useWidthScreen";
 
-const objectState = {
-    modal:null,
-    
-};
 
 const ListRoutines = ({titleList,type,placeHolderSearch,objHookList}) => {
     const navigate = useNavigate()
@@ -33,6 +29,8 @@ const ListRoutines = ({titleList,type,placeHolderSearch,objHookList}) => {
         selectOfTheList,
         addItem
     } = useList(content, {...stateObj, state:{...stateObj.state, searchValue:searchValue}}, repeat, apollo)
+
+    console.log(dataDone,error)
 
     const { state, updateState } = stateObj
 
@@ -60,7 +58,7 @@ const ListRoutines = ({titleList,type,placeHolderSearch,objHookList}) => {
                 textSearch={placeHolderSearch}
                 onError={() => 
                     <Container className={'container-center'}>
-                        <Text text={'Ooops hay un error...'}/>
+                        <Text text={'Ooops hay un error!...'}/>
                     </Container>
                 }
                 onLoading={() => 

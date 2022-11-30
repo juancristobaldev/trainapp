@@ -5,17 +5,18 @@ import { ModalAreUSure } from "../Modal/ModalAreUSure";
 import "../../styles/Folder.scss"
 import { useMutation } from "@apollo/client";
 import { DELETE_FOLDER } from "../../data/mutations";
-import Cookies from "universal-cookie/es6";
+
 import { GET_ROUTINES_FOLDERS_USER_BY_TOKEN } from "../../data/query";
 import { Loading } from "../Loading";
 import { BsThreeDots } from "react-icons/bs";
 import { Popover } from "../Popover";
 import { ModifyFolder } from "./ModifyFolder";
 
-const token = new Cookies().get('session-token')
-const Folder = ({children,classNameFolder,folder,viewMode,widthScreen,darkMode}) => {
-    const [deleteFolder] = useMutation(DELETE_FOLDER)
+const token = localStorage.getItem('token')
 
+const Folder = ({children,classNameFolder,folder,viewMode,widthScreen,darkMode}) => {
+
+    const [deleteFolder] = useMutation(DELETE_FOLDER)
     const [showRoutines,updateShowRoutines] = useState(false),
     [popover,updatePopover] = useState(false),
     [loading,updateLoading] = useState(false),
@@ -28,12 +29,9 @@ const Folder = ({children,classNameFolder,folder,viewMode,widthScreen,darkMode})
         await deleteFolder({
             variables:{
                 input:{
-                    id:deleteFolderModal.id,
-                    token:token
+                    id:deleteFolderModal.id
                 }
-            },refetchQueries:[{query:GET_ROUTINES_FOLDERS_USER_BY_TOKEN, variables:{
-                token:token
-            }}]
+            },refetchQueries:[{query:GET_ROUTINES_FOLDERS_USER_BY_TOKEN}]
         }).then(({data}) => {
             updateDeleteFolder({boolean:false,id:null})
             setTimeout(() =>{

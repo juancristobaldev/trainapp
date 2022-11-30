@@ -38,7 +38,7 @@ import CheckBox from "../Checkbox";
 import { TimerMenu } from "../MenuTimer";
 import { Loading } from "../Loading";
 
-const token = new Cookies().get('session-token')
+const token = localStorage.getItem('token')
 const timer = JSON.parse(localStorage.getItem('timer'))
 
 const RoutineCrud = ({routineObj}) => {
@@ -74,7 +74,6 @@ const RoutineCrud = ({routineObj}) => {
             listTimers:[]
         },
         dataFormCreate:{
-            token:token,
             name:'',
             exercises:[],
             timeRecord:'indefinido',
@@ -88,7 +87,7 @@ const RoutineCrud = ({routineObj}) => {
         listForSelect,
         updateListForSelect,
         deleteItem,
-    } = useList ('exercises',{state:state,updateState:setState},true,{ nameGql:"getExercisesByToken",gql:GET_EXERCISES_BY_TOKEN,variables:{ variables:{ token:token } } })
+    } = useList ('exercises',{state:state,updateState:setState},true,{ nameGql:"getExercises",gql:GET_EXERCISES_BY_TOKEN })
 
     const {
         loadingStatus,
@@ -251,9 +250,7 @@ const RoutineCrud = ({routineObj}) => {
                             ...inputVariables
                         }
                     },
-                    refetchQueries:[{query:GET_ROUTINES_AND_USER_BY_TOKEN,variables:{
-                        token:token
-                    }}]
+                    refetchQueries:[{query:GET_ROUTINES_AND_USER_BY_TOKEN}]
                 }).then( ({data}) => {
                     const { errors, success } = data.createRoutine
                     if(errors) console.log(errors)

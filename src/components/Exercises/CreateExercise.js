@@ -26,14 +26,14 @@ const CreateExercise = ({token,objectState}) => {
         listForSelect,
         refetchList,
         updateListForSelect,
-    } = useList ("exercises",{state:state,updateState:setState},true,{ nameGql:"getExercisesByToken",gql:GET_EXERCISES_BY_TOKEN,variables:{ variables:{ token:token } } })
+    } = useList ("exercises",{state:state,updateState:setState},true,{ nameGql:"getExercises",gql:GET_EXERCISES_BY_TOKEN })
 
     const {
         loadingStatus,
         errors,
         handleChange,
         createNewExercise,
-    } = useExercises(token,{list:listForSelect,updateList:updateListForSelect},{stateValue:state,setState:setState},{ nameGql:"getExercisesByToken",gql:GET_EXERCISES_BY_TOKEN,variables:{variables:{ token:token }}})
+    } = useExercises(token,{list:listForSelect,updateList:updateListForSelect},{stateValue:state,setState:setState},{ nameGql:"getExercises",gql:GET_EXERCISES_BY_TOKEN })
     
     return (
         <>

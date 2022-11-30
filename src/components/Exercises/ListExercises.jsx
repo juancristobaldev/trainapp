@@ -27,7 +27,7 @@ const ListExercises = ({token,objectState,backOff}) => {
         listForSelect,
         selectOfTheList,
         addItem,
-    } = useList ("exercises",{state:{...state,searchValue:searchValue},updateState:setState},true,{ nameGql:"getExercisesByToken",gql:GET_EXERCISES_BY_TOKEN,variables:{variables:{ token:token }}})
+    } = useList ("exercises",{state:{...state,searchValue:searchValue},updateState:setState},true,{ nameGql:"getExercises",gql:GET_EXERCISES_BY_TOKEN })
 
     const { widthScreen }= useWidthScreen()
 

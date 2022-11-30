@@ -10,7 +10,6 @@ const useExercises = (token,objectList,state) => {
 
     const [ dataFormCreateExercise, setDataFormCreateExercise ] = useState(
         {
-            token:token,
             name:'',
             typeEx:'Peso adicional',
             muscleEx:'Espalda',
@@ -42,8 +41,7 @@ const useExercises = (token,objectList,state) => {
                             }
                         },
                         refetchQueries:[{
-                            query:GET_EXERCISES_BY_TOKEN,
-                            variables:{token:token}
+                            query:GET_EXERCISES_BY_TOKEN
                         }]
                     }).then( async ({data}) => {
 
@@ -95,9 +93,7 @@ const useExercises = (token,objectList,state) => {
                 variables: {
                     input: {...dataFormCreateExercise},
                 },
-                refetchQueries:[{query: GET_EXERCISES_BY_TOKEN,variables:{
-                    token:token
-                }}]
+                refetchQueries:[{query: GET_EXERCISES_BY_TOKEN}]
             }).then( async ({data}) => {
                 const {errors,success} = data.createExercise;
                 const filt = [...list]

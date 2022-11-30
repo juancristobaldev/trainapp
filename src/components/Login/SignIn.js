@@ -48,12 +48,11 @@ const SingIn = () => {
                     }
                 }
             }).then(async ({ data }) => {
+
+                console.log(data)
                 const {success, errors, token } = data.userSignIn
                 if (success) {
-                    cookies.set( 'session-token', token , {
-                        path: '/',
-                        maxAge:86400
-                    })
+                    await localStorage.setItem('token',token)
                     window.location.reload()
                 }else{
                     setError(JSON.parse(errors))

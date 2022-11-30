@@ -13,7 +13,7 @@ const App = () => {
   const cookies = new Cookies();
 
   const [routineOnPlay,updateRoutineOnPlay] = useState({active:false,id:null});
-  const token = cookies.get('session-token');
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
     

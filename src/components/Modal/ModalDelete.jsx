@@ -15,7 +15,7 @@ const ModalDelete = ({token,objectState,exercise}) => {
     const {
         listForSelect,
         updateListForSelect,
-    } = useList("exercises",{state:state,updateState:setState},false,{ nameGql:"getExercisesByToken",gql:GET_EXERCISES_BY_TOKEN,variables:{ variables:{ token:token } } })
+    } = useList("exercises",{state:state,updateState:setState},false,{ nameGql:"getExercises",gql:GET_EXERCISES_BY_TOKEN })
 
 
     const {

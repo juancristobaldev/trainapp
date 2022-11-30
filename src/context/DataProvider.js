@@ -1,9 +1,6 @@
 import React, { createContext, useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { GET_ROUTINES_FOLDERS_USER_BY_TOKEN } from "../data/query";
-import Cookies from "universal-cookie/es6";
-const cookies = new Cookies();
-const session_token = cookies.get('session-token')
 
 export const DataContext = createContext()
 
@@ -15,21 +12,19 @@ export const DataProvider = ({children}) => {
     [routines,updateRoutines] = useState([]),
     [folders,updateFolders] = useState([])
 
-    const {data,error} = useQuery(GET_ROUTINES_FOLDERS_USER_BY_TOKEN, {
-        variables:{
-            token:session_token
-        }
-    })
+    const {data,error} = useQuery(GET_ROUTINES_FOLDERS_USER_BY_TOKEN)
 
+
+    console.log(data,error)
     useEffect(() => {
         if(!data) updateLoadingData(true)
         if(error) updateErrorData(error)
         if(data){
-            const {getRoutinesByToken,getUser, getFoldersByToken} = data;
-            updateFolders(getFoldersByToken)
+            const {getRoutines, getUser, getFolders} = data;
+            updateFolders(getFolders)
             updateLoadingData(false)
             updateMe(getUser)
-            updateRoutines(getRoutinesByToken)
+            updateRoutines(getRoutines)
         }
     })
 
