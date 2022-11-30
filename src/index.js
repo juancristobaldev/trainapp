@@ -10,7 +10,7 @@ import { DataProvider } from './context/DataProvider';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 const httpLink = createHttpLink({
-  uri: 'http://localhost:3001/graphql',
+  uri: 'https://trainingapp-api-nodejs.vercel.app/graphql',
 });
 
 const authLink = setContext((_, { headers }) => {
