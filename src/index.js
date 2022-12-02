@@ -5,7 +5,7 @@ import { ApolloClient, InMemoryCache, ApolloProvider, createHttpLink } from '@ap
 import { setContext } from '@apollo/client/link/context';
 
 import './index.css';
-import { DataProvider } from './context/DataProvider';
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -34,9 +34,7 @@ const client = new ApolloClient({
 
 root.render(
   <ApolloProvider client={client}>
-    <DataProvider>
       <App/>
-    </DataProvider>
   </ApolloProvider>
 );
 

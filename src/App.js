@@ -7,6 +7,7 @@ import { Dashboard } from "./components/Dashboard";
 
 import { RoutineCrud } from "./components/Routines/RoutineCrud";
 
+import { DataProvider } from './context/DataProvider';
 
 const App = () => {
   
@@ -25,7 +26,11 @@ const App = () => {
         token ?
         (
           <>
-            <Route path="/" element={<Dashboard updateRoutineOnPlay={updateRoutineOnPlay}/>}/>
+            <Route path="/" element={
+              <DataProvider>
+                <Dashboard updateRoutineOnPlay={updateRoutineOnPlay}/>
+              </DataProvider>
+            }/>
             <Route path="/routine" element={ <RoutineCrud routineObj={routineOnPlay}/>}/>
             <Route path="/signup" element={ <Navigate to={"/"}/> }/>
             <Route path="/signin" element={ <Navigate to={"/"}/> }/>
