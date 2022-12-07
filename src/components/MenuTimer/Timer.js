@@ -6,6 +6,7 @@ import { Container } from "../generals/Container";
 
 
 function Timer({time}){
+
     const [timer,setTimer] = useState(time)
     const [timerState,setTimerState] = useState(false)
     const [finishTime,setFinishTime] = useState(false)
@@ -57,7 +58,8 @@ function Timer({time}){
             if(minutesTime >= 0 || secondsTime >= 0){
                 setTimer(`${minutesTime <= 9 ? `0${minutesTime}` : minutesTime }:${secondsTime <= 9 ? `0${secondsTime}` : secondsTime}`)
             }
-            else{
+            else {
+                console.log('here')
                 setTimerState(false)
                 setFinishTime(true)
             }
