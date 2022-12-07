@@ -30,7 +30,8 @@
 
   .name-folder {
     padding: 0 1rem;
-    @include mixins.dflex(center, center, column);
+    @include mixins.dflex(center, stretch, column);
+    gap: 10px;
     input {
       @include mixins.input-default();
       width: 100%;

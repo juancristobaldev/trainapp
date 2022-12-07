@@ -33,11 +33,11 @@ input[type="number"] {
   }
   .typeAditional,
   .typeSupport {
-    grid-template: 100% / 10% 45% 15% 15% 15% !important;
+    grid-template: 100% / 15% 30% 20% 20% 15% !important;
   }
   .typeOnlyRep,
   .typeTime {
-    grid-template: 100% / 10% 45% 30% 15% !important;
+    grid-template: 100% / 15% 30% 40% 15% !important;
     .inputSerie {
       @include mixins.dflex(center, center, row);
       width: 90% !important;

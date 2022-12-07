@@ -2,25 +2,29 @@
 @import "src/styles/shared/variables.scss";
 
 @include mixins.media-up(sm-md, md-sm) {
-  .modal-add-routines {
+  .modal-add-routines,
+  .modal-select {
     width: calc(100% - 4rem);
     margin: 10vh 2rem;
   }
 }
 @include mixins.media-up(md-sm, md) {
-  .modal-add-routines {
+  .modal-add-routines,
+  .modal-select {
     width: calc(100% - 8rem);
     margin: 10vh 4rem;
   }
 }
 @include mixins.media-up(md, md-md-lg) {
-  .modal-add-routines {
+  .modal-add-routines,
+  .modal-select {
     max-width: calc(100% - 40%) !important;
     margin: 10vh 20% !important;
   }
 }
 @include mixins.media-up(md-md-lg, lg-lg-lg) {
-  .modal-add-routines {
+  .modal-add-routines,
+  .modal-select {
     max-width: 32.5vw !important;
     margin: 10vh calc((100vw - 32.5vw) / 2) !important;
   }

@@ -25,12 +25,13 @@
       }
       .form-create-routine {
         .input-name-routine {
-          @include mixins.dflex(space-between, stretch, column);
+          @include mixins.dflex(center, stretch, column);
           align-self: center;
-          height: 60%;
+          height: 100%;
+          gap: 10px;
           input {
-            width: 300px;
-            height: 30px;
+            width: 400px;
+            height: 35px;
           }
         }
         .exercises-list-routine {
@@ -92,6 +93,9 @@
         }
         .container-submit {
           @include mixins.dflex(flex-end, center, row);
+          input {
+            width: 120px !important;
+          }
         }
       }
       width: 100%;
@@ -127,26 +131,26 @@
       }
       .header-create-routine,
       .form-create-routine .input-name-routine label {
-        margin: 0 2rem;
+        margin: 0 1rem;
       }
       .form-create-routine {
         .input-name-routine {
           input {
-            width: calc(100% - 4rem);
-            margin: 0.5rem 2rem;
+            width: calc(100% - 2rem);
+            margin: 0.5rem 1rem;
           }
         }
       }
       .exercises-list-routine .exercise {
-        margin: 15px 2rem;
+        margin: 15px 1rem;
       }
       .container-add-exercise {
-        margin: 0 2rem !important;
-        width: calc(100% - 4rem) !important;
+        margin: 0 1rem !important;
+        width: calc(100% - 2rem) !important;
       }
       .container-submit {
         input {
-          width: calc(100% - 4rem);
+          width: calc(100% - 2rem);
         }
       }
     }

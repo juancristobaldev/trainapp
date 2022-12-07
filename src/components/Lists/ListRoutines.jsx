@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { useWidthScreen } from "../../hooks/useWidthScreen";
 
 
-const ListRoutines = ({titleList,type,placeHolderSearch,objHookList}) => {
+const ListRoutines = ({titleList,type,placeHolderSearch,objHookList,updateRoutineOnPlay}) => {
     const navigate = useNavigate()
 
     const [searchValue,updateSearchValue] = useState({routines:''})
@@ -123,7 +123,12 @@ const ListRoutines = ({titleList,type,placeHolderSearch,objHookList}) => {
             dataDone.length === 0 ? 
             <Container className={'buttons'}>
                 <Button
-                onClick={ async () => navigate('/create-routine')}
+                onClick={ 
+                    async () => {
+                        await updateRoutineOnPlay({active:false, id:false, routine:false})
+                        navigate('/routine')
+                    }
+                }
                 className={'add'}
                 textButton={"Crear tu primera rutina"}
                 />

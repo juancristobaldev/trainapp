@@ -60,15 +60,14 @@
 
 .routine-container {
   width: calc(100% - 2rem);
-  height: 25vh;
-  min-height: 30vh;
   align-self: center;
   background-color: white;
   box-shadow: 1px 1px 8px rgba($color: #000000, $alpha: 0.15);
   border-radius: 0.5rem;
+  min-height: 225px;
   margin: 1rem;
   display: grid;
-  grid-template-rows: 7.5vh 15vh 7.5vh;
+  grid-template-rows: 25% 50% 25%;
   .routine-container-header {
     width: 100%;
     padding: 0 1rem;
@@ -106,9 +105,10 @@
 
 .main-dashboard {
   display: grid;
+  min-height: 720px;
   max-height: 100vh;
   height: 100vh;
-  grid-template: 7.5vh 1fr/ 100%;
+  grid-template: 7.5% 1fr/ 100%;
   .section-nav-dashboard {
     @include mixins.dgrid(100%, repeat(2, 1fr) 10%, normal, normal);
     width: 100%;
@@ -125,6 +125,7 @@
     h3 {
       align-self: center;
       &.app {
+        font-size: 1.5rem;
         justify-self: flex-start;
         padding-left: 1rem;
       }
@@ -142,14 +143,14 @@
   }
   .menu {
     z-index: 999;
-    height: 100vh;
+    height: 100%;
     position: absolute;
     display: grid;
     grid-template-rows: 7.5vh repeat(6, 1fr);
     width: 100%;
     left: 0;
     background-color: rgb(250, 250, 250);
-    top: -100vh;
+    top: -100%;
     .header-menu {
       @include mixins.dflex(space-between, center, row);
       padding: 0 1rem;
@@ -328,8 +329,8 @@
         input {
           color: white;
         }
-        svg{
-          fill:white;
+        svg {
+          fill: white;
         }
       }
     }
@@ -403,7 +404,8 @@
       .routine-container,
       .folder-container {
         width: calc(100% - 2rem);
-        height: 30vh;
+        height: 90%;
+        min-height: 225px;
         margin: 0.25rem;
         place-self: center;
       }
@@ -453,11 +455,12 @@
         grid-auto-rows: 45%;
         .folder-container {
           min-width: 50%;
-          height: 30vh;
           margin: 0;
           .folder-list-routines {
-            max-height: calc(30vh - 7.5vh);
+            max-height: 100%;
             overflow: auto;
+            border-bottom-left-radius: 0.25rem;
+            border-bottom-right-radius: 0.25rem;
           }
         }
       }
@@ -519,7 +522,7 @@
 }
 
 .home {
-  max-height: calc(100vh - 7.5vh);
+  max-height: calc(100% - 7.5%);
   @include mixins.dgrid(20% 5% 5% 65%, 100%, normal, normal);
   .container-user-dashboard {
     text-align: center;
@@ -535,10 +538,10 @@
     place-self: center;
   }
   .list-last-routines {
-    grid-area:4/ 1 / 5 / 2 ;
-    background:$background-gradient-lightmode;
+    grid-area: 4/ 1 / 5 / 2;
+    background: $background-gradient-lightmode;
     overflow-y: auto;
-    max-width:100%;
+    max-width: 100%;
   }
 }
 
@@ -548,8 +551,8 @@
 }
 
 .routines {
-  max-height: calc(100vh - 7.5vh);
-  @include mixins.dgrid(7.5vh 1fr, 100%, normal, normal);
+  max-height: 100%;
+  @include mixins.dgrid(10% 1fr, 100%, normal, normal);
   .section-list-routines {
     overflow: auto;
     width: 100%;
@@ -561,10 +564,10 @@
   }
 }
 .folders {
-  @include mixins.dgrid(7.5vh 1fr, 100%, normal, normal);
+  @include mixins.dgrid(10% 1fr, 100%, normal, normal);
   section.section-list-folders {
     overflow: auto;
-    max-height: calc(92.5vh - 7.5vh);
+    height: 100%;
     .folder-container {
       background-color: $color-0-lightmode;
       width: calc(100% - 2rem);
@@ -573,12 +576,13 @@
       border-radius: 0.5rem;
       .header-folder,
       .folder-list-routines {
-        min-height: 7.5vh;
+        min-height: 20%;
       }
       .folder-list-routines.empty {
         @include mixins.dflex(center, center, row);
       }
       .header-folder {
+        height: 65px;
         padding: 0 1rem;
         @include mixins.dflex(space-between, center, row);
         p {
@@ -587,14 +591,14 @@
       }
       .folder-list-routines {
         background-color: $color-1-lightmode;
-        height: 100%;
+        height: 80%;
         .back.unblur {
           z-index: 1 !important;
           backdrop-filter: none;
           background-color: none;
         }
         .container-routine-on-folder {
-          min-height: 7.5vh;
+          min-height: 75px;
           font-weight: 500;
           background-color: white;
           border: 0.25px solid rgb(230, 230, 230);
@@ -604,7 +608,7 @@
           .container-routine-on-folder-header {
             cursor: pointer;
             width: 100%;
-            height: 7.5vh;
+            height: 100%;
             padding-left: 1rem;
             font-size: 0.85rem;
             font-weight: 600;
@@ -616,7 +620,7 @@
         }
         .container-routine-on-folder.top {
           position: relative !important;
-          @include mixins.dgrid(7.5vh 10vh 7.5vh, 100%, normal, normal);
+          @include mixins.dgrid(30% 40% 30%, 100%, normal, normal);
           .routine-container-stats {
             font-size: 0.75rem;
             @include mixins.dflex(space-between, stretch, column);
@@ -624,7 +628,7 @@
             margin: 1rem 0rem;
           }
           z-index: 1001;
-          height: auto;
+          height: 200px;
         }
         .routine-container-button {
           display: flex;

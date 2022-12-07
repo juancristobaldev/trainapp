@@ -119,72 +119,74 @@ const Dashboard = ({updateRoutineOnPlay}) => {
                         />
                     }
                 </nav>
-                <Container className={` menu ${ (widthScreen > 650) ? 'active web' :
-                        stateNav === 'none' ? '' : stateNav === 'actived' ? 'active' :  'unactived' 
-                        }
+                {   (stateNav === 'actived' || widthScreen > 650) &&
+                    <Container className={` menu ${ (widthScreen > 650) ? 'active web' :
+                    stateNav === 'none' ? '' : stateNav === 'actived' ? 'active' :  'unactived' 
+                    }
                     `}>
-                            {
-                                widthScreen < 650 &&
-                                <Container className={'header-menu'}>
-                                <h3>Menu</h3>
-                                <MdClose
-                                fill={darkMode ? 'white' : 'black'}
-                                cursor={'pointer'}
-                                onClick={() => updateStateNav('unactived')}
-                                />
-                                </Container>
-                            }
-                            <ButtonIcon
-                            icon={<ImHome/>}
-                            onClick={() => {
-                                updateStateNav('unactived')
-                                updateView('home')
-                            }}
-                            classNameContainer={`button-menu home ${view === "home" && true}`}
-                            textButton={'Inicio'}
+                        {
+                            widthScreen < 650 &&
+                            <Container className={'header-menu'}>
+                            <h3>Menu</h3>
+                            <MdClose
+                            fill={darkMode ? 'white' : 'black'}
+                            cursor={'pointer'}
+                            onClick={() => updateStateNav('unactived')}
                             />
-                            <ButtonIcon
-                            icon={<IoDocumentTextSharp/>}
-                            onClick={() => {
-                                updateStateNav('unactived')
-                                updateView('routines')
-                            }}
-                            classNameContainer={`button-menu ${view === "routines" && true}`}
-                            textButton={'Rutinas'}
-                            />
-                            <ButtonIcon
-                            icon={<RiFoldersFill/>}
-                            onClick={() => {
-                                updateStateNav('unactived')
-                                updateView('folders')
-                            }}
-                            classNameContainer={`button-menu ${view === "folders" && true}`}
-                            textButton={'Carpetas'}
-                            />
-                            <ButtonIcon
-                            icon={<BsFillDoorOpenFill/>}
-                            classNameContainer={`button-menu`}
-                            textButton={'Cerrar sesion'}
-                            onClick={() => closeSesion()}
-                            />
-                            <Container className={'viewMode'}>
-                                <MdLightMode
-                                fill={
-                                    !darkMode ?
-                                    '#e94560' : 'white'
-                                }
-                                />
-                                <Switch 
-                                checked={darkMode}
-                                onChange={() => updateDarkMode(!darkMode)}
-                                />
-                                <MdDarkMode
-                                fill={
-                                    darkMode ? '#e94560' : undefined
-                                }
-                                />
                             </Container>
-                    </Container>
+                        }
+                        <ButtonIcon
+                        icon={<ImHome/>}
+                        onClick={() => {
+                            updateStateNav('unactived')
+                            updateView('home')
+                        }}
+                        classNameContainer={`button-menu home ${view === "home" && true}`}
+                        textButton={'Inicio'}
+                        />
+                        <ButtonIcon
+                        icon={<IoDocumentTextSharp/>}
+                        onClick={() => {
+                            updateStateNav('unactived')
+                            updateView('routines')
+                        }}
+                        classNameContainer={`button-menu ${view === "routines" && true}`}
+                        textButton={'Rutinas'}
+                        />
+                        <ButtonIcon
+                        icon={<RiFoldersFill/>}
+                        onClick={() => {
+                            updateStateNav('unactived')
+                            updateView('folders')
+                        }}
+                        classNameContainer={`button-menu ${view === "folders" && true}`}
+                        textButton={'Carpetas'}
+                        />
+                        <ButtonIcon
+                        icon={<BsFillDoorOpenFill/>}
+                        classNameContainer={`button-menu`}
+                        textButton={'Cerrar sesion'}
+                        onClick={() => closeSesion()}
+                        />
+                        <Container className={'viewMode'}>
+                            <MdLightMode
+                            fill={
+                                !darkMode ?
+                                '#e94560' : 'white'
+                            }
+                            />
+                            <Switch 
+                            checked={darkMode}
+                            onChange={() => updateDarkMode(!darkMode)}
+                            />
+                            <MdDarkMode
+                            fill={
+                                darkMode ? '#e94560' : undefined
+                            }
+                            />
+                        </Container>
+                </Container>
+                }
                 {
                     view === 'home' &&
                     <Section
@@ -229,7 +231,7 @@ const Dashboard = ({updateRoutineOnPlay}) => {
                             key={routine.id}
                             routine={routine}
                             popOver={false}
-                            classNameContainer={`routine-container
+                            classNameContainer={`routine-container home-routine
                             ${darkMode && "darkMode"}`}
                             classNameHeader={"routine-container-header"}
                             >
@@ -357,7 +359,7 @@ const Dashboard = ({updateRoutineOnPlay}) => {
                         classDiv={'div-search'}
                         classSpan={'design-search'}
                         classList={`section-list-folders ${darkMode && "darkMode"}`}
-                        textSearch={'Buscar carpetas...'}
+                        textSearch={'Buscar carpeta...'}
                         onChange={ e => searchSomething(e)}
                         onError={() => 
                             <Container className={'container-center'}>
@@ -446,6 +448,7 @@ const Dashboard = ({updateRoutineOnPlay}) => {
                     <>
                         <Container className={`back ${darkMode && 'darkMode'}`}/>
                         <CreateFolder
+                        updateRoutineOnPlay={updateRoutineOnPlay}
                         token={token}
                         routines={routines}
                         closeFunction={() => updateModalCreateFolder(false)}

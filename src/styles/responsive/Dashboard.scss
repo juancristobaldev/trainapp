@@ -4,8 +4,8 @@
 @include mixins.media-up(md-sm, md) {
   .main-dashboard {
     nav.section-nav-dashboard {
-      width: calc(100% - 6rem);
-      margin: 0rem 3rem;
+      width: calc(100% - 4rem);
+      margin: 0rem 2rem;
       .app,
       .view,
       svg {
@@ -14,8 +14,8 @@
       }
     }
     .div-search {
-      width: calc(100% - 6rem);
-      margin: 0 3rem;
+      width: calc(100% - 4rem);
+      margin: 0rem 2rem;
       span,
       button {
         margin: 0;
@@ -24,17 +24,32 @@
     .home {
       .list-last-routines {
         .routine-container {
-          width: calc(100vw - 6rem);
+          width: calc(100vw - 4rem);
           margin: 1rem 0;
-          position:relative;
-          left:3rem;
+          position: relative;
+          left: 2rem;
         }
       }
     }
     .routines section.section-list-routines .routine-container,
     .folders section.section-list-folders .folder-container {
-      width: calc(100% - 6rem);
-      margin: 1rem 3rem;
+      width: calc(100% - 4rem);
+      margin: 1rem 2rem;
+    }
+  }
+}
+
+@include mixins.media-up(md, lg-lg-lg) {
+  .main-dashboard {
+    section.folders {
+      section.section-list-folders {
+        .folder-container {
+          height: 90% !important;
+          .header-folder {
+            height: 20% !important;
+          }
+        }
+      }
     }
   }
 }
@@ -48,12 +63,11 @@
     .folders section.section-list-folders {
       padding: 0;
     }
-    .home .list-last-routines{
-      padding-top:10%;
+    .home .list-last-routines {
+      padding-top: 10%;
     }
   }
 }
-
 
 @include mixins.media-up(md, md-md-lg) {
   .main-dashboard.grid-web {
@@ -70,8 +84,8 @@
   }
 }
 @include mixins.media-up(md-md-lg, lg-lg-lg) {
-  .main-dashboard.grid-web{
-    grid-template-columns:20% 80%;
+  .main-dashboard.grid-web {
+    grid-template-columns: 20% 80%;
   }
 }
 
@@ -93,7 +107,7 @@
       .routine-container {
         grid-template-rows: 7.5vh 1fr 7.5vh;
         width: 45%;
-        height:35vh;
+        height: 35vh;
         margin: 0.5rem;
       }
     }

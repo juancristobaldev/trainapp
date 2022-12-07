@@ -5,9 +5,9 @@ section.grid {
   .section-create-routine {
     border-top-left-radius: 0.25rem;
     border-top-right-radius: 0.25rem;
-    @include mixins.dgrid(7.5vh 1fr, none, normal, normal);
+    @include mixins.dgrid(7.5% 1fr, none, normal, normal);
     height: 100vh;
-
+    min-height: 720px;
     .button-cancel,
     .button-timer,
     .container-add-exercise input,
@@ -24,7 +24,7 @@ section.grid {
         font-size: 1.5rem;
       }
       margin: 0rem 1rem;
-      height: 7.5vh;
+      height: 100%;
       font-weight: 600;
       @include mixins.dflex(space-between, center, row);
       .button-cancel,
@@ -59,10 +59,10 @@ section.grid {
       }
     }
     .form-create-routine {
-      @include mixins.dgrid(12.5vh 7.5vh 1fr 7.5vh, none, normal, normal);
+      @include mixins.dgrid(12.5% 7.5% 1fr 7.5%, none, normal, normal);
       .stats-goroutine {
         @include mixins.dflex(center, stretch, column);
-        padding-left: 2rem;
+        padding-left: 1rem;
         h2,
         p {
           margin: 0.25rem 0rem;
@@ -121,6 +121,7 @@ section.grid {
       }
       .container-submit {
         @include mixins.dflex(center, center, row);
+        margin: 0 1rem;
         input {
           @include mixins.button-primary(
             $color-primary,
@@ -130,7 +131,7 @@ section.grid {
             0,
             0
           );
-          width: calc(100% - 2rem);
+          width: 100%;
           font-weight: 800;
         }
       }

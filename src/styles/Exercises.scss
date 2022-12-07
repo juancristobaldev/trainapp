@@ -4,7 +4,7 @@
 .exercises-list-routine {
   display: flex;
   flex-direction: column;
-  max-height: 65vh;
+  max-height: 100%;
   overflow: auto;
   background: linear-gradient(180deg, #ffffff, #fafafa 100%) !important;
   .empty-list-routine {
@@ -23,7 +23,7 @@
     border-radius: 0.25rem;
     .exercise-header {
       cursor: pointer;
-      height: 7vh;
+      height: 50px;
       .exercise-name {
         font-weight: 700;
         font-size: 1.2rem;
@@ -50,10 +50,10 @@
         @include mixins.dgrid(auto, auto, center, normal);
       }
       .stats-second-floor.double-input {
-        grid-template: 100% / 10% 45% 15% 15% 15% !important;
+        grid-template: 100% / 15% 30% 20% 20% 15% !important;
       }
       .stats-second-floor.single-input {
-        grid-template: 100%/10% 45% 30% 15% !important;
+        grid-template: 100%/15% 30% 40% 15% !important;
       }
       .listSerie {
         .first-serie,
@@ -81,12 +81,21 @@
           }
           .input-reps,
           .input-type,
-          .lock {
-            width: 3vh !important;
-            height: 3vh;
+          .lock,
+          .inputSerie {
             border-radius: 0.25rem;
             text-align: center;
+            height: 30px;
           }
+          .input-reps,
+          .input-type {
+            width: 90% !important;
+          }
+
+          .lock {
+            width: 30px !important;
+          }
+
           .input-reps {
             background-color: rgb(240, 240, 240);
             border: none;
@@ -107,7 +116,7 @@
           border-radius: 0.25rem;
           z-index: 99;
           background-color: white;
-          height: 5vh;
+          height: 50px;
           @include mixins.dflex(center, center, row);
           button {
             @include mixins.button-primary(

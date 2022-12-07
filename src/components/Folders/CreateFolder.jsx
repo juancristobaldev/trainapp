@@ -21,7 +21,7 @@ import { Routine } from "../Routines/Routine";
 
 import "../../styles/responsive/Folder.scss"
 
-const CreateFolder = ({token,closeFunction}) => {
+const CreateFolder = ({token,closeFunction, updateRoutineOnPlay}) => {
 
 
     const [createFolder] = useMutation(CREATE_FOLDER)
@@ -131,6 +131,7 @@ const CreateFolder = ({token,closeFunction}) => {
                             error={[errors.name]}
                             value={state.dataFormCreate.name}
                             typeControl={'input'}
+                            label={'Nombre:'}
                             className={'name-folder'}
                             placeholder="Ingresa un nombre para tu carpeta..."
                             type={"text"}
@@ -153,6 +154,7 @@ const CreateFolder = ({token,closeFunction}) => {
                     placeHolderSearch='Buscar rutinas...'
                     textOnEmpty="Tu lista de rutinas esta vacia..."
                     titleList={'Lista de rutinas'}
+                    updateRoutineOnPlay={updateRoutineOnPlay}
                     objHookList={{
                         content:"content",
                         stateObj:{state:state,updateState:updateState},
