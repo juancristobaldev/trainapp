@@ -188,7 +188,6 @@ const TimerMenu = ({objState}) => {
                         </Container>
                         <Timer
                             time={state.timer.time}
-                            objState={objState}
                         />
                         <Container
                         style={{
