@@ -5,7 +5,7 @@ section.grid {
   .section-create-routine {
     border-top-left-radius: 0.25rem;
     border-top-right-radius: 0.25rem;
-    @include mixins.dgrid(7.5% 1fr, none, normal, normal);
+    @include mixins.dgrid(7.5% 92.5%, none, normal, normal);
     height: 100vh;
     min-height: 720px;
     .button-cancel,
@@ -59,7 +59,8 @@ section.grid {
       }
     }
     .form-create-routine {
-      @include mixins.dgrid(12.5% 7.5% 1fr 7.5%, none, normal, normal);
+      @include mixins.dgrid(12.5% 7.5% 72.5% 7.5%, none, normal, normal);
+      height: 100%;
       .stats-goroutine {
         @include mixins.dflex(center, stretch, column);
         padding-left: 1rem;
