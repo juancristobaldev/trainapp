@@ -78,7 +78,8 @@ const RoutineCrud = ({routineObj}) => {
             exercises:[],
             timeRecord:'indefinido',
             dones:0
-        }
+        },
+        
     }),
     
     {dataFormCreate,listOnCreate} = state

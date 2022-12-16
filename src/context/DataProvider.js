@@ -15,7 +15,6 @@ export const DataProvider = ({children}) => {
     const {data,error} = useQuery(GET_ROUTINES_FOLDERS_USER_BY_TOKEN)
 
 
-    console.log(data,error)
     useEffect(() => {
         if(!data) updateLoadingData(true)
         if(error) updateErrorData(error)
