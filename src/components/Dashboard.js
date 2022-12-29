@@ -102,7 +102,8 @@ const Dashboard = ({updateRoutineOnPlay}) => {
             } 
             className={`main-dashboard ${darkMode && "darkMode"} ${widthScreen > 650 && "grid-web"}`}
             >
-            {(loadingData || loadingDeleteRoutine ) && 
+            {
+                (loadingData || loadingDeleteRoutine ) && 
                 <Loading/>
             }
             {!loadingData  && 

@@ -51,15 +51,15 @@ const ContainerSearch = (
 
     return (
         <>
-                <InputSearch
+            <InputSearch
                 textSearch={textSearch}
                 classNameSpan={classSpan}
                 classNameDiv={classDiv}
                 onChange={onChange}
                 name={name}
                 button={button}
-                /> 
-                <ListApi
+            /> 
+            <ListApi
                 children={children}
                 searchContents={dataSearch}
                 data={data}
@@ -71,7 +71,7 @@ const ContainerSearch = (
                 onEmpty={onEmpty}
                 onEmptySearch={onEmptySearch}
                 render={render}
-                />
+            />
         </>
     )
 }

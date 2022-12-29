@@ -20,6 +20,7 @@ import { ModalSelect } from "../Modal/ModalSelect";
 import { Routine } from "../Routines/Routine";
 
 import "../../styles/responsive/Folder.scss"
+import { List } from "../Lists/List";
 
 const CreateFolder = ({token,closeFunction, updateRoutineOnPlay}) => {
 
@@ -97,7 +98,7 @@ const CreateFolder = ({token,closeFunction, updateRoutineOnPlay}) => {
                     textSelect
                     list={
                         <>
-                            <ListArray
+                            <List
                             errors={errors.content}
                             className={'list-routines-folder'}
                             data={dataFormCreate.content}
