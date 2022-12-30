@@ -1,20 +1,19 @@
 import React, { useState } from "react";
 
 const useWidthScreen = () => {
+  const [widthScreen, updateWidthScreen] = useState(window.innerWidth);
 
-    const [widthScreen,updateWidthScreen ] = useState(window.innerWidth);
+  const windowWidthChange = () => {
+    updateWidthScreen(window.innerWidth);
+  };
 
-    const windowWidthChange = () => {
-        updateWidthScreen(window.innerWidth);
-    };
-    
-    window.addEventListener('resize', () => {
-        windowWidthChange();
-    });
+  window.addEventListener("resize", () => {
+    windowWidthChange();
+  });
 
-    return {
-        widthScreen
-    }
-}
+  return {
+    widthScreen,
+  };
+};
 
-export {useWidthScreen}
+export { useWidthScreen };

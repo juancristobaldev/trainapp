@@ -1,16 +1,14 @@
 import React from "react";
 import { Container } from "./generals/Container";
-import ReactLoading from "react-loading"
-import '../styles/Loading.scss'
+import ReactLoading from "react-loading";
+import "../styles/Loading.scss";
 
 const Loading = () => {
-    return (
-        <Container
-            className={'loading'}
-        >
-            <ReactLoading type="spokes"/>
-        </Container>
-    )
-}
+  return (
+    <Container className={"loading"}>
+      <ReactLoading type="spokes" />
+    </Container>
+  );
+};
 
-export {Loading}
+export { Loading };

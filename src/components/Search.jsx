@@ -1,10 +1,7 @@
 import React from "react";
 
-const Search = props => {
+const Search = (props) => {
+  return <input />;
+};
 
-    return(
-            <input />
-        )
-}
-
-export {Search}
+export { Search };

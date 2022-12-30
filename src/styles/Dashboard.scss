@@ -551,7 +551,7 @@
 }
 
 .routines {
-  max-height: 100%;
+  min-height: 100%;
   @include mixins.dgrid(10% 1fr, 100%, normal, normal);
   .section-list-routines {
     overflow: auto;
@@ -564,6 +564,7 @@
   }
 }
 .folders {
+  min-height: 100%;
   @include mixins.dgrid(10% 1fr, 100%, normal, normal);
   section.section-list-folders {
     overflow: auto;
